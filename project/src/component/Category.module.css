@@ -1,0 +1,23 @@
+.container {
+  padding: 20px;
+  width: 100%;
+  max-width: 250px;
+  border: 1px solid black;
+}
+
+.category_container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.category_container > div {
+  cursor: pointer;
+}
+.showPeoples {
+  cursor: pointer;
+}
+.showPeoples_container > div {
+  font-size: 15px;
+  cursor: pointer;
+}

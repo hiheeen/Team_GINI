@@ -1,0 +1,29 @@
+.container {
+  border: 1px solid black;
+  width: 100%;
+  max-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.container > div {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.profileImg {
+  width: 100px;
+  height: 200px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.nickname {
+  padding: 10px 0;
+}
+.description {
+  padding: 10px 0;
+}
+.liked {
+  padding: 10px 0;
+}

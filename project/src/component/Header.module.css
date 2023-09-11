@@ -1,0 +1,13 @@
+.header {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px;
+  height: 80px;
+  border-bottom: 1px solid black;
+}
+.headerImg {
+  width: 100%;
+  max-width: 150px;
+}
