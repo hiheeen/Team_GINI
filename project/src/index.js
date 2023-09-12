@@ -4,12 +4,17 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyle from './GlobalStyle';
+import { RecoilRoot } from 'recoil';
+import RecoilTest from './RecoilTest';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <GlobalStyle />
-    <App />
+    <RecoilRoot>
+      <App />
+      {/* <RecoilTest /> */}
+    </RecoilRoot>
   </React.StrictMode>,
 );
 

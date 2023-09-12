@@ -3,11 +3,28 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 30px;
-  height: 80px;
-  border-bottom: 1px solid black;
+  padding: 40px;
+  height: 100px;
+  box-shadow:
+    rgba(17, 17, 26, 0.05) 0px 1px 0px,
+    rgba(17, 17, 26, 0.1) 0px 0px 8px;
+  position: fixed;
+  left: 0;
+  right: 0;
+  background-color: white;
+}
+.header > div {
+  max-width: 200px;
+  width: 100%;
 }
 .headerImg {
   width: 100%;
   max-width: 150px;
+}
+.login {
+  display: flex;
+  justify-content: right;
+}
+.login > div {
+  cursor: pointer;
 }

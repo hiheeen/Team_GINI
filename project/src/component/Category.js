@@ -4,7 +4,7 @@ function Category() {
   const [showPeoples, setShowPeoples] = useState(false);
   return (
     <div className={styles.container}>
-      <div>카테고리</div>
+      <div style={{ padding: 10 }}>카테고리</div>
       <div className={styles.category_container}>
         <div>여행지</div>
         <div>책/글귀</div>
@@ -19,6 +19,7 @@ function Category() {
         <div>취미</div>
       </div>
       <div
+        style={{ padding: 10 }}
         className={styles.showPeoples}
         onClick={() => setShowPeoples(!showPeoples)}
       >
