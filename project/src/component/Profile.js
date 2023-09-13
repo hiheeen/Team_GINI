@@ -19,6 +19,7 @@ function Profile() {
       <div className={styles.nickname}>nickname</div>
       <div className={styles.description}>간단 소개글</div>
       <div className={styles.liked}>좋아요 한 기록물</div>
+      <div className={styles.change}>정보 수정</div>
     </div>
   );
 }

@@ -18,6 +18,11 @@
 .category_container > div {
   cursor: pointer;
   padding: 10px;
+  display: flex;
+  align-items: center;
+}
+.category_container > div > div:last-child {
+  margin-left: 10px;
 }
 .showPeoples {
   cursor: pointer;

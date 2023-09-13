@@ -1,8 +1,15 @@
 import { Form, useNavigate } from 'react-router-dom';
 import styles from './SignUpPage.module.css';
 import { useForm } from 'react-hook-form';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { useRef, useState } from 'react';
+import { useCookies } from 'react-cookie';
+import axios from 'axios';
 function SignUpPage() {
+  const profileImg = process.env.PUBLIC_URL + '/images/Vector.png';
+  const [profile, setProfile] = useState();
+  const [cookies, setCookie] = useCookies(['access_token', 'refresh_token']);
   const navigate = useNavigate();
   const {
     register,
@@ -10,9 +17,7 @@ function SignUpPage() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = async (data) => {
-    navigate('/', { replace: true });
-  };
+
   const password = watch('password', '');
   const validateId = (value) => {
     if (!value) return '이메일을 입력하세요.';
@@ -41,15 +46,92 @@ function SignUpPage() {
     if (!/^[A-za-z0-9가-힣]{3,}$/.test(value)) return '2글자 이상 적어주세요.';
     return true;
   };
+
+  const fileInputRef = useRef(null);
+  //   const handleButtonClick = () => {
+  //     fileInputRef.current.click();
+  //   };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        // 파일의 내용을 읽어 이미지로 표시
+        const result = e.target.result;
+        setProfile(result); // 이미지를 표시하기 위해 상태 업데이트
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const onSubmit = async (data) => {
+    const signupData = {
+      email: data.userId,
+      password: data.password,
+      nickname: data.nickname,
+      gender: data.gender,
+      name: data.username,
+    };
+    await axios
+      .post('http://27.96.134.191/api/v1/users/', signupData, {
+        headers: {
+          Authorization: `Bearer ${cookies.access_token}`,
+        },
+        withCredentials: true,
+      })
+      .then((res) => {
+        //회원가입 성공 시 쿠키설정
+        setCookie('access_token', res.token.access);
+        setCookie('refresh_token', res.token.refresh);
+        navigate('/');
+      })
+      .catch((err) => {
+        console.error('회원가입실패', err);
+        window.alert('회원가입 실패!');
+      });
+  };
+  // console.log(data);
+  // 회원가입 로직처리
+
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className={styles.login_form}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div>
+                <img
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: '50%',
+                    border: '1px solid lightgrey',
+                    marginRight: 20,
+                  }}
+                  alt=""
+                  src={profile ? profile : profileImg}
+                />
+              </div>
+              <label style={{ fontSize: 12 }} className={styles.changeProfile}>
+                이미지 설정
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  onChange={handleFileChange}
+                />
+              </label>
+              {/* <button
+                className={styles.changeProfile}
+                onClick={handleButtonClick}
+              >
+                change
+              </button> */}
+            </div>
             {/* 이름 */}
             <div>
               <input
-                className={styles.login_input}
+                className={styles.signUp_input}
                 id="username"
                 name="username"
                 type="text"
@@ -73,11 +155,12 @@ function SignUpPage() {
             {/* 아이디 */}
             <div>
               <input
-                className={styles.login_input}
+                className={styles.signUp_input}
                 id="userId"
                 type="text"
                 name="userId"
                 placeholder="onandoff@naver.com"
+                autoComplete="userId"
                 // input의 기본 config를 작성
                 {...register('userId', {
                   required: '아이디는 필수 입력입니다.',
@@ -94,11 +177,12 @@ function SignUpPage() {
             {/* 비밀번호 */}
             <div>
               <input
-                className={styles.login_input}
+                className={styles.signUp_input}
                 id="password"
                 type="password"
                 name="password"
                 placeholder="비밀번호"
+                autoComplete="new-password"
                 {...register('password', {
                   required: '비밀번호는 필수 입력입니다.',
 
@@ -114,11 +198,12 @@ function SignUpPage() {
             {/* 비밀번호 확인 */}
             <div>
               <input
-                className={styles.login_input}
+                className={styles.signUp_input}
                 id="confirmPassword"
                 type="password"
                 name="confirmPassword"
                 placeholder="비밀번호 재입력"
+                autoComplete="new-password"
                 {...register('confirmPassword', {
                   required: '비밀번호 확인은 필수입니다.',
 
@@ -135,7 +220,7 @@ function SignUpPage() {
             {/* 닉네임 */}
             <div>
               <input
-                className={styles.login_input}
+                className={styles.signUp_input}
                 id="nickname"
                 name="nickname"
                 type="text"
@@ -154,7 +239,7 @@ function SignUpPage() {
             {/* 성별 */}
             <div>
               <select
-                className={styles.login_input}
+                className={styles.signUp_input}
                 name="성별"
                 {...register('gender', {
                   required: '성별을 선택해주세요.',
@@ -179,17 +264,10 @@ function SignUpPage() {
             style={{
               display: 'flex',
               justifyContent: 'center',
-              marginTop: 10,
+              marginTop: 20,
             }}
           >
-            <button
-              type="submit"
-              style={{
-                padding: '5px',
-                border: '1px solid lightgrey',
-                borderRadius: 10,
-              }}
-            >
+            <button type="submit" className={styles.signUp_submit}>
               회원가입
             </button>
           </div>
