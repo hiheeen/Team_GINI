@@ -1,0 +1,16 @@
+.container {
+  padding: 30px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+}
+.feedImg {
+  width: 600px;
+  height: 400px;
+  border-radius: 20px;
+}
+.date_category {
+  display: flex;
+}

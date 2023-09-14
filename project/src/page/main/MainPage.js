@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Fab from '@mui/material/Fab';
 import EditIcon from '@mui/icons-material/Edit';
+import Feed from '../../component/Feed';
 function MainPage() {
   const [searchValue, setSearchValue] = useState();
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ function MainPage() {
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <FontAwesomeIcon
+          {/* <FontAwesomeIcon
             icon={faFolderClosed}
             style={{
               width: 100,
@@ -84,10 +85,12 @@ function MainPage() {
               color: 'rgba(160, 160, 160, 0.2)',
               padding: 15,
             }}
-          />
+          /> */}
         </div>
       </div>
-      <div className={styles.feed}></div>
+      <div className={styles.feed}>
+        <Feed />
+      </div>
     </div>
   );
 }

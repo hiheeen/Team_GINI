@@ -6,6 +6,7 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { useRef, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
+import { signUpApi } from '../../apis/api';
 function SignUpPage() {
   const profileImg = process.env.PUBLIC_URL + '/images/Vector.png';
   const [profile, setProfile] = useState();
@@ -64,35 +65,45 @@ function SignUpPage() {
       reader.readAsDataURL(file);
     }
   };
-  const onSubmit = async (data) => {
-    const signupData = {
+  // const onSubmit = async (data) => {
+  //   const signupData = {
+  //     email: data.userId,
+  //     password: data.password,
+  //     nickname: data.nickname,
+  //     gender: data.gender,
+  //     name: data.username,
+  //   };
+  //   await axios
+  //     .post('http://27.96.134.191/api/v1/users/', signupData)
+  //     .then((res) => {
+  //       //회원가입 성공 시 쿠키설정
+  //       console.log('sdlfs', res);
+  //       // setCookie('access_token', res.data.token.access);
+  //       // setCookie('refresh_token', res.data.token.refresh);
+  //       navigate('/');
+  //     })
+  //     .catch((err) => {
+  //       console.error('회원가입실패', err);
+  //       window.alert('회원가입 실패!');
+  //     });
+  // };
+
+  const onSubmit = (data) => {
+    const signUpData = {
       email: data.userId,
       password: data.password,
       nickname: data.nickname,
       gender: data.gender,
       name: data.username,
     };
-    await axios
-      .post('http://27.96.134.191/api/v1/users/', signupData, {
-        headers: {
-          Authorization: `Bearer ${cookies.access_token}`,
-        },
-        withCredentials: true,
+    signUpApi(signUpData)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log('200', response);
+        }
       })
-      .then((res) => {
-        //회원가입 성공 시 쿠키설정
-        setCookie('access_token', res.token.access);
-        setCookie('refresh_token', res.token.refresh);
-        navigate('/');
-      })
-      .catch((err) => {
-        console.error('회원가입실패', err);
-        window.alert('회원가입 실패!');
-      });
+      .catch((error) => console.log('err data', error));
   };
-  // console.log(data);
-  // 회원가입 로직처리
-
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>

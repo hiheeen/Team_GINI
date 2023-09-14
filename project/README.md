@@ -7,3 +7,5 @@
     - styled-reset
     - @fortawesome/react-fontawesome
     - @fortawesome/free-solid-svg-icons
+    - recoil
+    

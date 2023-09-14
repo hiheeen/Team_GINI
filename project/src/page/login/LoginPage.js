@@ -4,9 +4,13 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { loggedInState } from '../../recoil/loggedIn';
+import { useCookies } from 'react-cookie';
+import axios from 'axios';
+import { loginApi } from '../../apis/api';
 function LoginPage() {
   const [userId, setUserId] = useState();
   const [password, setPassword] = useState();
+  const [cookies, setCookie] = useCookies(['access_token']);
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
   const setLoggedInUseSetRecoilState = useSetRecoilState(loggedInState);
@@ -18,11 +22,24 @@ function LoginPage() {
       setPassword(value);
     }
   };
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const loginData = {
+      email: userId,
+      password: password,
+    };
     // 회원정보 전송 로직
-    // 성공할 경우
-    setIsLoggedIn(true);
-    navigate('/');
+    loginApi(loginData)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log('로그인 성공', response.data);
+          setCookie('access_token', response.data.token.access);
+          setCookie('refresh_token', response.data.token.refresh);
+          setIsLoggedIn(true);
+          navigate('/');
+        }
+      })
+      .catch((error) => console.log('로그인 실패', error));
   };
   return (
     <div className={styles.container}>

@@ -5,11 +5,16 @@ import { Switch } from '@mui/material';
 import { styled } from '@mui/material/styles'; // styled import 추가
 import { useRecoilState } from 'recoil';
 import { loggedInState } from '../recoil/loggedIn';
+import { useCookies } from 'react-cookie';
+import Cookies from 'js-cookie';
+
+import { logOutApi } from '../apis/api';
+import axios from 'axios';
 
 function Header() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
-
+  const [cookies] = useCookies(['access_token']);
   const headerImg = process.env.PUBLIC_URL + '/images/Group 2.png';
   const [checked, setChecked] = useState(false);
 
@@ -33,6 +38,39 @@ function Header() {
     },
   }));
 
+  // const handleLogOut = () => {
+  //   logOutApi(cookies.access_token)
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         Cookies.remove('access_token');
+  //         Cookies.remove('refresh_token');
+  //         navigate('/');
+  //       } else {
+  //         console.error('로그아웃실패', res);
+  //         window.alert('로그아웃 실패');
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error('로그아웃 실패 catch문', err);
+  //       window.alert('로그아웃 실패 catch문');
+  //     });
+  // };
+  const handleLogOut = async () => {
+    await axios
+      .delete('http://27.96.134.191/api/v1/users/logout/', {
+        headers: {
+          Authorization: `Bearer ${cookies.access_token}`,
+        },
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log('로그아웃 성공', res);
+        Cookies.remove('access_token');
+        Cookies.remove('refresh_token');
+        navigate('/');
+      })
+      .catch((err) => console.error('로그아웃 실패', err));
+  };
   return (
     <div className={styles.header}>
       <div></div>
@@ -56,14 +94,7 @@ function Header() {
       <div className={styles.login}>
         {isLoggedIn ? (
           <>
-            <div
-              onClick={() => {
-                setIsLoggedIn(false);
-                navigate('/');
-              }}
-            >
-              로그아웃
-            </div>
+            <div onClick={handleLogOut}>로그아웃</div>
             <div>/</div>
             <div>마이페이지</div>
           </>
