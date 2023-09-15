@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Switch } from '@mui/material';
 import { styled } from '@mui/material/styles'; // styled import 추가
 import { useRecoilState } from 'recoil';
@@ -10,18 +10,33 @@ import Cookies from 'js-cookie';
 
 import { logOutApi } from '../apis/api';
 import axios from 'axios';
+import { onOffState } from '../recoil/onOff';
 
 function Header() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
   const [cookies] = useCookies(['access_token']);
   const headerImg = process.env.PUBLIC_URL + '/images/Group 2.png';
-  const [checked, setChecked] = useState(false);
+  const [isOnOffState, setIsOnOffState] = useRecoilState(onOffState);
+  // const handleChange = (event) => {
+  //   setChecked(!isOnOffState);
+  //   setIsOnOffState(!isOnOffState);
+  // };
 
+  // 로컬 스토리지의 값을 초기 recoil 상태로 설정
+  useEffect(() => {
+    const storedIsOnOffState = localStorage.getItem('isOnOffState');
+    if (storedIsOnOffState !== null) {
+      setIsOnOffState(storedIsOnOffState === 'true'); // 문자열을 불리언으로 변환
+    }
+  }, []);
+
+  // CustomSwitch 변경 시 recoil 상태와 로컬 스토리지 값 업데이트
   const handleChange = (event) => {
-    setChecked(event.target.checked);
+    const newValue = !isOnOffState;
+    setIsOnOffState(newValue);
+    localStorage.setItem('isOnOffState', newValue.toString()); // 불리언을 문자열로 저장
   };
-
   // styled 컴포넌트를 사용하여 스위치 스타일 변경
   const CustomSwitch = styled(Switch)(({ theme }) => ({
     '& .MuiSwitch-track': {
@@ -67,6 +82,7 @@ function Header() {
         console.log('로그아웃 성공', res);
         Cookies.remove('access_token');
         Cookies.remove('refresh_token');
+        setIsLoggedIn(false);
         navigate('/');
       })
       .catch((err) => console.error('로그아웃 실패', err));
@@ -86,7 +102,7 @@ function Header() {
         </div>
         {/* <img className={styles.headerImg} alt="" src={headerImg} /> */}
         <CustomSwitch
-          checked={checked}
+          checked={isOnOffState}
           onChange={handleChange}
           inputProps={{ 'aria-label': 'controlled' }}
         />
@@ -96,7 +112,7 @@ function Header() {
           <>
             <div onClick={handleLogOut}>로그아웃</div>
             <div>/</div>
-            <div>마이페이지</div>
+            <div onClick={() => navigate('/myPage')}>마이페이지</div>
           </>
         ) : (
           <>

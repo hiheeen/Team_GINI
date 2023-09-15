@@ -17,6 +17,7 @@ import {
   useResetRecoilState,
 } from 'recoil';
 import { loggedInState } from './recoil/loggedIn';
+import MyPage from './page/login/MyPage';
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
@@ -34,6 +35,7 @@ function App() {
             <Route path={routes.upload} element={<UpLoadPage />} />
             <Route path={routes.login} element={<LoginPage />} />
             <Route path={routes.signUp} element={<SignUpPage />} />
+            <Route path={routes.myPage} element={<MyPage />} />
           </Routes>
           {isLoggedIn && <Profile />}
         </div>

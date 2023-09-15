@@ -6,15 +6,20 @@ import reportWebVitals from './reportWebVitals';
 import GlobalStyle from './GlobalStyle';
 import { RecoilRoot } from 'recoil';
 import RecoilTest from './RecoilTest';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+const queryClient = new QueryClient();
+
 root.render(
   <React.StrictMode>
-    <GlobalStyle />
-    <RecoilRoot>
-      <App />
-      {/* <RecoilTest /> */}
-    </RecoilRoot>
+    <QueryClientProvider client={queryClient}>
+      <GlobalStyle />
+      <RecoilRoot>
+        <App />
+        {/* <RecoilTest /> */}
+      </RecoilRoot>
+    </QueryClientProvider>
   </React.StrictMode>,
 );
 

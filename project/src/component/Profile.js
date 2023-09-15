@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './Profile.module.css';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
@@ -6,6 +6,7 @@ import { useCookies } from 'react-cookie';
 function Profile() {
   const profileImg = process.env.PUBLIC_URL + '/images/profileTest.png';
   const [cookies] = useCookies(['access_token']);
+  const [infoData, setInfoData] = useState();
   useEffect(() => {
     if (cookies.access_token) {
       axios
@@ -15,10 +16,14 @@ function Profile() {
           },
           withCredentials: true,
         })
-        .then((res) => console.log('인포', res.data))
+        .then((res) => {
+          console.log('인포', res.data);
+          setInfoData(res.data);
+        })
         .catch((err) => console.log('인포 get에러', err));
     }
   }, []);
+
   return (
     <div className={styles.container}>
       <div className={styles.profileImg}>
@@ -33,7 +38,7 @@ function Profile() {
           }}
         />
       </div>
-      <div className={styles.nickname}>nickname</div>
+      <div className={styles.nickname}>{infoData?.nickname}</div>
       <div className={styles.description}>간단 소개글</div>
       <div className={styles.liked}>좋아요 한 기록물</div>
       <div className={styles.change}>정보 수정</div>

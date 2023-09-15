@@ -4,17 +4,23 @@ import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
+import { postFeedApi } from '../../apis/api';
+import { useRecoilState } from 'recoil';
+import { onOffState } from '../../recoil/onOff';
 function UpLoadPage() {
+  const [isOnOffState, setIsOnOffState] = useRecoilState(onOffState);
+
   const [value, setValue] = useState({
     title: '',
     photo: '',
-    description: '',
+    content: '',
     category: '',
-    isSecret: false,
+    is_secret: '',
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [cookies] = useCookies(['access_token', 'refresh_token']);
+
   const navigate = useNavigate();
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -42,21 +48,18 @@ function UpLoadPage() {
     const formData = {
       category: value.category,
       title: value.title,
-      comment: value.description,
-      is_secret: false,
+      content: value.content,
+      is_secret: value.is_secret,
     };
-    await axios
-      .post('http://27.96.134.191/api/v1/feeds/', formData, {
-        headers: {
-          Authorization: `Bearer ${cookies.access_token}`,
-        },
-        withCredentials: true,
-      })
+    postFeedApi(cookies.access_token, formData)
       .then((res) => {
         console.log('데이터 전송 성공', res);
         navigate('/');
       })
-      .catch((err) => console.log('데이터 전송 에러', err));
+      .catch((err) => {
+        console.log('데이터 전송 에러', err);
+        console.log('formData', formData);
+      });
   };
   return (
     <div className={styles.container}>
@@ -67,7 +70,7 @@ function UpLoadPage() {
               onChange={(e) =>
                 setValue((prevValue) => ({
                   ...prevValue,
-                  title: e.target.value, // category 상태 업데이트
+                  title: e.target.value, // title 상태 업데이트
                 }))
               }
               className={styles.title}
@@ -107,11 +110,11 @@ function UpLoadPage() {
                 onChange={(e) =>
                   setValue((prevValue) => ({
                     ...prevValue,
-                    description: e.target.value, // category 상태 업데이트
+                    content: e.target.value, // content 상태 업데이트
                   }))
                 }
                 className={styles.description}
-                value={value.description}
+                value={value.content}
               />
             </div>
           </div>
@@ -144,7 +147,23 @@ function UpLoadPage() {
               <option value={'hobby'}>취미</option>
             </select>
           </div>
-          <div className={styles.isSecret}>on/off</div>
+          <div>
+            <select
+              onChange={(e) =>
+                setValue((prevValue) => ({
+                  ...prevValue,
+                  is_secret: e.target.value, // is_secret 상태 업데이트
+                }))
+              }
+              value={value.is_secret}
+            >
+              <option value="" disabled selected>
+                on/off
+              </option>
+              <option value="true">on</option>
+              <option value="false">off</option>
+            </select>
+          </div>
           <button type="submit">저장하기</button>
         </form>
       </div>

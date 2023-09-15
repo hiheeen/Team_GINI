@@ -8,3 +8,12 @@ instance.interceptors.request.use((config) => {
   config.headers.Authorization = `Bearer ${cookies.access_token}`;
   return config;
 });
+// export const getFeedApi = async (accessToken) => {
+//   const response = await instance.get('feeds/', {
+//     //   headers: {
+//     //     Authorization: `Bearer ${accessToken}`,
+//     //   },
+//     withCredentials: true,
+//   });
+//   return response;
+// };

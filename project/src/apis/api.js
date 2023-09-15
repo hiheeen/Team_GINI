@@ -1,3 +1,4 @@
+import { assignNestedKeys } from '@mui/system/cssVars/cssVarsParser';
 import axios from 'axios';
 
 const instance = axios.create({ baseURL: 'http://27.96.134.191/api/v1/' });
@@ -27,4 +28,22 @@ export const logOutApi = async (accessToken) => {
   } catch (error) {
     throw error;
   }
+};
+export const getFeedApi = async (accessToken) => {
+  const response = await instance.get('feeds/', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};
+export const postFeedApi = async (accessToken, formData) => {
+  const response = await instance.post('feeds/', formData, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
 };

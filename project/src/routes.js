@@ -3,5 +3,6 @@ const routes = {
   upload: '/upload/:category/:id',
   login: '/login',
   signUp: '/signUp',
+  myPage: '/myPage',
 };
 export default routes;
