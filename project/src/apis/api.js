@@ -1,3 +1,4 @@
+import { accordionActionsClasses } from '@mui/material';
 import { assignNestedKeys } from '@mui/system/cssVars/cssVarsParser';
 import axios from 'axios';
 
@@ -38,8 +39,62 @@ export const getFeedApi = async (accessToken) => {
   });
   return response;
 };
+export const getSecretFeedApi = async (accessToken) => {
+  const response = await instance.get('feeds/mysecret', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};
 export const postFeedApi = async (accessToken, formData) => {
   const response = await instance.post('feeds/', formData, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};
+export const deleteSecretFeedApi = async (itemId, accessToken) => {
+  const response = await instance.delete(`feeds/mysecret/${itemId}/`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};
+export const deleteFeedApi = async (itemId, accessToken) => {
+  const response = await instance.delete(`feeds/${itemId}/`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};
+export const feedLikeApi = async (feedId, accessToken) => {
+  const response = await instance.post(`feeds/${feedId}/likes/`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};
+export const getInfoApi = async (accessToken) => {
+  const response = await instance.get('users/my_info/', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};
+export const updateInfoApi = async (accessToken, formData) => {
+  const response = await instance.put('users/my_info/', formData, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

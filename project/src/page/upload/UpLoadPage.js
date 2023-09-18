@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { postFeedApi } from '../../apis/api';
 import { useRecoilState } from 'recoil';
 import { onOffState } from '../../recoil/onOff';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 function UpLoadPage() {
   const [isOnOffState, setIsOnOffState] = useRecoilState(onOffState);
 
@@ -20,6 +21,7 @@ function UpLoadPage() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageSrc, setImageSrc] = useState(null);
   const [cookies] = useCookies(['access_token', 'refresh_token']);
+  const queryClient = useQueryClient();
 
   const navigate = useNavigate();
   const handleFileChange = (event) => {
@@ -32,6 +34,9 @@ function UpLoadPage() {
         // 파일의 내용을 읽어 이미지로 표시
         const result = e.target.result;
         setImageSrc(result); // 이미지를 표시하기 위해 상태 업데이트
+
+        const imageURL = result;
+        console.log('이미지 URL', imageURL);
       };
       reader.readAsDataURL(file);
     }
@@ -50,9 +55,11 @@ function UpLoadPage() {
       title: value.title,
       content: value.content,
       is_secret: value.is_secret,
+      file: 'https://images.unsplash.com/photo-1693850226769-2f4d4541917c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
     };
     postFeedApi(cookies.access_token, formData)
       .then((res) => {
+        queryClient.invalidateQueries('postFeed');
         console.log('데이터 전송 성공', res);
         navigate('/');
       })
@@ -61,6 +68,18 @@ function UpLoadPage() {
         console.log('formData', formData);
       });
   };
+
+  const postFeedMutation = useMutation(
+    (formData) => postFeedApi(cookies.access_token, formData),
+    {
+      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
+      onSuccess: () => {
+        // 새로운 쿼리를 무효화합니다.
+        queryClient.invalidateQueries('postFeed');
+      },
+    },
+  );
+
   return (
     <div className={styles.container}>
       <div>

@@ -1,19 +1,59 @@
+import { useEffect, useState } from 'react';
 import styles from './MyPage.module.css';
 import { useForm } from 'react-hook-form';
+import { useQuery } from '@tanstack/react-query';
+import { getInfoApi, updateInfoApi } from '../../apis/api';
+import { useCookies } from 'react-cookie';
+import { style } from '@mui/system';
 function MyPage() {
+  const profileImg = process.env.PUBLIC_URL + '/images/Vector.png';
+  const [profile, setProfile] = useState();
+  const [cookies] = useCookies(['access_token']);
+  const [updateInfo, setUpdateInfo] = useState({
+    nickname: '',
+    description: '',
+  });
   const {
     register,
     watch,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = () => {};
+
+  const { data: infoData, isLoading } = useQuery(['infoData'], () =>
+    getInfoApi(cookies.access_token),
+  );
+  const onSubmit = () => {
+    const formData = {
+      nickname: updateInfo.nickname || infoData.data.nickname,
+      description: updateInfo.description,
+    };
+    updateInfoApi(cookies.access_token, formData)
+      .then((res) => console.log('정보 수정', res))
+      .catch((err) => console.log('정보수정 에러', err));
+  };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        // 파일의 내용을 읽어 이미지로 표시
+        const result = e.target.result;
+        setProfile(result); // 이미지를 표시하기 위해 상태 업데이트
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  if (isLoading) {
+    return <div>is Loading...</div>;
+  }
   return (
     <div className={styles.container}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.login_form}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {/* <div>
+            <div>
               <img
                 style={{
                   width: 50,
@@ -25,46 +65,26 @@ function MyPage() {
                 alt=""
                 src={profile ? profile : profileImg}
               />
-            </div> */}
-            {/* <label style={{ fontSize: 12 }} className={styles.changeProfile}>
-              이미지 설정
+            </div>
+            <label style={{ fontSize: 12 }} className={styles.changeProfile}>
+              이미지 변경
               <input
                 type="file"
-                ref={fileInputRef}
                 style={{ display: 'none' }}
                 onChange={handleFileChange}
               />
-            </label> */}
-            {/* <button
-                className={styles.changeProfile}
-                onClick={handleButtonClick}
-              >
-                change
-              </button> */}
+            </label>
           </div>
           {/* 이름 */}
           <div>
             <input
+              disabled
               className={styles.signUp_input}
               id="username"
               name="username"
               type="text"
-              placeholder="이름"
-              // input의 기본 config를 작성
-              {...register('username', {
-                required: {
-                  value: true,
-                  message: '이름은 필수 입력입니다.',
-                },
-                // validate: validateName,
-              })}
+              placeholder={`${infoData.data.name}`}
             />
-
-            {errors.username && (
-              <div className={styles.alert} role="alert">
-                {errors?.username?.message}
-              </div>
-            )}
           </div>
           {/* 아이디 */}
           <div>
@@ -73,24 +93,20 @@ function MyPage() {
               className={styles.signUp_input}
               type="text"
               name="userId"
-              placeholder="onandoff@naver.com"
+              placeholder={`${infoData.data.email}`}
               autoComplete="userId"
             />
           </div>
           {/* 비밀번호 */}
           <div>
             <input
+              disabled
               className={styles.signUp_input}
               id="password"
               type="password"
               name="password"
-              placeholder="비밀번호"
+              placeholder="********"
               autoComplete="new-password"
-              {...register('password', {
-                required: '비밀번호는 필수 입력입니다.',
-
-                // validate: validatePassword,
-              })}
             />
             {errors.password && (
               <div className={styles.alert} role="alert">
@@ -98,68 +114,49 @@ function MyPage() {
               </div>
             )}
           </div>
-          {/* 비밀번호 확인 */}
-          {/* <div>
-            <input
-              className={styles.signUp_input}
-              id="confirmPassword"
-              type="password"
-              name="confirmPassword"
-              placeholder="비밀번호 재입력"
-              autoComplete="new-password"
-              {...register('confirmPassword', {
-                required: '비밀번호 확인은 필수입니다.',
-
-                validate: (value) =>
-                  value === password || '비밀번호가 일치하지 않습니다.',
-              })}
-            />
-            {errors.confirmPassword && (
-              <div className={styles.alert} role="alert">
-                {errors?.confirmPassword?.message}
-              </div>
-            )}
-          </div> */}
           {/* 닉네임 */}
           <div>
             <input
+              autoFocus
               className={styles.signUp_input}
-              id="nickname"
               name="nickname"
               type="text"
-              placeholder="닉네임"
-              {...register('nickname', {
-                required: '닉네임을 입력해주세요',
-                // validate: validateNickname,
-              })}
+              value={updateInfo.nickname}
+              onChange={(e) =>
+                setUpdateInfo((prevValue) => ({
+                  ...prevValue,
+                  nickname: e.target.value, // content 상태 업데이트
+                }))
+              }
+              placeholder={`${infoData.data.nickname}`}
             />
-            {errors.nickname && (
-              <div className={styles.alert} role="alert">
-                {errors?.nickname?.message}
-              </div>
-            )}
           </div>
           {/* 성별 */}
           <div>
             <select
+              disabled
               className={styles.signUp_input}
               name="성별"
-              {...register('gender', {
-                required: '성별을 선택해주세요.',
-                // validate: validateGender,
-              })}
+              value={`${infoData.data.gender}`}
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 성별
               </option>
               <option value={'male'}>남</option>
               <option value={'female'}>여</option>
             </select>
-            {errors.gender && (
-              <div className={styles.alert} role="alert">
-                {errors?.gender?.message}
-              </div>
-            )}
+          </div>
+          <div>
+            <textarea
+              placeholder="소개글을 입력해주세요"
+              onChange={(e) =>
+                setUpdateInfo((prevValue) => ({
+                  ...prevValue,
+                  description: e.target.value, // content 상태 업데이트
+                }))
+              }
+              className={styles.signUp_textarea}
+            ></textarea>
           </div>
         </div>
 
