@@ -102,3 +102,21 @@ export const updateInfoApi = async (accessToken, formData) => {
   });
   return response;
 };
+export const postReviewApi = async (accessToken, feedId, formData) => {
+  const response = await instance.post(`feeds/${feedId}/reviews/`, formData, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};
+export const getReviewApi = async (accessToken, feedId) => {
+  const response = await instance.get(`feeds/${feedId}/reviews/`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};

@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
 import { getInfoApi, updateInfoApi } from '../../apis/api';
 import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
+
 import { style } from '@mui/system';
 function MyPage() {
   const profileImg = process.env.PUBLIC_URL + '/images/Vector.png';
@@ -19,7 +21,7 @@ function MyPage() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  const navigate = useNavigate();
   const { data: infoData, isLoading } = useQuery(['infoData'], () =>
     getInfoApi(cookies.access_token),
   );
@@ -29,7 +31,10 @@ function MyPage() {
       description: updateInfo.description,
     };
     updateInfoApi(cookies.access_token, formData)
-      .then((res) => console.log('정보 수정', res))
+      .then((res) => {
+        console.log('정보 수정', res);
+        navigate('/');
+      })
       .catch((err) => console.log('정보수정 에러', err));
   };
   const handleFileChange = (e) => {
@@ -148,7 +153,9 @@ function MyPage() {
           </div>
           <div>
             <textarea
-              placeholder="소개글을 입력해주세요"
+              placeholder={
+                `${infoData.data.description}` || '소개글을 입력해주세요'
+              }
               onChange={(e) =>
                 setUpdateInfo((prevValue) => ({
                   ...prevValue,

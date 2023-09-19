@@ -4,5 +4,6 @@ const routes = {
   login: '/login',
   signUp: '/signUp',
   myPage: '/myPage',
+  category: '/:category',
 };
 export default routes;

@@ -18,6 +18,7 @@ import {
 } from 'recoil';
 import { loggedInState } from './recoil/loggedIn';
 import MyPage from './page/login/MyPage';
+import CategoryPage from './page/category/CategoryPage';
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
@@ -36,6 +37,7 @@ function App() {
             <Route path={routes.login} element={<LoginPage />} />
             <Route path={routes.signUp} element={<SignUpPage />} />
             <Route path={routes.myPage} element={<MyPage />} />
+            <Route path={routes.category} element={<CategoryPage />} />
           </Routes>
           {isLoggedIn && <Profile />}
         </div>

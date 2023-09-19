@@ -6,11 +6,13 @@ import {
   deleteSecretFeedApi,
   getFeedApi,
   getSecretFeedApi,
+  postReviewApi,
 } from '../apis/api';
 import { useCookies } from 'react-cookie';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { onOffState } from '../recoil/onOff';
+import Review from './Review';
 
 // on/off 여부에 따라 feed에서 사람들의 프로필과 닉네임을 보여줘야 한다.
 // off 일 때에는 안 보여줘도 됨. 내 것만 나오기 때문에.
@@ -20,6 +22,7 @@ function Feed() {
   const testImg = process.env.PUBLIC_URL + '/images/testImg.png';
   const testImg2 = process.env.PUBLIC_URL + '/images/testImg2.png';
   const onOff = useRecoilValue(onOffState);
+  const [reviewValue, setReviewValue] = useState();
   const queryClient = useQueryClient();
   const deleteSecretFeedMutation = useMutation(
     (itemId) => deleteSecretFeedApi(itemId, cookies.access_token),
@@ -94,23 +97,68 @@ function Feed() {
   //     .then((res) => console.log('feedData delete성공', res))
   //     .catch((err) => console.log('feedData delete 실패', err));
   // };
-
+  const getCategoryText = (category) => {
+    switch (category) {
+      case 'travel':
+        return '여행지';
+      case 'phrase':
+        return '책/글귀';
+      case 'sing':
+        return '노래';
+      case 'movie_drama':
+        return '영화/드라마';
+      case 'game':
+        return '게임';
+      case 'memory':
+        return '추억';
+      case 'paint':
+        return '그림';
+      case 'idea':
+        return '아이디어';
+      case 'food':
+        return '음식';
+      case 'place':
+        return '장소';
+      case 'hobby':
+        return '취미';
+      default:
+        return '';
+    }
+  };
+  const handleReviewPost = (feedId) => {
+    const formData = {
+      content: reviewValue,
+    };
+    postReviewApi(cookies.access_token, feedId, formData)
+      .then((res) => console.log('리뷰 post 성공', res))
+      .catch((err) => console.log('리뷰 post 실패', err));
+  };
   return (
     <div>
       {onOff
         ? secretData.data?.map((item, index) => (
             <div key={index}>
               <div className={styles.container}>
-                <div
-                  style={{
-                    padding: '10px 5px',
-                    textAlign: 'right',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => handleDeleteSecretClick(item.id)}
-                >
-                  지우기
+                <div style={{ display: 'flex', justifyContent: 'right' }}>
+                  <div
+                    style={{
+                      padding: '10px 5px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    수정
+                  </div>
+                  <div
+                    style={{
+                      padding: '10px 5px',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => handleDeleteSecretClick(item.id)}
+                  >
+                    삭제
+                  </div>
                 </div>
+
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <img className={styles.feedImg} alt="" src={item.file} />
                 </div>
@@ -120,34 +168,18 @@ function Feed() {
                     {dayjs(item.created_at).format('YYYY-MM-DD')}
                   </div>
                   <div className={styles.category}>
-                    {item.category === 'travel'
-                      ? '여행지'
-                      : item.category === 'phrase'
-                      ? '책/글귀'
-                      : item.category === 'sing'
-                      ? '노래'
-                      : item.category === 'movie_drama'
-                      ? '영화/드라마'
-                      : item.category === 'game'
-                      ? '게임'
-                      : item.category === 'memory'
-                      ? '추억'
-                      : item.category === 'paint'
-                      ? '그림'
-                      : item.category === 'idea'
-                      ? '아이디어'
-                      : item.category === 'food'
-                      ? '음식'
-                      : item.category === 'place'
-                      ? '장소'
-                      : item.category === 'hobby'
-                      ? '취미'
-                      : ''}
+                    {getCategoryText(item.category)}
                   </div>
                 </div>
                 <div>
                   <div className={styles.title}>{item.title}</div>
                   <div className={styles.content}>{item.content}</div>
+                </div>
+                <div>
+                  <Review feedId={item.id} />
+                </div>
+                <div>
+                  <input></input>
                 </div>
               </div>
             </div>
@@ -163,7 +195,7 @@ function Feed() {
                   }}
                   onClick={() => handleDeleteClick(item.id)}
                 >
-                  지우기
+                  삭제
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <img className={styles.feedImg} alt="" src={item.file} />
@@ -173,33 +205,25 @@ function Feed() {
                     {dayjs(item.created_at).format('YYYY-MM-DD')}
                   </div>
                   <div className={styles.category}>
-                    {item.category === 'travel'
-                      ? '여행지'
-                      : item.category === 'phrase'
-                      ? '책/글귀'
-                      : item.category === 'sing'
-                      ? '노래'
-                      : item.category === 'movie_drama'
-                      ? '영화/드라마'
-                      : item.category === 'game'
-                      ? '게임'
-                      : item.category === 'memory'
-                      ? '추억'
-                      : item.category === 'paint'
-                      ? '그림'
-                      : item.category === 'idea'
-                      ? '아이디어'
-                      : item.category === 'food'
-                      ? '음식'
-                      : item.category === 'place'
-                      ? '장소'
-                      : item.category === 'hobby'
-                      ? '취미'
-                      : ''}
+                    {getCategoryText(item.category)}
                   </div>
                 </div>
                 <div>
+                  <div className={styles.title}>{item.title}</div>
                   <div className={styles.content}>{item.content}</div>
+                </div>
+                <div>
+                  <Review feedId={item.id} />
+                </div>
+                <div>
+                  <input
+                    value={reviewValue}
+                    onChange={(e) => setReviewValue(e.target.value)}
+                    placeholder="댓글을 입력하세요"
+                  ></input>
+                  <button onClick={() => handleReviewPost(item.id)}>
+                    댓글 쓰기
+                  </button>
                 </div>
               </div>
             </div>

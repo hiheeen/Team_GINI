@@ -11,55 +11,57 @@ import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import SurfingOutlinedIcon from '@mui/icons-material/SurfingOutlined';
 import MusicNoteOutlinedIcon from '@mui/icons-material/MusicNoteOutlined';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
+import { useNavigate } from 'react-router-dom';
 function Category() {
   const [showPeoples, setShowPeoples] = useState(false);
+  const navigate = useNavigate();
   return (
     <div className={styles.container}>
       <div style={{ padding: 10 }}>카테고리</div>
       <div className={styles.category_container}>
         <div>
           <AirplanemodeActiveIcon />
-          <div>여행지</div>
+          <div onClick={() => navigate('/travel')}>여행지</div>
         </div>
         <div>
           <MenuBookOutlinedIcon />
-          <div>책/글귀</div>
+          <div onClick={() => navigate('/phrase')}>책/글귀</div>
         </div>
         <div>
           <MusicNoteOutlinedIcon />
-          <div>노래</div>
+          <div onClick={() => navigate('/sing')}>노래</div>
         </div>
         <div>
           <LiveTvOutlinedIcon />
-          <div>영화/드라마</div>
+          <div onClick={() => navigate('/movie_drama')}>영화/드라마</div>
         </div>
         <div>
           <SportsEsportsOutlinedIcon />
-          <div>게임</div>
+          <div onClick={() => navigate('/game')}>게임</div>
         </div>
         <div>
           <LocalPostOfficeOutlinedIcon />
-          <div>추억</div>
+          <div onClick={() => navigate('/memory')}>추억</div>
         </div>
         <div>
           <PhotoOutlinedIcon />
-          <div>그림</div>
+          <div onClick={() => navigate('/paint')}>그림</div>
         </div>
         <div>
           <LightbulbOutlinedIcon />
-          <div>아이디어</div>
+          <div onClick={() => navigate('/idea')}>아이디어</div>
         </div>
         <div>
           <LunchDiningOutlinedIcon />
-          <div>음식</div>
+          <div onClick={() => navigate('/food')}>음식</div>
         </div>
         <div>
           <PlaceOutlinedIcon />
-          <div>장소</div>
+          <div onClick={() => navigate('/place')}>장소</div>
         </div>
         <div>
           <SurfingOutlinedIcon />
-          <div>취미</div>
+          <div onClick={() => navigate('/hobby')}>취미</div>
         </div>
       </div>
       <div
