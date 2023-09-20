@@ -111,12 +111,33 @@ export const postReviewApi = async (accessToken, feedId, formData) => {
   });
   return response;
 };
-export const getReviewApi = async (accessToken, feedId) => {
-  const response = await instance.get(`feeds/${feedId}/reviews/`, {
+export const getDetailApi = async (accessToken, feedId) => {
+  const response = await instance.get(`feeds/${feedId}/`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
     withCredentials: true,
   });
+  return response;
+};
+export const getSecretDetailApi = async (accessToken, feedId) => {
+  const response = await instance.get(`feeds/mysecret/${feedId}/`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};
+export const reviewDeleteApi = async (accessToken, feedId, reviewId) => {
+  const response = await instance.delete(
+    `feeds/${feedId}/reviews/${reviewId}/`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      withCredentials: true,
+    },
+  );
   return response;
 };

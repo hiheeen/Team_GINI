@@ -4,7 +4,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   deleteFeedApi,
   deleteSecretFeedApi,
+  getDetailApi,
   getFeedApi,
+  getInfoApi,
   getSecretFeedApi,
   postReviewApi,
 } from '../apis/api';
@@ -19,11 +21,19 @@ import Review from './Review';
 
 function Feed() {
   const [cookies] = useCookies(['access_token']);
-  const testImg = process.env.PUBLIC_URL + '/images/testImg.png';
-  const testImg2 = process.env.PUBLIC_URL + '/images/testImg2.png';
+  // recoil로 on/off 상태관리
   const onOff = useRecoilValue(onOffState);
-  const [reviewValue, setReviewValue] = useState();
+  // 댓글 상태관리
+  const [reviewValue, setReviewValue] = useState({});
+  // 댓글 열람 상태관리
+  const [reviewMode, setReviewMode] = useState();
+  const [reviewOpen, setReviewOpen] = useState(false);
+  // react-query mutation 사용
   const queryClient = useQueryClient();
+
+  const { data: infoData } = useQuery(['getInfo'], () =>
+    getInfoApi(cookies.access_token),
+  );
   const deleteSecretFeedMutation = useMutation(
     (itemId) => deleteSecretFeedApi(itemId, cookies.access_token),
     {
@@ -65,7 +75,7 @@ function Feed() {
     //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
     // },
   );
-
+  console.log('secretData', secretData);
   if (isLoading) {
     return <div>is loading...</div>;
   }
@@ -125,39 +135,54 @@ function Feed() {
         return '';
     }
   };
+  const handleModify = (itemId) => {
+    setReviewOpen(!reviewOpen);
+    setReviewMode(itemId);
+  };
   const handleReviewPost = (feedId) => {
     const formData = {
-      content: reviewValue,
+      content: reviewValue[feedId],
     };
     postReviewApi(cookies.access_token, feedId, formData)
-      .then((res) => console.log('리뷰 post 성공', res))
+      .then((res) => {
+        console.log('리뷰 post 성공', res);
+        setReviewValue({
+          ...reviewValue,
+          [feedId]: '',
+        });
+      })
       .catch((err) => console.log('리뷰 post 실패', err));
   };
+
   return (
     <div>
       {onOff
         ? secretData.data?.map((item, index) => (
             <div key={index}>
               <div className={styles.container}>
-                <div style={{ display: 'flex', justifyContent: 'right' }}>
-                  <div
-                    style={{
-                      padding: '10px 5px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    수정
+                {item.writer.nickname === infoData.data.nickname && (
+                  <div style={{ display: 'flex', justifyContent: 'right' }}>
+                    <div
+                      style={{
+                        padding: '10px 5px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      수정
+                    </div>
+
+                    <div
+                      style={{
+                        padding: '10px 5px',
+                        textAlign: 'right',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => handleDeleteClick(item.id)}
+                    >
+                      삭제
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      padding: '10px 5px',
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => handleDeleteSecretClick(item.id)}
-                  >
-                    삭제
-                  </div>
-                </div>
+                )}
 
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <img className={styles.feedImg} alt="" src={item.file} />
@@ -175,28 +200,36 @@ function Feed() {
                   <div className={styles.title}>{item.title}</div>
                   <div className={styles.content}>{item.content}</div>
                 </div>
-                <div>
-                  <Review feedId={item.id} />
-                </div>
-                <div>
-                  <input></input>
-                </div>
               </div>
             </div>
           ))
         : feedData.data.results?.map((item, index) => (
             <div key={index}>
               <div className={styles.container}>
-                <div
-                  style={{
-                    padding: '10px 5px',
-                    textAlign: 'right',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => handleDeleteClick(item.id)}
-                >
-                  삭제
-                </div>
+                {item.writer.nickname === infoData.data.nickname && (
+                  <div style={{ display: 'flex', justifyContent: 'right' }}>
+                    <div
+                      style={{
+                        padding: '10px 5px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      수정
+                    </div>
+
+                    <div
+                      style={{
+                        padding: '10px 5px',
+                        textAlign: 'right',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => handleDeleteClick(item.id)}
+                    >
+                      삭제
+                    </div>
+                  </div>
+                )}
+
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <img className={styles.feedImg} alt="" src={item.file} />
                 </div>
@@ -212,13 +245,33 @@ function Feed() {
                   <div className={styles.title}>{item.title}</div>
                   <div className={styles.content}>{item.content}</div>
                 </div>
-                <div>
-                  <Review feedId={item.id} />
+                <div
+                  style={{ cursor: 'pointer', padding: '10px 0' }}
+                  onClick={() => handleModify(item.id)}
+                >
+                  {item.review_count !== 0 &&
+                    (reviewOpen && reviewMode === item.id
+                      ? '댓글 닫기'
+                      : `댓글 ${item.review_count}개 모두 보기`)}
                 </div>
+                {reviewOpen && reviewMode === item.id && (
+                  <div style={{ display: 'flex' }}>
+                    <Review
+                      feedId={item.id}
+                      nickname={infoData.data.nickname}
+                    />
+                  </div>
+                )}
+
                 <div>
                   <input
-                    value={reviewValue}
-                    onChange={(e) => setReviewValue(e.target.value)}
+                    value={reviewValue[item.id] || ''}
+                    onChange={(e) =>
+                      setReviewValue({
+                        ...reviewValue,
+                        [item.id]: e.target.value,
+                      })
+                    }
                     placeholder="댓글을 입력하세요"
                   ></input>
                   <button onClick={() => handleReviewPost(item.id)}>
@@ -228,9 +281,6 @@ function Feed() {
               </div>
             </div>
           ))}
-      {feedData.data.results?.map((item) => (
-        <div>{item.date}</div>
-      ))}
     </div>
   );
 }

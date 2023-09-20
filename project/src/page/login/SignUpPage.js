@@ -100,6 +100,7 @@ function SignUpPage() {
       .then((response) => {
         if (response.status === 200) {
           console.log('200', response);
+          navigate('/');
         }
       })
       .catch((error) => console.log('err data', error));
