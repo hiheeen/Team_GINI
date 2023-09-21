@@ -67,7 +67,7 @@ function Feed() {
     //   onSuccess: () => setFeedData(data.data.results),
     // },
   );
-  console.log('feedData false값들', feedData);
+  // console.log('feedData false값들', feedData);
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
     ['secretData'],
     () => getSecretFeedApi(cookies.access_token),
@@ -75,7 +75,7 @@ function Feed() {
     //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
     // },
   );
-  console.log('secretData', secretData);
+  // console.log('secretData', secretData);
   if (isLoading) {
     return <div>is loading...</div>;
   }
@@ -177,7 +177,7 @@ function Feed() {
                         textAlign: 'right',
                         cursor: 'pointer',
                       }}
-                      onClick={() => handleDeleteClick(item.id)}
+                      onClick={() => handleDeleteSecretClick(item.id)}
                     >
                       삭제
                     </div>
@@ -249,21 +249,17 @@ function Feed() {
                   style={{ cursor: 'pointer', padding: '10px 0' }}
                   onClick={() => handleModify(item.id)}
                 >
-                  {item.review_count !== 0 &&
+                  {/* {item.review_count !== 0 &&
                     (reviewOpen && reviewMode === item.id
                       ? '댓글 닫기'
-                      : `댓글 ${item.review_count}개 모두 보기`)}
+                      : `댓글 ${item.review_count}개 모두 보기`)} */}
                 </div>
-                {reviewOpen && reviewMode === item.id && (
-                  <div style={{ display: 'flex' }}>
-                    <Review
-                      feedId={item.id}
-                      nickname={infoData.data.nickname}
-                    />
-                  </div>
-                )}
 
-                <div>
+                <div style={{ display: 'flex' }}>
+                  <Review feedId={item.id} nickname={infoData.data.nickname} />
+                </div>
+
+                {/* <div>
                   <input
                     value={reviewValue[item.id] || ''}
                     onChange={(e) =>
@@ -277,7 +273,7 @@ function Feed() {
                   <button onClick={() => handleReviewPost(item.id)}>
                     댓글 쓰기
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
           ))}

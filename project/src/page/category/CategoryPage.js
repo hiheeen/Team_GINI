@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import styles from './CategoryPage.module.css';
 import { useCookies } from 'react-cookie';
-import { getSecretFeedApi } from '../../apis/api';
+import { getFeedApi, getSecretFeedApi } from '../../apis/api';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -23,6 +23,13 @@ function CategoryPage() {
     //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
     // },
   );
+  const { data: feedData, isLoading } = useQuery(
+    ['feedData'],
+    () => getFeedApi(cookies.access_token),
+    // {
+    //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
+    // },
+  );
   if (secretIsLoading) {
     return <div>is loading...</div>;
   }
@@ -36,7 +43,7 @@ function CategoryPage() {
               boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
               zIndex: 50,
             }}
-            onClick={() => navigate(`/upload/${category}/:id`)}
+            onClick={() => navigate(`/upload/${category}`)}
             color="white"
             aria-label="edit"
             size="small"
@@ -53,12 +60,13 @@ function CategoryPage() {
         </div>
       </div>
       <div className={styles.grid_container}>
-        {secretData?.data?.map(
+        {feedData.data.results?.map(
           (item) =>
             item.category === category && (
               <div
                 style={{ backgroundImage: `url(${item.file})` }}
                 className={styles.grid_item}
+                onClick={() => navigate(`/${category}/${item.id}`)}
               >
                 <div style={{ padding: '10px 20px 0 20px' }}>
                   {dayjs(item.created_at).format('YYYY-MM-DD')}

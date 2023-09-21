@@ -28,7 +28,7 @@ function Profile() {
   const { data, isLoading } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),
   );
-  console.log(data, '인포 데이터');
+  // console.log(data, '인포 데이터');
   if (isLoading) {
     return <div>is Loading...</div>;
   }
