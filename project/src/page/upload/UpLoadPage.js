@@ -61,6 +61,7 @@ function UpLoadPage() {
       .then((res) => {
         queryClient.invalidateQueries('postFeed');
         console.log('데이터 전송 성공', res);
+        // setIsOnOffState(value.is_secret);
         navigate('/');
       })
       .catch((err) => {

@@ -6,7 +6,8 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { useRef, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
-import { signUpApi } from '../../apis/api';
+import { kakaoLoginApi, signUpApi } from '../../apis/api';
+import Kakao from '../../component/socialLogin/Kakao';
 function SignUpPage() {
   const profileImg = process.env.PUBLIC_URL + '/images/Vector.png';
   const [profile, setProfile] = useState();
@@ -104,6 +105,12 @@ function SignUpPage() {
         }
       })
       .catch((error) => console.log('err data', error));
+  };
+  const kakaoLogin = () => {
+    const response = kakaoLoginApi()
+      .then((res) => console.log('카카오', res))
+      .catch((err) => console.log('카카오 에러', err));
+    console.log(response, '카카오');
   };
   return (
     <div className={styles.container}>
@@ -283,7 +290,9 @@ function SignUpPage() {
               회원가입
             </button>
           </div>
+          {/* <Kakao /> */}
         </form>
+        <button onClick={kakaoLogin}>카카오로</button>
       </div>
     </div>
   );

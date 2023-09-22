@@ -141,3 +141,7 @@ export const reviewDeleteApi = async (accessToken, feedId, reviewId) => {
   );
   return response;
 };
+export const kakaoLoginApi = async () => {
+  const response = await instance.get('users/auth/kakao/login/');
+  return response;
+};

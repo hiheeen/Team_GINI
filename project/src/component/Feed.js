@@ -12,9 +12,10 @@ import {
 } from '../apis/api';
 import { useCookies } from 'react-cookie';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { onOffState } from '../recoil/onOff';
 import Review from './Review';
+import { reviewOpenState } from '../recoil/reviewOpen';
 
 // on/off 여부에 따라 feed에서 사람들의 프로필과 닉네임을 보여줘야 한다.
 // off 일 때에는 안 보여줘도 됨. 내 것만 나오기 때문에.
@@ -28,11 +29,33 @@ function Feed() {
   // 댓글 열람 상태관리
   const [reviewMode, setReviewMode] = useState();
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
+
   // react-query mutation 사용
   const queryClient = useQueryClient();
 
   const { data: infoData } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),
+  );
+  const postReviewMutation = useMutation(
+    (data) => {
+      const { feedId, formData } = data;
+      return postReviewApi(cookies.access_token, feedId, formData);
+    },
+    {
+      onSuccess: (data) => {
+        // 새로운 쿼리를 무효화합니다.
+        queryClient.invalidateQueries('detailData');
+        console.log('리뷰 post 성공', data);
+        setIsReviewOpen(true);
+      },
+      onError: (error) => {
+        // console.log('리뷰 post 안됨', error);
+        if (error.response.status === 400) {
+          alert('이미 리뷰를 작성하셨습니다');
+        }
+      },
+    },
   );
   const deleteSecretFeedMutation = useMutation(
     (itemId) => deleteSecretFeedApi(itemId, cookies.access_token),
@@ -56,24 +79,17 @@ function Feed() {
       },
     },
   );
-  // const [feedData, setFeedData] = useState();
   const { data: feedData, isLoading } = useQuery(
     ['feedData'],
     () => getFeedApi(cookies.access_token),
     {
       staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
     },
-    // {
-    //   onSuccess: () => setFeedData(data.data.results),
-    // },
   );
   // console.log('feedData false값들', feedData);
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
     ['secretData'],
     () => getSecretFeedApi(cookies.access_token),
-    // {
-    //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
-    // },
   );
   // console.log('secretData', secretData);
   if (isLoading) {
@@ -136,24 +152,45 @@ function Feed() {
     }
   };
   const handleModify = (itemId) => {
-    setReviewOpen(!reviewOpen);
+    setIsReviewOpen(!isReviewOpen);
     setReviewMode(itemId);
   };
-  const handleReviewPost = (feedId) => {
+  // const handleReviewPost = (feedId) => {
+  //   const formData = {
+  //     content: reviewValue[feedId],
+  //   };
+  //   postReviewApi(cookies.access_token, feedId, formData)
+  //     .then((res) => {
+  //       console.log('리뷰 post 성공', res);
+  //       setReviewValue({
+  //         ...reviewValue,
+  //         [feedId]: '',
+  //       });
+  //     })
+  //     .catch((err) => console.log('리뷰 post 실패', err));
+  // };
+
+  const handleReviewPost = (e, feedId) => {
+    e.preventDefault();
     const formData = {
       content: reviewValue[feedId],
     };
-    postReviewApi(cookies.access_token, feedId, formData)
-      .then((res) => {
-        console.log('리뷰 post 성공', res);
-        setReviewValue({
-          ...reviewValue,
-          [feedId]: '',
-        });
-      })
-      .catch((err) => console.log('리뷰 post 실패', err));
+    console.log(formData, 'formData');
+    // postReviewApi(cookies.access_token, feedId, formData)
+    //   .then((res) => {
+    //     console.log('리뷰 post 성공', res);
+    //     setReviewValue({
+    //       ...reviewValue,
+    //       [feedId]: '',
+    //     });
+    //   })
+    //   .catch((err) => console.log('리뷰 post 실패', err));
+    postReviewMutation.mutate({ feedId, formData });
+    setReviewValue({
+      ...reviewValue,
+      [feedId]: '',
+    });
   };
-
   return (
     <div>
       {onOff
@@ -249,31 +286,41 @@ function Feed() {
                   style={{ cursor: 'pointer', padding: '10px 0' }}
                   onClick={() => handleModify(item.id)}
                 >
-                  {/* {item.review_count !== 0 &&
-                    (reviewOpen && reviewMode === item.id
+                  {item.review_count !== 0 &&
+                    (isReviewOpen && reviewMode === item.id
                       ? '댓글 닫기'
-                      : `댓글 ${item.review_count}개 모두 보기`)} */}
+                      : `댓글 ${item.review_count}개 모두 보기`)}
                 </div>
-
-                <div style={{ display: 'flex' }}>
-                  <Review feedId={item.id} nickname={infoData.data.nickname} />
-                </div>
-
-                {/* <div>
-                  <input
-                    value={reviewValue[item.id] || ''}
-                    onChange={(e) =>
-                      setReviewValue({
-                        ...reviewValue,
-                        [item.id]: e.target.value,
-                      })
-                    }
-                    placeholder="댓글을 입력하세요"
-                  ></input>
-                  <button onClick={() => handleReviewPost(item.id)}>
-                    댓글 쓰기
-                  </button>
-                </div> */}
+                {isReviewOpen && reviewMode === item.id ? (
+                  <div style={{ display: 'flex' }}>
+                    <Review
+                      feedId={item.id}
+                      nickname={infoData.data.nickname}
+                    />
+                  </div>
+                ) : (
+                  ''
+                )}
+                <form onSubmit={(e) => handleReviewPost(e, item.id)}>
+                  <div>
+                    <input
+                      value={reviewValue[item.id] || ''}
+                      onChange={(e) =>
+                        setReviewValue({
+                          ...reviewValue,
+                          [item.id]: e.target.value,
+                        })
+                      }
+                      placeholder="댓글을 입력하세요"
+                    ></input>
+                    <button
+                      type="submit"
+                      // onClick={() => handleReviewPost(item.id)}
+                    >
+                      댓글 쓰기
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           ))}

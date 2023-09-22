@@ -26,7 +26,7 @@ function MainPage() {
               boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
               zIndex: 50,
             }}
-            onClick={() => navigate('/upload/default/:id')}
+            onClick={() => navigate('/upload/default/')}
             color="white"
             aria-label="edit"
             size="small"
