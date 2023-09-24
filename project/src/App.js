@@ -7,7 +7,7 @@ import UpLoadPage from './page/upload/UpLoadPage';
 import Header from './component/Header';
 import Category from './component/Category';
 import Profile from './component/Profile';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LoginPage from './page/login/LoginPage';
 import SignUpPage from './page/login/SignUpPage';
 import {
@@ -20,8 +20,15 @@ import { loggedInState } from './recoil/loggedIn';
 import MyPage from './page/login/MyPage';
 import CategoryPage from './page/category/CategoryPage';
 import DetailPage from './page/detail/DetailPage';
+import { useCookies } from 'react-cookie';
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [cookies] = useCookies(['access_token']);
+  useEffect(() => {
+    if (!cookies.access_token) {
+      setIsLoggedIn(false);
+    }
+  }, []);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
   return (
     <BrowserRouter>

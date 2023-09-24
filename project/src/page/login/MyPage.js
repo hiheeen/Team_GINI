@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from './MyPage.module.css';
 import { useForm } from 'react-hook-form';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getInfoApi, updateInfoApi } from '../../apis/api';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,8 @@ function MyPage() {
   const profileImg = process.env.PUBLIC_URL + '/images/Vector.png';
   const [profile, setProfile] = useState();
   const [cookies] = useCookies(['access_token']);
+  const queryClient = useQueryClient();
+
   const [updateInfo, setUpdateInfo] = useState({
     nickname: '',
     description: '',
@@ -25,17 +27,29 @@ function MyPage() {
   const { data: infoData, isLoading } = useQuery(['infoData'], () =>
     getInfoApi(cookies.access_token),
   );
+  const updateInfoMutation = useMutation(
+    (formData) => updateInfoApi(cookies.access_token, formData),
+    {
+      onSuccess: (data) => {
+        // 새로운 쿼리를 무효화합니다.
+        queryClient.invalidateQueries('infoData');
+        console.log('마이페이지 업데이트 성공', data);
+        navigate('/');
+      },
+    },
+  );
   const onSubmit = () => {
     const formData = {
       nickname: updateInfo.nickname || infoData.data.nickname,
       description: updateInfo.description,
     };
-    updateInfoApi(cookies.access_token, formData)
-      .then((res) => {
-        console.log('정보 수정', res);
-        navigate('/');
-      })
-      .catch((err) => console.log('정보수정 에러', err));
+    updateInfoMutation.mutate(formData);
+    // updateInfoApi(cookies.access_token, formData)
+    //   .then((res) => {
+    //     console.log('정보 수정', res);
+    //     navigate('/');
+    //   })
+    //   .catch((err) => console.log('정보수정 에러', err));
   };
   const handleFileChange = (e) => {
     const file = e.target.files[0];

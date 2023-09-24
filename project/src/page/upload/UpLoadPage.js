@@ -8,6 +8,12 @@ import { postFeedApi } from '../../apis/api';
 import { useRecoilState } from 'recoil';
 import { onOffState } from '../../recoil/onOff';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+// import AWS from '@aws-sdk/client-s3';
+// import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import AWS from 'aws-sdk';
+// import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
+import { v4 as uuidv4 } from 'uuid';
 function UpLoadPage() {
   const [isOnOffState, setIsOnOffState] = useRecoilState(onOffState);
 
@@ -19,6 +25,7 @@ function UpLoadPage() {
     is_secret: '',
   });
   const [selectedFile, setSelectedFile] = useState(null);
+  const [progress, setProgress] = useState(0);
   const [imageSrc, setImageSrc] = useState(null);
   const [cookies] = useCookies(['access_token', 'refresh_token']);
   const queryClient = useQueryClient();
@@ -36,27 +43,86 @@ function UpLoadPage() {
         setImageSrc(result); // 이미지를 표시하기 위해 상태 업데이트
 
         const imageURL = result;
-        console.log('이미지 URL', imageURL);
+        // console.log('이미지 URL', imageURL);
       };
       reader.readAsDataURL(file);
     }
   };
-  // const handleCategoryChange = (event) => {
-  //   const selectedCategory = event.target.value; // 선택한 값을 가져옴
-  //   setValue((prevValue) => ({
-  //     ...prevValue,
-  //     category: selectedCategory, // category 상태 업데이트
-  //   }));
+  // const uniqueKey = uuidv4();
+  // const client = createClient({
+  //   accessKey: 'bwsXS9Z0teKUNcnoZvNQ',
+  //   secretKey: 'ctHagAeEtaT5bq2ly9JqmzGutvO2Mq4zUUTtZOjM',
+  // });
+  // const uploadFileToNaverStorage = async (file) => {
+  //   try {
+  //     const uploadResponse = await client.uploadFile({
+  //       bucket: 'jini',
+  //       key: uniqueKey,
+  //       file: file,
+  //     });
+  //     return uploadResponse.url;
+  //   } catch (error) {
+  //     console.error('Naver Object Storage upload error:', error);
+  //     return null;
+  //   }
   // };
+  const uploadImage = async () => {
+    const endpoint = new AWS.Endpoint(
+      'https://kr.object.gov-ncloudstorage.com',
+    );
+    const region = 'gov-standard';
+    const access_key = 'bwsXS9Z0teKUNcnoZvNQ';
+    const secret_key = 'ctHagAeEtaT5bq2ly9JqmzGutvO2Mq4zUUTtZOjM';
+    const S3 = new AWS.S3({
+      endpoint: endpoint,
+      region: region,
+      credentials: {
+        accessKeyId: access_key,
+        secretAccessKey: secret_key,
+      },
+    });
+    // 파일 업로드
+    // try {
+    //   const res = await S3.putObject({
+    //     Bucket: 'jini',
+    //     Key: selectedFile.name,
+    //     ACL: 'public-read',
+    //     Body: selectedFile,
+    //   }).promise();
+    //   console.log('s3 업로드 어쩌고', res);
+    // } catch (err) {
+    //   console.error('업로드 중 오류 발생', err);
+    // }
+    // 진행률 어쩌고
+    S3.putObject({
+      Bucket: 'jini',
+      Key: selectedFile.name,
+      ACL: 'public-read',
+      Body: selectedFile,
+    })
+      .on('httpUploadProgress', (evt) => {
+        setProgress(Math.round((evt.loaded / evt.total) * 100));
+
+        setTimeout(() => {
+          setSelectedFile(null);
+        }, 3000);
+      })
+      .send((err) => {
+        if (err) console.log(err);
+      });
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
+
     const formData = {
       category: value.category,
       title: value.title,
       content: value.content,
       is_secret: value.is_secret,
-      file: 'https://images.unsplash.com/photo-1693850226769-2f4d4541917c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
+      file: '',
     };
+
     postFeedApi(cookies.access_token, formData)
       .then((res) => {
         queryClient.invalidateQueries('postFeed');
@@ -125,6 +191,10 @@ function UpLoadPage() {
                 onChange={handleFileChange}
               />
             </div>
+            <button onClick={uploadImage}>파일 업로드</button>
+            {progress !== 0 && (
+              <div color="primary">업로드 진행률 : {progress}%</div>
+            )}
             <div>
               <textarea
                 onChange={(e) =>

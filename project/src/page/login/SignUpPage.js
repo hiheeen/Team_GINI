@@ -3,15 +3,16 @@ import styles from './SignUpPage.module.css';
 import { useForm } from 'react-hook-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
-import { kakaoLoginApi, signUpApi } from '../../apis/api';
+import { kakaoLoginApi, signUpApi, valEmailApi } from '../../apis/api';
 import Kakao from '../../component/socialLogin/Kakao';
 function SignUpPage() {
   const profileImg = process.env.PUBLIC_URL + '/images/Vector.png';
   const [profile, setProfile] = useState();
   const [cookies, setCookie] = useCookies(['access_token', 'refresh_token']);
+  const [emailChecked, setEmailChecked] = useState(false);
   const navigate = useNavigate();
   const {
     register,
@@ -19,7 +20,7 @@ function SignUpPage() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  const [emailValue, setEmailValue] = useState();
   const password = watch('password', '');
   const validateId = (value) => {
     if (!value) return '이메일을 입력하세요.';
@@ -66,30 +67,20 @@ function SignUpPage() {
       reader.readAsDataURL(file);
     }
   };
-  // const onSubmit = async (data) => {
-  //   const signupData = {
-  //     email: data.userId,
-  //     password: data.password,
-  //     nickname: data.nickname,
-  //     gender: data.gender,
-  //     name: data.username,
-  //   };
-  //   await axios
-  //     .post('http://27.96.134.191/api/v1/users/', signupData)
-  //     .then((res) => {
-  //       //회원가입 성공 시 쿠키설정
-  //       console.log('sdlfs', res);
-  //       // setCookie('access_token', res.data.token.access);
-  //       // setCookie('refresh_token', res.data.token.refresh);
-  //       navigate('/');
-  //     })
-  //     .catch((err) => {
-  //       console.error('회원가입실패', err);
-  //       window.alert('회원가입 실패!');
-  //     });
-  // };
 
-  const onSubmit = (data) => {
+  const valEmail = async () => {
+    const formData = {
+      email: emailValue,
+    };
+
+    try {
+      const response = await valEmailApi(formData);
+      console.log('이메일 중복검사', response);
+    } catch (error) {
+      console.error('이메일 중복검사 에러', error);
+    }
+  };
+  const onSubmit = async (data) => {
     const signUpData = {
       email: data.userId,
       password: data.password,
@@ -97,14 +88,25 @@ function SignUpPage() {
       gender: data.gender,
       name: data.username,
     };
-    signUpApi(signUpData)
-      .then((response) => {
-        if (response.status === 200) {
-          console.log('200', response);
-          navigate('/');
-        }
-      })
-      .catch((error) => console.log('err data', error));
+
+    await valEmailApi({ email: signUpData.email }).then((res) => {
+      console.log(signUpData.email);
+      if (res.status === 200) {
+        alert('사용 가능한 이메일입니다');
+        return;
+      } else {
+        alert('사용 불가능한 이메일입니다');
+        return;
+      }
+    });
+    // signUpApi(signUpData)
+    //   .then((response) => {
+    //     if (response.status === 200) {
+    //       console.log('200', response);
+    //       navigate('/');
+    //     }
+    //   })
+    //   .catch((error) => console.log('err data', error));
   };
   const kakaoLogin = () => {
     const response = kakaoLoginApi()
@@ -112,6 +114,9 @@ function SignUpPage() {
       .catch((err) => console.log('카카오 에러', err));
     console.log(response, '카카오');
   };
+  // useEffect(() => {
+  //   console.log(emailValue);
+  // }, [emailValue]);
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
@@ -174,12 +179,14 @@ function SignUpPage() {
             {/* 아이디 */}
             <div>
               <input
+                value={emailValue}
+                onChange={(e) => setEmailValue(e.target.value)}
                 className={styles.signUp_input}
                 id="userId"
                 type="text"
                 name="userId"
                 placeholder="onandoff@naver.com"
-                autoComplete="userId"
+                // autoComplete="userId"
                 // input의 기본 config를 작성
                 {...register('userId', {
                   required: '아이디는 필수 입력입니다.',
@@ -193,6 +200,7 @@ function SignUpPage() {
                 </div>
               )}
             </div>
+            {/* <button onClick={handleSubmit(onSubmit)}>아이디 중복 확인</button> */}
             {/* 비밀번호 */}
             <div>
               <input
@@ -255,6 +263,8 @@ function SignUpPage() {
                 </div>
               )}
             </div>
+            <button>닉네임 중복 확인</button>
+
             {/* 성별 */}
             <div>
               <select
@@ -292,6 +302,7 @@ function SignUpPage() {
           </div>
           {/* <Kakao /> */}
         </form>
+        <button onClick={valEmail}>아이디 중복 확인</button>
         <button onClick={kakaoLogin}>카카오로</button>
       </div>
     </div>

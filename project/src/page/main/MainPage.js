@@ -41,53 +41,6 @@ function MainPage() {
             />
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          {/* <FontAwesomeIcon
-            icon={faFolderClosed}
-            style={{
-              width: 100,
-              height: 100,
-              color: 'rgba(160, 160, 160, 0.2)',
-              padding: 15,
-            }}
-          />
-          <FontAwesomeIcon
-            icon={faFolderClosed}
-            style={{
-              width: 100,
-              height: 100,
-              color: 'rgba(160, 160, 160, 0.2)',
-              padding: 15,
-            }}
-          />
-          <FontAwesomeIcon
-            icon={faFolderClosed}
-            style={{
-              width: 100,
-              height: 100,
-              color: 'rgba(160, 160, 160, 0.2)',
-              padding: 15,
-            }}
-          />
-          <FontAwesomeIcon
-            icon={faFolderClosed}
-            style={{
-              width: 100,
-              height: 100,
-              color: 'rgba(160, 160, 160, 0.2)',
-              padding: 15,
-            }}
-          />
-          <FontAwesomeIcon
-            icon={faFolderClosed}
-            style={{
-              width: 100,
-              height: 100,
-              color: 'rgba(160, 160, 160, 0.2)',
-              padding: 15,
-            }}
-          /> */}
-        </div>
       </div>
       <div className={styles.feed}>
         <Feed />

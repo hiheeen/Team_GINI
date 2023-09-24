@@ -141,6 +141,14 @@ export const reviewDeleteApi = async (accessToken, feedId, reviewId) => {
   );
   return response;
 };
+export const valEmailApi = async (formData) => {
+  const response = await instance.post('users/val_email/', formData);
+  return response;
+};
+export const valNicknameApi = async (formData) => {
+  const response = await instance.post('users/val_nickname/', formData);
+  return response;
+};
 export const kakaoLoginApi = async () => {
   const response = await instance.get('users/auth/kakao/login/');
   return response;
