@@ -72,7 +72,7 @@ function Header() {
   // };
   const handleLogOut = async () => {
     await axios
-      .delete('http://27.96.134.191/api/v1/users/logout/', {
+      .delete('http://www.jinii.shop/api/v1/users/logout/', {
         headers: {
           Authorization: `Bearer ${cookies.access_token}`,
         },

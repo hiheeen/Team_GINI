@@ -7,6 +7,7 @@ import { getInfoApi } from '../apis/api';
 
 function Profile() {
   const profileImg = process.env.PUBLIC_URL + '/images/profileTest.png';
+  const profile = process.env.PUBLIC_URL + '/images/profile.png';
   const [cookies] = useCookies(['access_token']);
   const [infoData, setInfoData] = useState();
   // useEffect(() => {
@@ -28,7 +29,7 @@ function Profile() {
   const { data, isLoading } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),
   );
-  // console.log(data, '인포 데이터');
+  console.log(data, '인포 데이터');
   if (isLoading) {
     return <div>is Loading...</div>;
   }
@@ -37,7 +38,9 @@ function Profile() {
       <div className={styles.profileImg}>
         <img
           alt=""
-          src={profileImg}
+          src={
+            data.data.profileImg !== null ? data.data.profileImg : profileImg
+          }
           style={{
             width: '150px',
             height: '150px',

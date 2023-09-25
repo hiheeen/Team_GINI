@@ -88,25 +88,19 @@ function SignUpPage() {
       gender: data.gender,
       name: data.username,
     };
-
-    await valEmailApi({ email: signUpData.email }).then((res) => {
-      console.log(signUpData.email);
-      if (res.status === 200) {
-        alert('사용 가능한 이메일입니다');
-        return;
-      } else {
-        alert('사용 불가능한 이메일입니다');
-        return;
-      }
-    });
-    // signUpApi(signUpData)
-    //   .then((response) => {
-    //     if (response.status === 200) {
-    //       console.log('200', response);
-    //       navigate('/');
-    //     }
-    //   })
-    //   .catch((error) => console.log('err data', error));
+    if (emailChecked) {
+      signUpApi(signUpData)
+        .then((response) => {
+          if (response.status === 200) {
+            console.log('200', response);
+            navigate('/');
+          }
+        })
+        .catch((error) => console.log('err data', error));
+    } else {
+      alert('이메일 중복체크를 해 주세요');
+      return;
+    }
   };
   const kakaoLogin = () => {
     const response = kakaoLoginApi()
@@ -114,9 +108,7 @@ function SignUpPage() {
       .catch((err) => console.log('카카오 에러', err));
     console.log(response, '카카오');
   };
-  // useEffect(() => {
-  //   console.log(emailValue);
-  // }, [emailValue]);
+
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>

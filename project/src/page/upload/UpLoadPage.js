@@ -9,7 +9,7 @@ import { useRecoilState } from 'recoil';
 import { onOffState } from '../../recoil/onOff';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 // import AWS from '@aws-sdk/client-s3';
-// import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { PutBucketCorsCommand, S3Client } from '@aws-sdk/client-s3';
 import AWS from 'aws-sdk';
 // import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
@@ -29,7 +29,7 @@ function UpLoadPage() {
   const [imageSrc, setImageSrc] = useState(null);
   const [cookies] = useCookies(['access_token', 'refresh_token']);
   const queryClient = useQueryClient();
-
+  const client = new S3Client({});
   const navigate = useNavigate();
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -66,11 +66,20 @@ function UpLoadPage() {
   //     return null;
   //   }
   // };
+  const region = 'gov-standard';
+  const access_key = 'bwsXS9Z0teKUNcnoZvNQ';
+  const secret_key = 'ctHagAeEtaT5bq2ly9JqmzGutvO2Mq4zUUTtZOjM';
+  const S3 = new AWS.S3({
+    endpoint: 'https://kr.object.gov-ncloudstorage.com',
+    region: region,
+    credentials: {
+      accessKeyId: access_key,
+      secretAccessKey: secret_key,
+    },
+  });
   const uploadImage = async () => {
-    const endpoint = new AWS.Endpoint(
-      'https://kr.object.gov-ncloudstorage.com',
-    );
-    const region = 'gov-standard';
+    const endpoint = new AWS.Endpoint('https://kr.object.ncloudstorage.com');
+    const region = 'kr-standard';
     const access_key = 'bwsXS9Z0teKUNcnoZvNQ';
     const secret_key = 'ctHagAeEtaT5bq2ly9JqmzGutvO2Mq4zUUTtZOjM';
     const S3 = new AWS.S3({
@@ -81,59 +90,82 @@ function UpLoadPage() {
         secretAccessKey: secret_key,
       },
     });
-    // 파일 업로드
-    // try {
-    //   const res = await S3.putObject({
-    //     Bucket: 'jini',
-    //     Key: selectedFile.name,
-    //     ACL: 'public-read',
-    //     Body: selectedFile,
-    //   }).promise();
-    //   console.log('s3 업로드 어쩌고', res);
-    // } catch (err) {
-    //   console.error('업로드 중 오류 발생', err);
-    // }
-    // 진행률 어쩌고
-    S3.putObject({
-      Bucket: 'jini',
-      Key: selectedFile.name,
-      ACL: 'public-read',
-      Body: selectedFile,
-    })
-      .on('httpUploadProgress', (evt) => {
-        setProgress(Math.round((evt.loaded / evt.total) * 100));
 
-        setTimeout(() => {
-          setSelectedFile(null);
-        }, 3000);
-      })
-      .send((err) => {
-        if (err) console.log(err);
-      });
+    //url
+    // `https://kr.object.ncloudstorage.com/jini/${selectedFile.name}`
+    // 파일 업로드
+    try {
+      const res = await S3.putObject({
+        Bucket: 'jini',
+        Key: selectedFile.name,
+        ACL: 'public-read',
+        Body: selectedFile,
+      }).promise();
+      console.log('s3 업로드 어쩌고', res);
+    } catch (err) {
+      console.error('업로드 중 오류 발생', err);
+    }
+
+    // const upload = S3.upload({
+    //   Bucket: 'jini',
+    //   Key: selectedFile.name,
+    //   ACL: 'public-read',
+    //   Body: selectedFile,
+    // });
+    // if (selectedFile) {
+    //   upload.promise().then((res) => console.log('업로드', res));
+    // }
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    const endpoint = new AWS.Endpoint('https://kr.object.ncloudstorage.com');
+    const region = 'kr-standard';
+    const access_key = 'bwsXS9Z0teKUNcnoZvNQ';
+    const secret_key = 'ctHagAeEtaT5bq2ly9JqmzGutvO2Mq4zUUTtZOjM';
+    const S3 = new AWS.S3({
+      endpoint: endpoint,
+      region: region,
+      credentials: {
+        accessKeyId: access_key,
+        secretAccessKey: secret_key,
+      },
+    });
 
-    const formData = {
-      category: value.category,
-      title: value.title,
-      content: value.content,
-      is_secret: value.is_secret,
-      file: '',
-    };
+    //url
+    // `https://kr.object.ncloudstorage.com/jini/${selectedFile.name}`
+    // 파일 업로드
+    try {
+      const res = await S3.putObject({
+        Bucket: 'jini',
+        Key: selectedFile.name,
+        ACL: 'public-read',
+        Body: selectedFile,
+      }).promise();
+      console.log('s3 업로드 어쩌고', res);
+      const encodedKey = encodeURIComponent(selectedFile.name);
+      const formData = {
+        category: value.category,
+        title: value.title,
+        content: value.content,
+        is_secret: value.is_secret,
+        file: `https://kr.object.ncloudstorage.com/jini/${encodedKey}`,
+      };
 
-    postFeedApi(cookies.access_token, formData)
-      .then((res) => {
-        queryClient.invalidateQueries('postFeed');
-        console.log('데이터 전송 성공', res);
-        // setIsOnOffState(value.is_secret);
-        navigate('/');
-      })
-      .catch((err) => {
-        console.log('데이터 전송 에러', err);
-        console.log('formData', formData);
-      });
+      postFeedApi(cookies.access_token, formData)
+        .then((res) => {
+          queryClient.invalidateQueries('postFeed');
+          console.log('데이터 전송 성공', res);
+          // setIsOnOffState(value.is_secret);
+          navigate('/');
+        })
+        .catch((err) => {
+          console.log('데이터 전송 에러', err);
+          console.log('formData', formData);
+        });
+    } catch (err) {
+      console.error('업로드 중 오류 발생', err);
+    }
   };
 
   const postFeedMutation = useMutation(
