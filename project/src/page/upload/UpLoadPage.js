@@ -25,11 +25,9 @@ function UpLoadPage() {
     is_secret: '',
   });
   const [selectedFile, setSelectedFile] = useState(null);
-  const [progress, setProgress] = useState(0);
   const [imageSrc, setImageSrc] = useState(null);
   const [cookies] = useCookies(['access_token', 'refresh_token']);
   const queryClient = useQueryClient();
-  const client = new S3Client({});
   const navigate = useNavigate();
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -66,17 +64,17 @@ function UpLoadPage() {
   //     return null;
   //   }
   // };
-  const region = 'gov-standard';
-  const access_key = 'bwsXS9Z0teKUNcnoZvNQ';
-  const secret_key = 'ctHagAeEtaT5bq2ly9JqmzGutvO2Mq4zUUTtZOjM';
-  const S3 = new AWS.S3({
-    endpoint: 'https://kr.object.gov-ncloudstorage.com',
-    region: region,
-    credentials: {
-      accessKeyId: access_key,
-      secretAccessKey: secret_key,
-    },
-  });
+  // const region = 'gov-standard';
+  // const access_key = process.env.REACT_APP_ACCESS_KEY;
+  // const secret_key = process.env.REACT_APP_SECRET_KEY;
+  // const S3 = new AWS.S3({
+  //   endpoint: 'https://kr.object.gov-ncloudstorage.com',
+  //   region: region,
+  //   credentials: {
+  //     accessKeyId: access_key,
+  //     secretAccessKey: secret_key,
+  //   },
+  // });
   const uploadImage = async () => {
     const endpoint = new AWS.Endpoint('https://kr.object.ncloudstorage.com');
     const region = 'kr-standard';
@@ -131,40 +129,48 @@ function UpLoadPage() {
         secretAccessKey: secret_key,
       },
     });
+    if (value.category === '') {
+      alert('카테고리를 선택해주세요');
+    } else if (value.title === '') {
+      alert('제목을 입력해주세요');
+    } else if (value.content === '') {
+      alert('콘텐츠를 작성해주세요');
+    } else if (value.is_secret === '') {
+      alert('on/off 여부를 선택해주세요');
+    } else if (selectedFile === null) {
+      alert('이미지를 업로드해주세요');
+    } else {
+      try {
+        const res = await S3.putObject({
+          Bucket: 'jini',
+          Key: selectedFile.name,
+          ACL: 'public-read',
+          Body: selectedFile,
+        }).promise();
+        console.log('s3 업로드 어쩌고', res);
+        const encodedKey = encodeURIComponent(selectedFile.name);
+        const formData = {
+          category: value.category,
+          title: value.title,
+          content: value.content,
+          is_secret: value.is_secret,
+          file: `https://kr.object.ncloudstorage.com/jini/${encodedKey}`,
+        };
 
-    //url
-    // `https://kr.object.ncloudstorage.com/jini/${selectedFile.name}`
-    // 파일 업로드
-    try {
-      const res = await S3.putObject({
-        Bucket: 'jini',
-        Key: selectedFile.name,
-        ACL: 'public-read',
-        Body: selectedFile,
-      }).promise();
-      console.log('s3 업로드 어쩌고', res);
-      const encodedKey = encodeURIComponent(selectedFile.name);
-      const formData = {
-        category: value.category,
-        title: value.title,
-        content: value.content,
-        is_secret: value.is_secret,
-        file: `https://kr.object.ncloudstorage.com/jini/${encodedKey}`,
-      };
-
-      postFeedApi(cookies.access_token, formData)
-        .then((res) => {
-          queryClient.invalidateQueries('postFeed');
-          console.log('데이터 전송 성공', res);
-          // setIsOnOffState(value.is_secret);
-          navigate('/');
-        })
-        .catch((err) => {
-          console.log('데이터 전송 에러', err);
-          console.log('formData', formData);
-        });
-    } catch (err) {
-      console.error('업로드 중 오류 발생', err);
+        postFeedApi(cookies.access_token, formData)
+          .then((res) => {
+            queryClient.invalidateQueries('postFeed');
+            console.log('데이터 전송 성공', res);
+            // setIsOnOffState(value.is_secret);
+            navigate('/');
+          })
+          .catch((err) => {
+            console.log('데이터 전송 에러', err);
+            console.log('formData', formData);
+          });
+      } catch (err) {
+        console.error('업로드 중 오류 발생', err);
+      }
     }
   };
 
@@ -223,10 +229,6 @@ function UpLoadPage() {
                 onChange={handleFileChange}
               />
             </div>
-            <button onClick={uploadImage}>파일 업로드</button>
-            {progress !== 0 && (
-              <div color="primary">업로드 진행률 : {progress}%</div>
-            )}
             <div>
               <textarea
                 onChange={(e) =>
@@ -244,7 +246,6 @@ function UpLoadPage() {
           <div className={styles.category}>
             {' '}
             <select
-              name="성별"
               onChange={(e) =>
                 setValue((prevValue) => ({
                   ...prevValue,

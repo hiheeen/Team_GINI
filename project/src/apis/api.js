@@ -153,3 +153,34 @@ export const kakaoLoginApi = () => {
   const response = instance.get('users/auth/kakao/login/');
   return response;
 };
+export const postReplyApi = async (feedId, reviewId, formData, accessToken) => {
+  const response = await instance.post(
+    `feeds/${feedId}/reviews/${reviewId}/post_reply/`,
+    formData,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      withCredentials: true,
+    },
+  );
+  return response;
+};
+export const getReviewDetailApi = async (feedId, accessToken) => {
+  const response = await instance.get(`feeds/${feedId}/reviews/`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};
+export const deleteReplyApi = async (replyId, accessToken) => {
+  const response = await instance.delete(`updel_reply/${replyId}/`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};

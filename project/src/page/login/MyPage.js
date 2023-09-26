@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getInfoApi, updateInfoApi } from '../../apis/api';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
+import AWS from 'aws-sdk';
 
 import { style } from '@mui/system';
 function MyPage() {
@@ -12,6 +13,7 @@ function MyPage() {
   const [profile, setProfile] = useState();
   const [cookies] = useCookies(['access_token']);
   const queryClient = useQueryClient();
+  const [selectedFile, setSelectedFile] = useState();
 
   const [updateInfo, setUpdateInfo] = useState({
     nickname: '',
@@ -38,22 +40,9 @@ function MyPage() {
       },
     },
   );
-  const onSubmit = () => {
-    const formData = {
-      nickname: updateInfo.nickname || infoData.data.nickname,
-      description: updateInfo.description,
-    };
-    updateInfoMutation.mutate(formData);
-    // updateInfoApi(cookies.access_token, formData)
-    //   .then((res) => {
-    //     console.log('정보 수정', res);
-    //     navigate('/');
-    //   })
-    //   .catch((err) => console.log('정보수정 에러', err));
-  };
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-
+    setSelectedFile(file);
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -64,6 +53,46 @@ function MyPage() {
       reader.readAsDataURL(file);
     }
   };
+  const onSubmit = async () => {
+    const endpoint = new AWS.Endpoint('https://kr.object.ncloudstorage.com');
+    const region = 'kr-standard';
+    const access_key = process.env.REACT_APP_ACCESS_KEY;
+    const secret_key = process.env.REACT_APP_SECRET_KEY;
+    const S3 = new AWS.S3({
+      endpoint: endpoint,
+      region: region,
+      credentials: {
+        accessKeyId: access_key,
+        secretAccessKey: secret_key,
+      },
+    });
+    try {
+      const res = await S3.putObject({
+        Bucket: 'jini',
+        Key: selectedFile.name,
+        ACL: 'public-read',
+        Body: selectedFile,
+      }).promise();
+      console.log('s3 업로드 어쩌고', res);
+      const encodedKey = encodeURIComponent(selectedFile.name);
+      const formData = {
+        nickname: updateInfo.nickname || infoData.data.nickname,
+        description: updateInfo.description,
+        profileImg: `https://kr.object.ncloudstorage.com/jini/${encodedKey}`,
+      };
+      updateInfoMutation.mutate(formData);
+    } catch (err) {
+      console.error('업로드 중 오류 발생', err);
+    }
+
+    // updateInfoApi(cookies.access_token, formData)
+    //   .then((res) => {
+    //     console.log('정보 수정', res);
+    //     navigate('/');
+    //   })
+    //   .catch((err) => console.log('정보수정 에러', err));
+  };
+
   if (isLoading) {
     return <div>is Loading...</div>;
   }
@@ -82,7 +111,7 @@ function MyPage() {
                   marginRight: 20,
                 }}
                 alt=""
-                src={profile ? profile : profileImg}
+                src={profile ? profile : infoData.data.profileImg}
               />
             </div>
             <label style={{ fontSize: 12 }} className={styles.changeProfile}>
@@ -168,7 +197,9 @@ function MyPage() {
           <div>
             <textarea
               placeholder={
-                `${infoData.data.description}` || '소개글을 입력해주세요'
+                infoData.data.description === null
+                  ? '소개글을 입력해주세요'
+                  : `${infoData.data.description}`
               }
               onChange={(e) =>
                 setUpdateInfo((prevValue) => ({

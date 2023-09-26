@@ -9,12 +9,12 @@
 .feedImg {
   width: 680px;
   height: 400px;
-  border-radius: 20px;
+  /* border-radius: 20px; */
 }
 .date_category {
   display: flex;
   align-items: center;
-  padding: 10px 0;
+  padding: 10px;
 }
 .category {
   margin-left: 20px;

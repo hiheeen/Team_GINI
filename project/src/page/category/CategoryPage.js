@@ -8,6 +8,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useState } from 'react';
 import Fab from '@mui/material/Fab';
 import dayjs from 'dayjs';
+import { useRecoilValue } from 'recoil';
+import { onOffState } from '../../recoil/onOff';
 
 function CategoryPage() {
   const params = useParams();
@@ -15,6 +17,7 @@ function CategoryPage() {
   const [cookies] = useCookies(['access_token']);
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState();
+  const onOff = useRecoilValue(onOffState);
 
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
     ['secretData'],
@@ -60,23 +63,41 @@ function CategoryPage() {
         </div>
       </div>
       <div className={styles.grid_container}>
-        {feedData.data.results?.map(
-          (item) =>
-            item.category === category && (
-              <div
-                style={{ backgroundImage: `url(${item.file})` }}
-                className={styles.grid_item}
-                onClick={() => navigate(`/${category}/${item.id}`)}
-              >
-                <div style={{ padding: '10px 20px 0 20px' }}>
-                  {dayjs(item.created_at).format('YYYY-MM-DD')}
-                </div>
-                <div style={{ fontWeight: 'bold', padding: '20px' }}>
-                  {item.title}
-                </div>
-              </div>
-            ),
-        )}
+        {onOff
+          ? secretData.data?.map(
+              (item) =>
+                item.category === category && (
+                  <div
+                    style={{ backgroundImage: `url(${item.file})` }}
+                    className={styles.grid_item}
+                    onClick={() => navigate(`/${category}/${item.id}`)}
+                  >
+                    <div style={{ padding: '10px 20px 0 20px' }}>
+                      {dayjs(item.created_at).format('YYYY-MM-DD')}
+                    </div>
+                    <div style={{ fontWeight: 'bold', padding: '20px' }}>
+                      {item.title}
+                    </div>
+                  </div>
+                ),
+            )
+          : feedData.data.results?.map(
+              (item) =>
+                item.category === category && (
+                  <div
+                    style={{ backgroundImage: `url(${item.file})` }}
+                    className={styles.grid_item}
+                    onClick={() => navigate(`/${category}/${item.id}`)}
+                  >
+                    <div style={{ padding: '10px 20px 0 20px' }}>
+                      {dayjs(item.created_at).format('YYYY-MM-DD')}
+                    </div>
+                    <div style={{ fontWeight: 'bold', padding: '20px' }}>
+                      {item.title}
+                    </div>
+                  </div>
+                ),
+            )}
       </div>
     </div>
   );

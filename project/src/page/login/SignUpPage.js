@@ -6,19 +6,30 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useRef, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
-import { kakaoLoginApi, signUpApi, valEmailApi } from '../../apis/api';
+import AWS from 'aws-sdk';
+
+import {
+  kakaoLoginApi,
+  signUpApi,
+  valEmailApi,
+  valNicknameApi,
+} from '../../apis/api';
 import Kakao from '../../component/socialLogin/Kakao';
 function SignUpPage() {
   const profileImg = process.env.PUBLIC_URL + '/images/Vector.png';
   const [profile, setProfile] = useState();
   const [cookies, setCookie] = useCookies(['access_token', 'refresh_token']);
+  const [selectedFile, setSelectedFile] = useState();
   const [emailChecked, setEmailChecked] = useState(false);
+  const [nicknameChecked, setNicknameChecked] = useState(false);
   const navigate = useNavigate();
   const {
     register,
     watch,
     handleSubmit,
     formState: { errors },
+    setValue,
+    getValues,
   } = useForm();
   const [emailValue, setEmailValue] = useState();
   const password = watch('password', '');
@@ -56,7 +67,7 @@ function SignUpPage() {
   //   };
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-
+    setSelectedFile(file);
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -70,36 +81,92 @@ function SignUpPage() {
 
   const valEmail = async () => {
     const formData = {
-      email: emailValue,
+      email: getValues('userId'),
     };
 
-    try {
-      const response = await valEmailApi(formData);
-      console.log('이메일 중복검사', response);
-    } catch (error) {
-      console.error('이메일 중복검사 에러', error);
-    }
+    await valEmailApi(formData)
+      .then((res) => {
+        console.log(formData);
+        console.log(res, '이메일중복검사');
+        if (res.status === 200) {
+          alert('사용 가능한 아이디입니다');
+          setEmailChecked(true);
+        }
+      })
+      .catch((err) => {
+        console.log('이메일중복검사 에러', err);
+        alert('중복된 아이디입니다');
+        setValue('userId', '');
+      });
+  };
+  const valNickName = async () => {
+    const formData = {
+      nickname: getValues('nickname'),
+    };
+    await valNicknameApi(formData)
+      .then((res) => {
+        console.log(formData);
+        console.log(res, '닉네임중복검사');
+        if (res.status === 200) {
+          alert('사용 가능한 닉네임입니다');
+          setNicknameChecked(true);
+        }
+      })
+      .catch((err) => {
+        console.log('닉네임중복검사 에러', err);
+        alert('중복된 닉네임입니다');
+        setValue('nickname', '');
+      });
   };
   const onSubmit = async (data) => {
-    const signUpData = {
-      email: data.userId,
-      password: data.password,
-      nickname: data.nickname,
-      gender: data.gender,
-      name: data.username,
-    };
-    if (emailChecked) {
-      signUpApi(signUpData)
-        .then((response) => {
-          if (response.status === 200) {
-            console.log('200', response);
-            navigate('/');
-          }
-        })
-        .catch((error) => console.log('err data', error));
-    } else {
-      alert('이메일 중복체크를 해 주세요');
-      return;
+    const endpoint = new AWS.Endpoint('https://kr.object.ncloudstorage.com');
+    const region = 'kr-standard';
+    const access_key = process.env.REACT_APP_ACCESS_KEY;
+    const secret_key = process.env.REACT_APP_SECRET_KEY;
+    const S3 = new AWS.S3({
+      endpoint: endpoint,
+      region: region,
+      credentials: {
+        accessKeyId: access_key,
+        secretAccessKey: secret_key,
+      },
+    });
+
+    try {
+      const res = await S3.putObject({
+        Bucket: 'jini',
+        Key: selectedFile.name,
+        ACL: 'public-read',
+        Body: selectedFile,
+      }).promise();
+      console.log('s3 업로드 어쩌고', res);
+      const encodedKey = encodeURIComponent(selectedFile.name);
+      const signUpData = {
+        email: data.userId,
+        password: data.password,
+        nickname: data.nickname,
+        gender: data.gender,
+        name: data.username,
+        profileImg: `https://kr.object.ncloudstorage.com/jini/${encodedKey}`,
+      };
+
+      if (emailChecked && nicknameChecked) {
+        signUpApi(signUpData)
+          .then((response) => {
+            if (response.status === 200) {
+              console.log('200', response);
+              navigate('/');
+            }
+          })
+          .catch((error) => console.log('err data', error));
+      } else if (!emailChecked) {
+        alert('이메일 중복체크를 해 주세요');
+        return;
+      } else if (!nicknameChecked) {
+        alert('닉네임 중복체크를 해 주세요');
+      }
+    } catch (err) {
+      console.error('업로드 중 오류 발생', err);
     }
   };
   const kakaoLogin = () => {
@@ -171,8 +238,7 @@ function SignUpPage() {
             {/* 아이디 */}
             <div>
               <input
-                value={emailValue}
-                onChange={(e) => setEmailValue(e.target.value)}
+                onChange={(e) => setValue(e.target.name, e.target.value)}
                 className={styles.signUp_input}
                 id="userId"
                 type="text"
@@ -237,8 +303,10 @@ function SignUpPage() {
               )}
             </div>
             {/* 닉네임 */}
+
             <div>
               <input
+                onChange={(e) => setValue(e.target.name, e.target.value)}
                 className={styles.signUp_input}
                 id="nickname"
                 name="nickname"
@@ -255,7 +323,6 @@ function SignUpPage() {
                 </div>
               )}
             </div>
-            <button>닉네임 중복 확인</button>
 
             {/* 성별 */}
             <div>
@@ -294,8 +361,13 @@ function SignUpPage() {
           </div>
           {/* <Kakao /> */}
         </form>
+        <button onClick={valNickName}>닉네임 중복 확인</button>
         <button onClick={valEmail}>아이디 중복 확인</button>
-        <button onClick={kakaoLogin}>카카오로</button>
+        <button>
+          <a href="http://www.jinii.shop/api/v1/users/auth/kakao/login/">
+            카카오
+          </a>
+        </button>
       </div>
     </div>
   );

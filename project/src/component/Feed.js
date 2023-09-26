@@ -16,6 +16,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { onOffState } from '../recoil/onOff';
 import Review from './Review';
 import { reviewOpenState } from '../recoil/reviewOpen';
+import SecretFeed from './SecretFeed';
 
 // on/off 여부에 따라 feed에서 사람들의 프로필과 닉네임을 보여줘야 한다.
 // off 일 때에는 안 보여줘도 됨. 내 것만 나오기 때문에.
@@ -98,6 +99,7 @@ function Feed() {
   if (secretIsLoading) {
     return <div>is loading...</div>;
   }
+
   const handleDeleteSecretClick = (itemId) => {
     const confirmDelete = window.confirm('게시글을 삭제하시겠습니까?');
     if (confirmDelete) {
@@ -155,20 +157,6 @@ function Feed() {
     setIsReviewOpen(!isReviewOpen);
     setReviewMode(itemId);
   };
-  // const handleReviewPost = (feedId) => {
-  //   const formData = {
-  //     content: reviewValue[feedId],
-  //   };
-  //   postReviewApi(cookies.access_token, feedId, formData)
-  //     .then((res) => {
-  //       console.log('리뷰 post 성공', res);
-  //       setReviewValue({
-  //         ...reviewValue,
-  //         [feedId]: '',
-  //       });
-  //     })
-  //     .catch((err) => console.log('리뷰 post 실패', err));
-  // };
 
   const handleReviewPost = (e, feedId) => {
     e.preventDefault();
@@ -176,15 +164,6 @@ function Feed() {
       content: reviewValue[feedId],
     };
     console.log(formData, 'formData');
-    // postReviewApi(cookies.access_token, feedId, formData)
-    //   .then((res) => {
-    //     console.log('리뷰 post 성공', res);
-    //     setReviewValue({
-    //       ...reviewValue,
-    //       [feedId]: '',
-    //     });
-    //   })
-    //   .catch((err) => console.log('리뷰 post 실패', err));
     postReviewMutation.mutate({ feedId, formData });
     setReviewValue({
       ...reviewValue,
@@ -193,58 +172,39 @@ function Feed() {
   };
   return (
     <div>
-      {onOff
-        ? secretData.data?.map((item, index) => (
-            <div key={index}>
-              <div className={styles.container}>
-                {item.writer.nickname === infoData.data.nickname && (
-                  <div style={{ display: 'flex', justifyContent: 'right' }}>
-                    <div
+      {onOff ? (
+        <SecretFeed
+          secretData={secretData}
+          infoData={infoData}
+          handleDeleteSecretClick={handleDeleteSecretClick}
+        />
+      ) : (
+        feedData.data.results?.map((item, index) => (
+          <div key={index}>
+            <div className={styles.container}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '0 10px 10px 10px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div>
+                    <img
                       style={{
-                        padding: '10px 5px',
-                        cursor: 'pointer',
+                        width: 40,
+                        borderRadius: '50%',
+                        marginRight: 10,
                       }}
-                    >
-                      수정
-                    </div>
-
-                    <div
-                      style={{
-                        padding: '10px 5px',
-                        textAlign: 'right',
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => handleDeleteSecretClick(item.id)}
-                    >
-                      삭제
-                    </div>
+                      alt=""
+                      src={item.writer.profile}
+                    />
                   </div>
-                )}
-
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <img className={styles.feedImg} alt="" src={item.file} />
+                  <div>{item.writer.nickname}</div>
                 </div>
-                <div className={styles.date_category}>
-                  <div className={styles.date}>
-                    {' '}
-                    {dayjs(item.created_at).format('YYYY-MM-DD')}
-                  </div>
-                  <div className={styles.category}>
-                    {getCategoryText(item.category)}
-                  </div>
-                </div>
-                <div>
-                  <div className={styles.title}>{item.title}</div>
-                  <div className={styles.content}>{item.content}</div>
-                </div>
-              </div>
-            </div>
-          ))
-        : feedData.data.results?.map((item, index) => (
-            <div key={index}>
-              <div className={styles.container}>
                 {item.writer.nickname === infoData.data.nickname && (
-                  <div style={{ display: 'flex', justifyContent: 'right' }}>
+                  <div style={{ display: 'flex' }}>
                     <div
                       style={{
                         padding: '10px 5px',
@@ -266,64 +226,72 @@ function Feed() {
                     </div>
                   </div>
                 )}
-
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <img className={styles.feedImg} alt="" src={item.file} />
-                </div>
-                <div className={styles.date_category}>
-                  <div className={styles.date}>
-                    {dayjs(item.created_at).format('YYYY-MM-DD')}
-                  </div>
-                  <div className={styles.category}>
-                    {getCategoryText(item.category)}
-                  </div>
-                </div>
-                <div>
-                  <div className={styles.title}>{item.title}</div>
-                  <div className={styles.content}>{item.content}</div>
-                </div>
-                <div
-                  style={{ cursor: 'pointer', padding: '10px 0' }}
-                  onClick={() => handleModify(item.id)}
-                >
-                  {item.review_count !== 0 &&
-                    (isReviewOpen && reviewMode === item.id
-                      ? '댓글 닫기'
-                      : `댓글 ${item.review_count}개 모두 보기`)}
-                </div>
-                {isReviewOpen && reviewMode === item.id ? (
-                  <div style={{ display: 'flex' }}>
-                    <Review
-                      feedId={item.id}
-                      nickname={infoData.data.nickname}
-                    />
-                  </div>
-                ) : (
-                  ''
-                )}
-                <form onSubmit={(e) => handleReviewPost(e, item.id)}>
-                  <div>
-                    <input
-                      value={reviewValue[item.id] || ''}
-                      onChange={(e) =>
-                        setReviewValue({
-                          ...reviewValue,
-                          [item.id]: e.target.value,
-                        })
-                      }
-                      placeholder="댓글을 입력하세요"
-                    ></input>
-                    <button
-                      type="submit"
-                      // onClick={() => handleReviewPost(item.id)}
-                    >
-                      댓글 쓰기
-                    </button>
-                  </div>
-                </form>
               </div>
+
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <img className={styles.feedImg} alt="" src={item.file} />
+              </div>
+              <div className={styles.date_category}>
+                <div className={styles.date}>
+                  {dayjs(item.created_at).format('YYYY-MM-DD')}
+                </div>
+                <div className={styles.category}>
+                  {getCategoryText(item.category)}
+                </div>
+              </div>
+              <div style={{ padding: '0 10px' }}>
+                <div className={styles.title}>{item.title}</div>
+                <div className={styles.content}>{item.content}</div>
+              </div>
+              <div
+                style={{
+                  cursor: 'pointer',
+                  padding: '10px',
+                  fontSize: '13px',
+                  color: 'grey',
+                }}
+                onClick={() => handleModify(item.id)}
+              >
+                {item.review_count !== 0 &&
+                  (isReviewOpen && reviewMode === item.id
+                    ? '댓글 닫기'
+                    : `댓글 ${item.review_count}개 모두 보기`)}
+              </div>
+              {isReviewOpen && reviewMode === item.id ? (
+                <div style={{ display: 'flex' }}>
+                  <Review
+                    feedId={item.id}
+                    nickname={infoData.data.nickname}
+                    feedWriter={item.writer.nickname}
+                  />
+                </div>
+              ) : (
+                ''
+              )}
+              <form onSubmit={(e) => handleReviewPost(e, item.id)}>
+                <div style={{ padding: '0 10px' }}>
+                  <input
+                    value={reviewValue[item.id] || ''}
+                    onChange={(e) =>
+                      setReviewValue({
+                        ...reviewValue,
+                        [item.id]: e.target.value,
+                      })
+                    }
+                    placeholder="댓글을 남겨보세요"
+                  ></input>
+                  <button
+                    type="submit"
+                    // onClick={() => handleReviewPost(item.id)}
+                  >
+                    댓글 쓰기
+                  </button>
+                </div>
+              </form>
             </div>
-          ))}
+          </div>
+        ))
+      )}
     </div>
   );
 }

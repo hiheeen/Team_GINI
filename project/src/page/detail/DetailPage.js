@@ -22,6 +22,7 @@ function DetailPage() {
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
   const [reviewValue, setReviewValue] = useState({});
   const [reviewMode, setReviewMode] = useState();
+  // offState postMutation
   const postReviewMutation = useMutation(
     (data) => {
       const { feedId, formData } = data;
@@ -42,6 +43,7 @@ function DetailPage() {
       },
     },
   );
+  // offState deleteMutation
   const deleteFeedMutation = useMutation(
     (itemId) => deleteFeedApi(itemId, cookies.access_token),
     {
@@ -53,26 +55,39 @@ function DetailPage() {
       },
     },
   );
+  // offState detailData
   const { data, isLoading } = useQuery(['detailData', feedId], () =>
     getDetailApi(cookies.access_token, feedId),
   );
-  console.log('detailData', data);
+  // console.log('detailData', data);
   const { data: infoData, isLoading: infoLoading } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),
   );
-  if (isLoading) {
-    return <div>is loading...</div>;
-  }
 
-  if (infoLoading) {
-    return <div>is loading...</div>;
-  }
-
+  // offState delete button
   const handleDeleteClick = (itemId) => {
     const confirmDelete = window.confirm('게시글을 삭제하시겠습니까?');
     if (confirmDelete) {
       deleteFeedMutation.mutate(itemId);
     }
+  };
+  // offState modify
+  const handleModify = (itemId) => {
+    setIsReviewOpen(!isReviewOpen);
+    setReviewMode(itemId);
+  };
+  // offState review post button
+  const handleReviewPost = (e, feedId) => {
+    e.preventDefault();
+    const formData = {
+      content: reviewValue[feedId],
+    };
+    console.log(formData, 'formData');
+    postReviewMutation.mutate({ feedId, formData });
+    setReviewValue({
+      ...reviewValue,
+      [feedId]: '',
+    });
   };
   const getCategoryText = (category) => {
     switch (category) {
@@ -102,31 +117,13 @@ function DetailPage() {
         return '';
     }
   };
-  const handleModify = (itemId) => {
-    setIsReviewOpen(!isReviewOpen);
-    setReviewMode(itemId);
-  };
-  const handleReviewPost = (e, feedId) => {
-    e.preventDefault();
-    const formData = {
-      content: reviewValue[feedId],
-    };
-    console.log(formData, 'formData');
-    // postReviewApi(cookies.access_token, feedId, formData)
-    //   .then((res) => {
-    //     console.log('리뷰 post 성공', res);
-    //     setReviewValue({
-    //       ...reviewValue,
-    //       [feedId]: '',
-    //     });
-    //   })
-    //   .catch((err) => console.log('리뷰 post 실패', err));
-    postReviewMutation.mutate({ feedId, formData });
-    setReviewValue({
-      ...reviewValue,
-      [feedId]: '',
-    });
-  };
+  if (isLoading) {
+    return <div>is loading...</div>;
+  }
+
+  if (infoLoading) {
+    return <div>is loading...</div>;
+  }
   return (
     <div className={styles.container}>
       <div>
