@@ -76,7 +76,7 @@ export const deleteFeedApi = async (itemId, accessToken) => {
   return response;
 };
 export const feedLikeApi = async (feedId, accessToken) => {
-  const response = await instance.post(`feeds/${feedId}/likes/`, {
+  const response = await instance.put(`feeds/${feedId}/likes/`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

@@ -29,6 +29,7 @@ function MyPage() {
   const { data: infoData, isLoading } = useQuery(['infoData'], () =>
     getInfoApi(cookies.access_token),
   );
+  // console.log('인포', infoData);
   const updateInfoMutation = useMutation(
     (formData) => updateInfoApi(cookies.access_token, formData),
     {
@@ -66,21 +67,33 @@ function MyPage() {
         secretAccessKey: secret_key,
       },
     });
+
     try {
-      const res = await S3.putObject({
-        Bucket: 'jini',
-        Key: selectedFile.name,
-        ACL: 'public-read',
-        Body: selectedFile,
-      }).promise();
-      console.log('s3 업로드 어쩌고', res);
-      const encodedKey = encodeURIComponent(selectedFile.name);
-      const formData = {
-        nickname: updateInfo.nickname || infoData.data.nickname,
-        description: updateInfo.description,
-        profileImg: `https://kr.object.ncloudstorage.com/jini/${encodedKey}`,
-      };
-      updateInfoMutation.mutate(formData);
+      if (selectedFile) {
+        const res = await S3.putObject({
+          Bucket: 'jini',
+          Key: selectedFile.name,
+          ACL: 'public-read',
+          Body: selectedFile,
+        }).promise();
+        console.log('s3 업로드 어쩌고', res);
+        const encodedKey = encodeURIComponent(selectedFile.name);
+        const formData = {
+          nickname: updateInfo.nickname || infoData.data.nickname,
+          description: updateInfo.description || infoData.data.description,
+          profileImg: selectedFile.name
+            ? `https://kr.object.ncloudstorage.com/jini/${encodedKey}`
+            : infoData.data.profileImg,
+        };
+        updateInfoMutation.mutate(formData);
+      } else {
+        const formData = {
+          nickname: updateInfo.nickname || infoData.data.nickname,
+          description: updateInfo.description || infoData.data.description,
+          profileImg: infoData.data.profileImg,
+        };
+        updateInfoMutation.mutate(formData);
+      }
     } catch (err) {
       console.error('업로드 중 오류 발생', err);
     }
@@ -100,7 +113,7 @@ function MyPage() {
     <div className={styles.container}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.login_form}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginTop: 10 }}>
             <div>
               <img
                 style={{

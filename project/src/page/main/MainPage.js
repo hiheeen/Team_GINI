@@ -7,19 +7,19 @@ import { useNavigate } from 'react-router-dom';
 import Fab from '@mui/material/Fab';
 import EditIcon from '@mui/icons-material/Edit';
 import Feed from '../../component/Feed';
+import { useRecoilValue } from 'recoil';
+import { onOffState } from '../../recoil/onOff';
+import SecretFeed from '../../component/SecretFeed';
+import PublicFeed from '../../component/PublicFeed';
 function MainPage() {
   const [searchValue, setSearchValue] = useState();
+  const onOff = useRecoilValue(onOffState);
+
   const navigate = useNavigate();
   return (
     <div className={styles.container}>
       <div className={styles.upload}>
         <div className={styles.mainSection_header}>
-          {/* <button
-            style={{ cursor: 'pointer' }}
-            onClick={() => navigate('/upload/default/:id')}
-          >
-            업로드 하기
-          </button> */}
           <Fab
             style={{
               cursor: 'pointer',
@@ -43,7 +43,7 @@ function MainPage() {
         </div>
       </div>
       <div className={styles.feed}>
-        <Feed />
+        {onOff ? <SecretFeed /> : <PublicFeed />}
       </div>
     </div>
   );

@@ -1,6 +1,10 @@
 import dayjs from 'dayjs';
 import styles from './Feed.module.css';
-function SecretFeed({ secretData, handleDeleteSecretClick, infoData }) {
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { deleteSecretFeedApi, getInfoApi, getSecretFeedApi } from '../apis/api';
+import { useCookies } from 'react-cookie';
+function SecretFeed() {
+  const [cookies] = useCookies(['access_token']);
   const getCategoryText = (category) => {
     switch (category) {
       case 'travel':
@@ -29,6 +33,35 @@ function SecretFeed({ secretData, handleDeleteSecretClick, infoData }) {
         return '';
     }
   };
+  const queryClient = useQueryClient();
+
+  const deleteSecretFeedMutation = useMutation(
+    (itemId) => deleteSecretFeedApi(itemId, cookies.access_token),
+    {
+      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
+      onSuccess: (data) => {
+        // 새로운 쿼리를 무효화합니다.
+        queryClient.invalidateQueries('secretData');
+        console.log('데이터 삭제 성공', data);
+      },
+    },
+  );
+  const handleDeleteSecretClick = (itemId) => {
+    const confirmDelete = window.confirm('게시글을 삭제하시겠습니까?');
+    if (confirmDelete) {
+      deleteSecretFeedMutation.mutate(itemId);
+    }
+  };
+  const { data: infoData } = useQuery(['getInfo'], () =>
+    getInfoApi(cookies.access_token),
+  );
+  const { data: secretData, isLoading: secretIsLoading } = useQuery(
+    ['secretData'],
+    () => getSecretFeedApi(cookies.access_token),
+  );
+  if (secretIsLoading) {
+    return <div>is loading...</div>;
+  }
   return (
     <div>
       {secretData.data?.map((item, index) => (

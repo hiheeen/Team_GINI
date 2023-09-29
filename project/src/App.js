@@ -21,6 +21,8 @@ import MyPage from './page/login/MyPage';
 import CategoryPage from './page/category/CategoryPage';
 import DetailPage from './page/detail/DetailPage';
 import { useCookies } from 'react-cookie';
+import PwSearchPage from './page/login/PwSearchPage';
+import NewPasswordPage from './page/login/NewPasswordPage';
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [cookies] = useCookies(['access_token']);
@@ -47,6 +49,8 @@ function App() {
             <Route path={routes.myPage} element={<MyPage />} />
             <Route path={routes.category} element={<CategoryPage />} />
             <Route path={routes.detail} element={<DetailPage />} />
+            <Route path={routes.passwordSearch} element={<PwSearchPage />} />
+            <Route path={routes.newPassword} element={<NewPasswordPage />} />
           </Routes>
           {isLoggedIn && <Profile />}
         </div>

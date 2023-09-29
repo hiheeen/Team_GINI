@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   deleteFeedApi,
   deleteSecretFeedApi,
+  feedLikeApi,
   getDetailApi,
   getFeedApi,
   getInfoApi,
@@ -17,6 +18,9 @@ import { onOffState } from '../recoil/onOff';
 import Review from './Review';
 import { reviewOpenState } from '../recoil/reviewOpen';
 import SecretFeed from './SecretFeed';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 
 // on/off 여부에 따라 feed에서 사람들의 프로필과 닉네임을 보여줘야 한다.
 // off 일 때에는 안 보여줘도 됨. 내 것만 나오기 때문에.
@@ -31,7 +35,7 @@ function Feed() {
   const [reviewMode, setReviewMode] = useState();
   const [reviewOpen, setReviewOpen] = useState(false);
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
-
+  const [isLiked, setIsLiked] = useState(false);
   // react-query mutation 사용
   const queryClient = useQueryClient();
 
@@ -83,9 +87,9 @@ function Feed() {
   const { data: feedData, isLoading } = useQuery(
     ['feedData'],
     () => getFeedApi(cookies.access_token),
-    {
-      staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
-    },
+    // {
+    //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
+    // },
   );
   // console.log('feedData false값들', feedData);
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
@@ -112,19 +116,6 @@ function Feed() {
       deleteFeedMutation.mutate(itemId);
     }
   };
-  // const handleDeleteSecret = (itemId, accessToken) => {
-  //   deleteSecretFeedApi(itemId, accessToken)
-  //     .then((res) => {
-  //       console.log('secretData delete성공', res);
-  //       queryClient.invalidateQueries('secretData');
-  //     })
-  //     .catch((err) => console.log('secretData delete 실패', err));
-  // };
-  // const handleDelete = (itemId, accessToken) => {
-  //   deleteFeedApi(itemId, accessToken)
-  //     .then((res) => console.log('feedData delete성공', res))
-  //     .catch((err) => console.log('feedData delete 실패', err));
-  // };
   const getCategoryText = (category) => {
     switch (category) {
       case 'travel':
@@ -169,6 +160,17 @@ function Feed() {
       ...reviewValue,
       [feedId]: '',
     });
+  };
+  const handleFeedLike = async (feedId) => {
+    setIsLiked(!isLiked);
+    if (!isLiked) {
+      await feedLikeApi(feedId, cookies.access_token)
+        .then((res) => {
+          console.log(res, '좋아요 전송');
+          queryClient.invalidateQueries('feedData');
+        })
+        .catch((err) => console.log(err, '좋아요 에러'));
+    }
   };
   return (
     <div>
@@ -232,6 +234,14 @@ function Feed() {
                 <img className={styles.feedImg} alt="" src={item.file} />
               </div>
               <div className={styles.date_category}>
+                <div onClick={() => handleFeedLike(item.id)}>
+                  {isLiked ? (
+                    <FontAwesomeIcon icon={solidHeart} color="red" />
+                  ) : (
+                    <FontAwesomeIcon icon={regularHeart} />
+                  )}
+                </div>
+                <div style={{ marginRight: 10 }}>{item.likes_count}</div>
                 <div className={styles.date}>
                   {dayjs(item.created_at).format('YYYY-MM-DD')}
                 </div>
@@ -271,6 +281,7 @@ function Feed() {
               <form onSubmit={(e) => handleReviewPost(e, item.id)}>
                 <div style={{ padding: '0 10px' }}>
                   <input
+                    className={styles.review_input}
                     value={reviewValue[item.id] || ''}
                     onChange={(e) =>
                       setReviewValue({

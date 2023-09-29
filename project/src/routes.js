@@ -6,5 +6,7 @@ const routes = {
   myPage: '/myPage',
   category: '/:category',
   detail: '/:category/:id',
+  passwordSearch: '/password_search',
+  newPassword: '/new_password',
 };
 export default routes;

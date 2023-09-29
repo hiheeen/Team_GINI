@@ -33,8 +33,8 @@ function LoginPage() {
       .then((response) => {
         if (response.status === 200) {
           console.log('로그인 성공', response.data);
-          setCookie('access_token', response.data.token.access);
-          setCookie('refresh_token', response.data.token.refresh);
+          setCookie('access_token', response.data.token.access_token);
+          setCookie('refresh_token', response.data.token.refresh_token);
           setIsLoggedIn(true);
           navigate('/');
         }
@@ -80,8 +80,18 @@ function LoginPage() {
               cursor: 'pointer',
             }}
           >
-            <div>비밀번호 찾기</div>
-            <div onClick={() => navigate('/signUp')}>회원가입</div>
+            <div
+              style={{ cursor: 'pointer' }}
+              onClick={() => navigate('/password_search')}
+            >
+              비밀번호 찾기
+            </div>
+            <div
+              style={{ cursor: 'pointer' }}
+              onClick={() => navigate('/signUp')}
+            >
+              회원가입
+            </div>
           </div>
         </form>
       </div>

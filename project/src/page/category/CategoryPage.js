@@ -34,7 +34,7 @@ function CategoryPage() {
     // },
   );
   if (secretIsLoading) {
-    return <div>is loading...</div>;
+    return <div>is loading...??</div>;
   }
   return (
     <div className={styles.container}>
