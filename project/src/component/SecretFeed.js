@@ -3,8 +3,11 @@ import styles from './Feed.module.css';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deleteSecretFeedApi, getInfoApi, getSecretFeedApi } from '../apis/api';
 import { useCookies } from 'react-cookie';
+import EditButton from './EditButton';
+import { useNavigate } from 'react-router-dom';
 function SecretFeed() {
   const [cookies] = useCookies(['access_token']);
+  const navigate = useNavigate();
   const getCategoryText = (category) => {
     switch (category) {
       case 'travel':
@@ -52,6 +55,9 @@ function SecretFeed() {
       deleteSecretFeedMutation.mutate(itemId);
     }
   };
+  const handleSecretEdit = (itemId) => {
+    navigate(`/edit/secret/${itemId}`);
+  };
   const { data: infoData } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),
   );
@@ -71,7 +77,7 @@ function SecretFeed() {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                padding: '0 10px 10px 10px',
+                padding: '0 0 10px 0',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -89,27 +95,10 @@ function SecretFeed() {
                 <div>{item.writer.nickname}</div>
               </div>
               {item.writer.nickname === infoData.data.nickname && (
-                <div style={{ display: 'flex' }}>
-                  <div
-                    style={{
-                      padding: '10px 5px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    수정
-                  </div>
-
-                  <div
-                    style={{
-                      padding: '10px 5px',
-                      textAlign: 'right',
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => handleDeleteSecretClick(item.id)}
-                  >
-                    삭제
-                  </div>
-                </div>
+                <EditButton
+                  handleEdit={() => handleSecretEdit(item.id)}
+                  handleDeleteClick={() => handleDeleteSecretClick(item.id)}
+                />
               )}
             </div>
 

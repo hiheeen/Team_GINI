@@ -1,5 +1,5 @@
 import styles from './MainPage.module.css';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFolderClosed } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
@@ -13,39 +13,62 @@ import SecretFeed from '../../component/SecretFeed';
 import PublicFeed from '../../component/PublicFeed';
 function MainPage() {
   const [searchValue, setSearchValue] = useState();
-  const onOff = useRecoilValue(onOffState);
+  const [goToUpload, setGoToUpload] = useState(false);
 
+  const onOff = useRecoilValue(onOffState);
   const navigate = useNavigate();
+
+  const onGoToUpload = () => {
+    navigate('/upload/default');
+  };
+
+  useEffect(() => {
+    const handleShowButtons = () => {
+      window.scrollY > 200 ? setGoToUpload(true) : setGoToUpload(false);
+    };
+
+    window.addEventListener('scroll', handleShowButtons);
+    return () => {
+      window.removeEventListener('scroll', handleShowButtons);
+    };
+  }, []);
   return (
-    <div className={styles.container}>
-      <div className={styles.upload}>
-        <div className={styles.mainSection_header}>
-          <Fab
-            style={{
-              cursor: 'pointer',
-              boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
-              zIndex: 50,
-            }}
-            onClick={() => navigate('/upload/default/')}
-            color="white"
-            aria-label="edit"
-            size="small"
-          >
-            <EditIcon />
-          </Fab>
-          <div>
-            <input
-              placeholder="search"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
+    <>
+      <div className={styles.container}>
+        <div className={styles.upload}>
+          <div className={styles.mainSection_header}>
+            <Fab
+              style={{
+                cursor: 'pointer',
+                boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
+                zIndex: 50,
+              }}
+              onClick={() => navigate('/upload/default/')}
+              color="white"
+              aria-label="edit"
+              size="small"
+            >
+              <EditIcon />
+            </Fab>
+            <div>
+              <input
+                placeholder="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+            </div>
           </div>
         </div>
+        <div className={styles.feed}>
+          {onOff ? <SecretFeed /> : <PublicFeed />}
+        </div>
       </div>
-      <div className={styles.feed}>
-        {onOff ? <SecretFeed /> : <PublicFeed />}
-      </div>
-    </div>
+      {goToUpload && (
+        <button className={styles.go_upload} onClick={onGoToUpload}>
+          +
+        </button>
+      )}
+    </>
   );
 }
 export default MainPage;

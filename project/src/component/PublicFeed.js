@@ -9,7 +9,7 @@ import {
   postReviewApi,
 } from '../apis/api';
 import { useCookies } from 'react-cookie';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { reviewOpenState } from '../recoil/reviewOpen';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,15 +17,16 @@ import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import Review from './Review';
 import dayjs from 'dayjs';
+import EditButton from './EditButton';
+import { useNavigate } from 'react-router-dom';
 function PublicFeed() {
   const [cookies] = useCookies(['access_token']);
   const [reviewMode, setReviewMode] = useState();
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
   const [isLiked, setIsLiked] = useState(false);
   const [reviewValue, setReviewValue] = useState({});
-
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   const postReviewMutation = useMutation(
     (data) => {
       const { feedId, formData } = data;
@@ -133,6 +134,9 @@ function PublicFeed() {
         .catch((err) => console.log(err, '좋아요 에러'));
     }
   };
+  const handleEdit = (itemId) => {
+    navigate(`/edit/${itemId}`);
+  };
   return (
     <div>
       {feedData.data.results?.map((item, index) => (
@@ -142,7 +146,8 @@ function PublicFeed() {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                padding: '0 10px 10px 10px',
+                alignItems: 'center',
+                padding: '0 0 10px 0',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -160,27 +165,31 @@ function PublicFeed() {
                 <div>{item.writer.nickname}</div>
               </div>
               {item.writer.nickname === infoData.data.nickname && (
-                <div style={{ display: 'flex' }}>
-                  <div
-                    style={{
-                      padding: '10px 5px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    수정
-                  </div>
+                // <div style={{ display: 'flex' }}>
+                //   <div
+                //     style={{
+                //       padding: '10px 5px',
+                //       cursor: 'pointer',
+                //     }}
+                //   >
+                //     수정
+                //   </div>
 
-                  <div
-                    style={{
-                      padding: '10px 5px',
-                      textAlign: 'right',
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => handleDeleteClick(item.id)}
-                  >
-                    삭제
-                  </div>
-                </div>
+                //   <div
+                //     style={{
+                //       padding: '10px 5px',
+                //       textAlign: 'right',
+                //       cursor: 'pointer',
+                //     }}
+                //     onClick={() => handleDeleteClick(item.id)}
+                //   >
+                //     삭제
+                //   </div>
+                // </div>
+                <EditButton
+                  handleEdit={() => handleEdit(item.id)}
+                  handleDeleteClick={() => handleDeleteClick(item.id)}
+                />
               )}
             </div>
 
@@ -188,14 +197,17 @@ function PublicFeed() {
               <img className={styles.feedImg} alt="" src={item.file} />
             </div>
             <div className={styles.date_category}>
-              <div onClick={() => handleFeedLike(item.id)}>
+              <div
+                style={{ marginRight: 5 }}
+                onClick={() => handleFeedLike(item.id)}
+              >
                 {isLiked ? (
                   <FontAwesomeIcon icon={solidHeart} color="red" />
                 ) : (
                   <FontAwesomeIcon icon={regularHeart} />
                 )}
               </div>
-              <div style={{ marginRight: 10 }}>{item.likes_count}</div>
+              <div style={{ marginRight: 10 }}> {item.likes_count}</div>
               <div className={styles.date}>
                 {dayjs(item.created_at).format('YYYY-MM-DD')}
               </div>

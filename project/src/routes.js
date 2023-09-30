@@ -8,5 +8,7 @@ const routes = {
   detail: '/:category/:id',
   passwordSearch: '/password_search',
   newPassword: '/new_password',
+  edit: '/edit/:id',
+  editSecret: '/edit/secret/:id',
 };
 export default routes;

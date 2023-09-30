@@ -9,16 +9,18 @@ import {
 import styles from './DetailPage.module.css';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { reviewOpenState } from '../../recoil/reviewOpen';
 import { useState } from 'react';
 import Review from '../../component/Review';
+import EditButton from '../../component/EditButton';
 function DetailPage() {
   const [cookies] = useCookies(['access_token']);
   const queryClient = useQueryClient();
   const params = useParams();
   const feedId = params.id;
+  const navigate = useNavigate();
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
   const [reviewValue, setReviewValue] = useState({});
   const [reviewMode, setReviewMode] = useState();
@@ -124,31 +126,17 @@ function DetailPage() {
   if (infoLoading) {
     return <div>is loading...</div>;
   }
+  const handleEdit = (itemId) => {
+    navigate(`/edit/${itemId}`);
+  };
   return (
     <div className={styles.container}>
       <div>
         {data.data.writer === infoData.data.nickname && (
-          <div style={{ display: 'flex', justifyContent: 'right' }}>
-            <div
-              style={{
-                padding: '10px 5px',
-                cursor: 'pointer',
-              }}
-            >
-              수정
-            </div>
-
-            <div
-              style={{
-                padding: '10px 5px',
-                textAlign: 'right',
-                cursor: 'pointer',
-              }}
-              onClick={() => handleDeleteClick(data.data.id)}
-            >
-              삭제
-            </div>
-          </div>
+          <EditButton
+            handleDeleteClick={() => handleDeleteClick(data.data.id)}
+            handleEdit={() => handleEdit(data.data.id)}
+          />
         )}
 
         <div style={{ display: 'flex', justifyContent: 'center' }}>

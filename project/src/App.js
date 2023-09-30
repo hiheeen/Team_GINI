@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import routes from './routes';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import MainPage from './page/main/MainPage';
 import UpLoadPage from './page/upload/UpLoadPage';
 import Header from './component/Header';
@@ -23,21 +23,48 @@ import DetailPage from './page/detail/DetailPage';
 import { useCookies } from 'react-cookie';
 import PwSearchPage from './page/login/PwSearchPage';
 import NewPasswordPage from './page/login/NewPasswordPage';
+import EditPage from './page/edit/EditPage';
+import EditSecretPage from './page/edit/EditSecretPage';
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [cookies] = useCookies(['access_token']);
+
   useEffect(() => {
     if (!cookies.access_token) {
       setIsLoggedIn(false);
     }
   }, []);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
+  const [showButton, setShowButton] = useState(false);
+  useEffect(() => {
+    const handleShowButtons = () => {
+      window.scrollY > 200 ? setShowButton(true) : setShowButton(false);
+    };
+
+    window.addEventListener('scroll', handleShowButtons);
+    return () => {
+      window.removeEventListener('scroll', handleShowButtons);
+    };
+  }, []);
+  const onScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
   return (
     <BrowserRouter>
       <div className="App">
         <Header />
         <div className="main">
           {isLoggedIn && <Category />}
+          {showButton && (
+            <button className="scroll" onClick={onScrollToTop}>
+              Top
+            </button>
+          )}
+
           <Routes>
             <Route
               path={routes.main}
@@ -51,6 +78,8 @@ function App() {
             <Route path={routes.detail} element={<DetailPage />} />
             <Route path={routes.passwordSearch} element={<PwSearchPage />} />
             <Route path={routes.newPassword} element={<NewPasswordPage />} />
+            <Route path={routes.edit} element={<EditPage />} />
+            <Route path={routes.editSecret} element={<EditSecretPage />} />
           </Routes>
           {isLoggedIn && <Profile />}
         </div>

@@ -11,7 +11,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 // import AWS from '@aws-sdk/client-s3';
 import { PutBucketCorsCommand, S3Client } from '@aws-sdk/client-s3';
 import AWS from 'aws-sdk';
-// import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { v4 as uuidv4 } from 'uuid';
 function UpLoadPage() {
@@ -46,35 +45,6 @@ function UpLoadPage() {
       reader.readAsDataURL(file);
     }
   };
-  // const uniqueKey = uuidv4();
-  // const client = createClient({
-  //   accessKey: 'bwsXS9Z0teKUNcnoZvNQ',
-  //   secretKey: 'ctHagAeEtaT5bq2ly9JqmzGutvO2Mq4zUUTtZOjM',
-  // });
-  // const uploadFileToNaverStorage = async (file) => {
-  //   try {
-  //     const uploadResponse = await client.uploadFile({
-  //       bucket: 'jini',
-  //       key: uniqueKey,
-  //       file: file,
-  //     });
-  //     return uploadResponse.url;
-  //   } catch (error) {
-  //     console.error('Naver Object Storage upload error:', error);
-  //     return null;
-  //   }
-  // };
-  // const region = 'gov-standard';
-  // const access_key = process.env.REACT_APP_ACCESS_KEY;
-  // const secret_key = process.env.REACT_APP_SECRET_KEY;
-  // const S3 = new AWS.S3({
-  //   endpoint: 'https://kr.object.gov-ncloudstorage.com',
-  //   region: region,
-  //   credentials: {
-  //     accessKeyId: access_key,
-  //     secretAccessKey: secret_key,
-  //   },
-  // });
   const uploadImage = async () => {
     const endpoint = new AWS.Endpoint('https://kr.object.ncloudstorage.com');
     const region = 'kr-standard';

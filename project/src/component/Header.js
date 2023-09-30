@@ -89,7 +89,9 @@ function Header() {
   };
   return (
     <div className={styles.header}>
-      <div></div>
+      <div style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+        on&off
+      </div>
       <div
         style={{
           display: 'flex',
@@ -97,9 +99,6 @@ function Header() {
           alignItems: 'center',
         }}
       >
-        <div style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-          on&off
-        </div>
         {/* <img className={styles.headerImg} alt="" src={headerImg} /> */}
         <CustomSwitch
           checked={isOnOffState}

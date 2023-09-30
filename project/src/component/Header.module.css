@@ -1,9 +1,10 @@
 .header {
-  margin: 0 auto;
+  /* margin: 0 auto; */
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 40px;
+  padding: 40px 130px;
   height: 100px;
   box-shadow:
     rgba(17, 17, 26, 0.05) 0px 1px 0px,
@@ -25,6 +26,7 @@
 .login {
   display: flex;
   justify-content: right;
+  font-size: 14px;
 }
 .login > div {
   cursor: pointer;

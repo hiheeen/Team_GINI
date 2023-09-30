@@ -57,6 +57,22 @@ export const postFeedApi = async (accessToken, formData) => {
   });
   return response;
 };
+export const EditFeedApi = async (accessToken, formData, feedId) => {
+  const response = await instance.put(`feeds/${feedId}/`, formData, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+};
+export const editSecretFeedApi = async (accessToken, formData, feedId) => {
+  const response = await instance.put(`feeds/mysecret/${feedId}/`, formData, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+};
 export const deleteSecretFeedApi = async (itemId, accessToken) => {
   const response = await instance.delete(`feeds/mysecret/${itemId}/`, {
     headers: {
