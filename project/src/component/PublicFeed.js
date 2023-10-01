@@ -68,7 +68,7 @@ function PublicFeed() {
     //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
     // },
   );
-  // console.log('feedData false값들', feedData);
+  console.log('feedData false값들', feedData);
   if (isLoading) {
     return <div>is loading...</div>;
   }
@@ -123,13 +123,13 @@ function PublicFeed() {
       [feedId]: '',
     });
   };
-  const handleFeedLike = async (feedId) => {
+  const handleFeedLike = (feedId) => {
     setIsLiked(!isLiked);
     if (!isLiked) {
-      await feedLikeApi(feedId, cookies.access_token)
+      feedLikeApi(feedId, cookies.access_token)
         .then((res) => {
           console.log(res, '좋아요 전송');
-          queryClient.invalidateQueries('feedData');
+          //   queryClient.invalidateQueries('feedData');
         })
         .catch((err) => console.log(err, '좋아요 에러'));
     }
@@ -150,42 +150,26 @@ function PublicFeed() {
                 padding: '0 0 10px 0',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div>
-                  <img
-                    style={{
-                      width: 40,
-                      borderRadius: '50%',
-                      marginRight: 10,
-                    }}
-                    alt=""
-                    src={item.writer.profile}
-                  />
-                </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'left',
+                  alignItems: 'center',
+                }}
+              >
+                <img
+                  style={{
+                    width: 40,
+                    borderRadius: '50%',
+                    marginRight: 10,
+                  }}
+                  alt=""
+                  src={item.writer.profile}
+                />
+
                 <div>{item.writer.nickname}</div>
               </div>
               {item.writer.nickname === infoData.data.nickname && (
-                // <div style={{ display: 'flex' }}>
-                //   <div
-                //     style={{
-                //       padding: '10px 5px',
-                //       cursor: 'pointer',
-                //     }}
-                //   >
-                //     수정
-                //   </div>
-
-                //   <div
-                //     style={{
-                //       padding: '10px 5px',
-                //       textAlign: 'right',
-                //       cursor: 'pointer',
-                //     }}
-                //     onClick={() => handleDeleteClick(item.id)}
-                //   >
-                //     삭제
-                //   </div>
-                // </div>
                 <EditButton
                   handleEdit={() => handleEdit(item.id)}
                   handleDeleteClick={() => handleDeleteClick(item.id)}
@@ -215,14 +199,14 @@ function PublicFeed() {
                 {getCategoryText(item.category)}
               </div>
             </div>
-            <div style={{ padding: '0 10px' }}>
+            <div>
               <div className={styles.title}>{item.title}</div>
               <div className={styles.content}>{item.content}</div>
             </div>
             <div
               style={{
                 cursor: 'pointer',
-                padding: '10px',
+                padding: '20px 0',
                 fontSize: '13px',
                 color: 'grey',
               }}
@@ -245,7 +229,13 @@ function PublicFeed() {
               ''
             )}
             <form onSubmit={(e) => handleReviewPost(e, item.id)}>
-              <div style={{ padding: '0 10px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
                 <input
                   className={styles.review_input}
                   value={reviewValue[item.id] || ''}
@@ -258,10 +248,11 @@ function PublicFeed() {
                   placeholder="댓글을 남겨보세요"
                 ></input>
                 <button
+                  className={styles.review_button}
                   type="submit"
                   // onClick={() => handleReviewPost(item.id)}
                 >
-                  댓글 쓰기
+                  작성
                 </button>
               </div>
             </form>

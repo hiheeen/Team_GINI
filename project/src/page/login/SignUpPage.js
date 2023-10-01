@@ -363,11 +363,7 @@ function SignUpPage() {
         </form>
         <button onClick={valNickName}>닉네임 중복 확인</button>
         <button onClick={valEmail}>아이디 중복 확인</button>
-        <button>
-          <a href="http://www.jinii.shop/api/v1/users/auth/kakao/login/">
-            카카오
-          </a>
-        </button>
+        <Kakao />
       </div>
     </div>
   );

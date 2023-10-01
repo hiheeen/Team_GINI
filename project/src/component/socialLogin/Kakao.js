@@ -10,10 +10,11 @@ function Kakao(props) {
   const handleKakaoLogin = () => {
     setTimeout(() => {
       window.location.href = kakaoURL;
-    }, 3000);
+    }, 1000);
 
     const code = new URL(window.location.href).searchParams.get('code');
     console.log('code', code);
+
     // axios.post('http://localhost:8000', code).then((res) => {
     //     //카카오 토큰 x 프로젝트 전용 토큰 -> 백엔드에서 넘겨줌
     // });

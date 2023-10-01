@@ -1,5 +1,5 @@
 .container {
-  padding: 30px;
+  padding: 30px 35px 0 35px;
 
   display: flex;
   flex-direction: column;
@@ -7,14 +7,14 @@
   justify-content: center;
 }
 .feedImg {
-  width: 540px;
+  width: 100%;
   height: 500px;
   /* border-radius: 20px; */
 }
 .date_category {
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 10px 0;
 }
 .category {
   margin-left: 20px;
@@ -28,13 +28,23 @@
   font-weight: bold;
 }
 .review_input {
-  width: 80%;
+  width: 85%;
   height: 30px;
-  border-radius: 15px;
+  border-radius: 10px;
   box-shadow:
     rgba(17, 17, 26, 0.05) 0px 1px 0px,
     rgba(17, 17, 26, 0.1) 0px 0px 8px;
   border: none;
   padding: 0 0 0 5px;
   margin-right: 10px;
+}
+.review_button {
+  all: unset;
+  font-size: 13px;
+  box-shadow:
+    rgba(17, 17, 26, 0.05) 0px 1px 0px,
+    rgba(17, 17, 26, 0.1) 0px 0px 8px;
+  background-color: rgba(107, 112, 119, 0.1);
+  padding: 9px 12px;
+  border-radius: 10px;
 }

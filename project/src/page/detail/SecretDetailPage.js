@@ -1,13 +1,52 @@
-import dayjs from 'dayjs';
-import styles from './Feed.module.css';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { deleteSecretFeedApi, getInfoApi, getSecretFeedApi } from '../apis/api';
+import {
+  deleteSecretFeedApi,
+  getInfoApi,
+  getSecretDetailApi,
+} from '../../apis/api';
 import { useCookies } from 'react-cookie';
-import EditButton from './EditButton';
-import { useNavigate } from 'react-router-dom';
-function SecretFeed() {
+import { useNavigate, useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
+import EditButton from '../../component/EditButton';
+import styles from './SecretDetailPage.module.css';
+function SecretDetailPage() {
   const [cookies] = useCookies(['access_token']);
   const navigate = useNavigate();
+  const params = useParams();
+  const id = params.id;
+  const { data: infoData, isLoading: infoLoading } = useQuery(['getInfo'], () =>
+    getInfoApi(cookies.access_token),
+  );
+  const { data: secretData, isLoading: isSecretLoading } = useQuery(
+    ['getSecretDetail', id],
+    () => getSecretDetailApi(cookies.access_token, id),
+  );
+  console.log(secretData, 'secretData');
+  if (isSecretLoading) {
+    <div>is loading...</div>;
+  }
+  const queryClient = useQueryClient();
+
+  const deleteSecretFeedMutation = useMutation(
+    (itemId) => deleteSecretFeedApi(itemId, cookies.access_token),
+    {
+      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
+      onSuccess: (data) => {
+        // 새로운 쿼리를 무효화합니다.
+        queryClient.invalidateQueries('secretData');
+        console.log('데이터 삭제 성공', data);
+      },
+    },
+  );
+  const handleDeleteSecretClick = (itemId) => {
+    const confirmDelete = window.confirm('게시글을 삭제하시겠습니까?');
+    if (confirmDelete) {
+      deleteSecretFeedMutation.mutate(itemId);
+    }
+  };
+  const handleSecretEdit = (itemId) => {
+    navigate(`/edit/secret/${itemId}`);
+  };
   const getCategoryText = (category) => {
     switch (category) {
       case 'travel':
@@ -36,42 +75,9 @@ function SecretFeed() {
         return '';
     }
   };
-  const queryClient = useQueryClient();
-
-  const deleteSecretFeedMutation = useMutation(
-    (itemId) => deleteSecretFeedApi(itemId, cookies.access_token),
-    {
-      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
-      onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
-        queryClient.invalidateQueries('secretData');
-        console.log('데이터 삭제 성공', data);
-      },
-    },
-  );
-  const handleDeleteSecretClick = (itemId) => {
-    const confirmDelete = window.confirm('게시글을 삭제하시겠습니까?');
-    if (confirmDelete) {
-      deleteSecretFeedMutation.mutate(itemId);
-    }
-  };
-  const handleSecretEdit = (itemId) => {
-    navigate(`/edit/secret/${itemId}`);
-  };
-  const { data: infoData } = useQuery(['getInfo'], () =>
-    getInfoApi(cookies.access_token),
-  );
-  const { data: secretData, isLoading: secretIsLoading } = useQuery(
-    ['secretData'],
-    () => getSecretFeedApi(cookies.access_token),
-  );
-  console.log('secretdata', secretData);
-  if (secretIsLoading) {
-    return <div>is loading...</div>;
-  }
   return (
     <div>
-      {secretData.data?.map((item, index) => (
+      {secretData?.data?.map((item, index) => (
         <div key={index}>
           <div className={styles.container}>
             <div
@@ -115,7 +121,7 @@ function SecretFeed() {
                 {getCategoryText(item.category)}
               </div>
             </div>
-            <div style={{ padding: '0 10px' }}>
+            <div>
               <div className={styles.title}>{item.title}</div>
               <div className={styles.content}>{item.content}</div>
             </div>
@@ -125,4 +131,4 @@ function SecretFeed() {
     </div>
   );
 }
-export default SecretFeed;
+export default SecretDetailPage;

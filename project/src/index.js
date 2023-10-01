@@ -7,6 +7,7 @@ import GlobalStyle from './GlobalStyle';
 import { RecoilRoot } from 'recoil';
 import RecoilTest from './RecoilTest';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const queryClient = new QueryClient();
@@ -16,7 +17,9 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <GlobalStyle />
       <RecoilRoot>
-        <App />
+        <GoogleOAuthProvider clientId="852732613951-1go534rideb7k8c2opjbrivkt41f8r5h.apps.googleusercontent.com">
+          <App />
+        </GoogleOAuthProvider>
         {/* <RecoilTest /> */}
       </RecoilRoot>
     </QueryClientProvider>

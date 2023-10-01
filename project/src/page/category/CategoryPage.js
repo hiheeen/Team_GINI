@@ -70,7 +70,7 @@ function CategoryPage() {
                   <div
                     style={{ backgroundImage: `url(${item.file})` }}
                     className={styles.grid_item}
-                    onClick={() => navigate(`/${category}/${item.id}`)}
+                    onClick={() => navigate(`/secret/${category}/${item.id}`)}
                   >
                     <div style={{ padding: '10px 20px 0 20px' }}>
                       {dayjs(item.created_at).format('YYYY-MM-DD')}

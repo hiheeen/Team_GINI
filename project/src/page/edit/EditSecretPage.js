@@ -4,8 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useCookies } from 'react-cookie';
 import { editSecretFeedApi, getSecretDetailApi } from '../../apis/api';
+import { useRecoilState } from 'recoil';
+import { onOffState } from '../../recoil/onOff';
 
 function EditSecretPage() {
+  const [isOnOffState, setIsOnOffState] = useRecoilState(onOffState);
+
   const params = useParams();
   const id = params.id;
   const navigate = useNavigate();
@@ -34,7 +38,13 @@ function EditSecretPage() {
     };
     editSecretFeedApi(cookies.access_token, formData, id).then((res) => {
       console.log('수정 성공', res);
-      navigate(`/${value.category || data?.data.category}/${id}`);
+      if (formData.is_secret === true) {
+        navigate(`/secret/${value.category || data?.data.category}/${id}`);
+        setIsOnOffState(true);
+      } else {
+        navigate(`/${value.category || data?.data.category}/${id}`);
+        setIsOnOffState(false);
+      }
     });
   };
   return (

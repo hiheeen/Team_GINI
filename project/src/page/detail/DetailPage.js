@@ -1,6 +1,7 @@
 import { useCookies } from 'react-cookie';
 import {
   deleteFeedApi,
+  feedLikeApi,
   getDetailApi,
   getInfoApi,
   getSecretFeedApi,
@@ -15,6 +16,9 @@ import { reviewOpenState } from '../../recoil/reviewOpen';
 import { useState } from 'react';
 import Review from '../../component/Review';
 import EditButton from '../../component/EditButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 function DetailPage() {
   const [cookies] = useCookies(['access_token']);
   const queryClient = useQueryClient();
@@ -24,6 +28,8 @@ function DetailPage() {
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
   const [reviewValue, setReviewValue] = useState({});
   const [reviewMode, setReviewMode] = useState();
+  const [isLiked, setIsLiked] = useState(false);
+
   // offState postMutation
   const postReviewMutation = useMutation(
     (data) => {
@@ -61,11 +67,11 @@ function DetailPage() {
   const { data, isLoading } = useQuery(['detailData', feedId], () =>
     getDetailApi(cookies.access_token, feedId),
   );
-  // console.log('detailData', data);
+  console.log('detailData', data);
   const { data: infoData, isLoading: infoLoading } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),
   );
-
+  // console.log(infoData, 'info');
   // offState delete button
   const handleDeleteClick = (itemId) => {
     const confirmDelete = window.confirm('게시글을 삭제하시겠습니까?');
@@ -129,20 +135,64 @@ function DetailPage() {
   const handleEdit = (itemId) => {
     navigate(`/edit/${itemId}`);
   };
+  const handleFeedLike = (feedId) => {
+    setIsLiked(!isLiked);
+    if (!isLiked) {
+      feedLikeApi(feedId, cookies.access_token)
+        .then((res) => {
+          console.log(res, '좋아요 전송');
+          //   queryClient.invalidateQueries('feedData');
+        })
+        .catch((err) => console.log(err, '좋아요 에러'));
+    }
+  };
   return (
     <div className={styles.container}>
       <div>
-        {data.data.writer === infoData.data.nickname && (
-          <EditButton
-            handleDeleteClick={() => handleDeleteClick(data.data.id)}
-            handleEdit={() => handleEdit(data.data.id)}
-          />
-        )}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '0 0 10px 0',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div>
+              <img
+                style={{
+                  width: 40,
+                  borderRadius: '50%',
+                  marginRight: 10,
+                }}
+                alt=""
+                src={data.data.feed_writer.profileImg}
+              />
+            </div>
+            <div>{data.data.feed_writer.nickname}</div>
+          </div>
+          {data.data.feed_writer.nickname === infoData.data.nickname && (
+            <EditButton
+              handleDeleteClick={() => handleDeleteClick(data.data.id)}
+              handleEdit={() => handleEdit(data.data.id)}
+            />
+          )}
+        </div>
 
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <img className={styles.feedImg} alt="" src={data.data.file} />
         </div>
         <div className={styles.date_category}>
+          <div
+            style={{ marginRight: 5 }}
+            onClick={() => handleFeedLike(data.data.id)}
+          >
+            {isLiked ? (
+              <FontAwesomeIcon icon={solidHeart} color="red" />
+            ) : (
+              <FontAwesomeIcon icon={regularHeart} />
+            )}
+          </div>
+          <div style={{ marginRight: 10 }}> {data.data.likes}</div>
           <div className={styles.date}>
             {' '}
             {dayjs(data.data.created_at).format('YYYY-MM-DD')}

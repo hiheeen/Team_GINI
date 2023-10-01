@@ -143,6 +143,7 @@ function Review({ feedId, nickname, feedWriter }) {
           {replyOpen && nickname !== item.writer && (
             <div style={{ padding: '10px 20px' }}>
               <input
+                className={styles.reply_input}
                 placeholder="답글을 남겨보세요"
                 value={replyValue}
                 onChange={(e) => setReplyValue(e.target.value)}

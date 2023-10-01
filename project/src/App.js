@@ -25,6 +25,8 @@ import PwSearchPage from './page/login/PwSearchPage';
 import NewPasswordPage from './page/login/NewPasswordPage';
 import EditPage from './page/edit/EditPage';
 import EditSecretPage from './page/edit/EditSecretPage';
+import SecretDetailPage from './page/detail/SecretDetailPage';
+import KakaoCallback from './component/socialLogin/KaKaoCallback';
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [cookies] = useCookies(['access_token']);
@@ -76,10 +78,12 @@ function App() {
             <Route path={routes.myPage} element={<MyPage />} />
             <Route path={routes.category} element={<CategoryPage />} />
             <Route path={routes.detail} element={<DetailPage />} />
+            <Route path={routes.secretDetail} element={<SecretDetailPage />} />
             <Route path={routes.passwordSearch} element={<PwSearchPage />} />
             <Route path={routes.newPassword} element={<NewPasswordPage />} />
             <Route path={routes.edit} element={<EditPage />} />
             <Route path={routes.editSecret} element={<EditSecretPage />} />
+            <Route path={routes.kakao} element={<KakaoCallback />} />
           </Routes>
           {isLoggedIn && <Profile />}
         </div>

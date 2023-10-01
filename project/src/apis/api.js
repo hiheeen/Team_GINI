@@ -92,12 +92,16 @@ export const deleteFeedApi = async (itemId, accessToken) => {
   return response;
 };
 export const feedLikeApi = async (feedId, accessToken) => {
-  const response = await instance.put(`feeds/${feedId}/likes/`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
+  const response = await instance.put(
+    `feeds/${feedId}/likes/`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      withCredentials: true,
     },
-    withCredentials: true,
-  });
+  );
   return response;
 };
 export const getInfoApi = async (accessToken) => {
@@ -165,8 +169,12 @@ export const valNicknameApi = async (formData) => {
   const response = await instance.post('users/val_nickname/', formData);
   return response;
 };
-export const kakaoLoginApi = () => {
-  const response = instance.get('users/auth/kakao/login/');
+export const kakaoLoginApi = (code) => {
+  const response = instance.get('users/auth/kakao/callback', {
+    params: {
+      code,
+    },
+  });
   return response;
 };
 export const postReplyApi = async (feedId, reviewId, formData, accessToken) => {
