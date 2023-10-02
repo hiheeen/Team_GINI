@@ -15,6 +15,8 @@ import {
   valNicknameApi,
 } from '../../apis/api';
 import Kakao from '../../component/socialLogin/Kakao';
+import Google from '../../component/socialLogin/Google';
+import Naver from '../../component/socialLogin/Naver';
 function SignUpPage() {
   const profileImg = process.env.PUBLIC_URL + '/images/Vector.png';
   const [profile, setProfile] = useState();
@@ -240,6 +242,7 @@ function SignUpPage() {
               <input
                 onChange={(e) => setValue(e.target.name, e.target.value)}
                 className={styles.signUp_input}
+                style={{ width: 250 }}
                 id="userId"
                 type="text"
                 name="userId"
@@ -364,6 +367,8 @@ function SignUpPage() {
         <button onClick={valNickName}>닉네임 중복 확인</button>
         <button onClick={valEmail}>아이디 중복 확인</button>
         <Kakao />
+        <Google />
+        <Naver />
       </div>
     </div>
   );

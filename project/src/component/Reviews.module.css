@@ -8,8 +8,20 @@
   all: unset;
   box-shadow:
     rgba(17, 17, 26, 0.05) 0px 1px 0px,
-    rgba(17, 17, 26, 0.1) 0px 0px 8px;
+    rgba(17, 17, 26, 0.05) 0px 0px 8px;
   border-radius: 10px;
   font-size: 12px;
   padding: 5px;
+  margin-right: 10px;
+}
+.reply_btn {
+  all: unset;
+  font-size: 13px;
+  /* box-shadow:
+    rgba(17, 17, 26, 0.05) 0px 1px 0px,
+    rgba(17, 17, 26, 0.05) 0px 0px 8px; */
+  background-color: rgba(107, 112, 119, 0.1);
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 12px;
 }

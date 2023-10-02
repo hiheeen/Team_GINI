@@ -65,7 +65,7 @@ function SecretFeed() {
     ['secretData'],
     () => getSecretFeedApi(cookies.access_token),
   );
-  console.log('secretdata', secretData);
+  // console.log('secretdata', secretData);
   if (secretIsLoading) {
     return <div>is loading...</div>;
   }
@@ -115,7 +115,7 @@ function SecretFeed() {
                 {getCategoryText(item.category)}
               </div>
             </div>
-            <div style={{ padding: '0 10px' }}>
+            <div>
               <div className={styles.title}>{item.title}</div>
               <div className={styles.content}>{item.content}</div>
             </div>

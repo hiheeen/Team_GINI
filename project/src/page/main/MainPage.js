@@ -11,10 +11,12 @@ import { useRecoilValue } from 'recoil';
 import { onOffState } from '../../recoil/onOff';
 import SecretFeed from '../../component/SecretFeed';
 import PublicFeed from '../../component/PublicFeed';
+import { userSearchApi } from '../../apis/api';
+import { useCookies } from 'react-cookie';
 function MainPage() {
   const [searchValue, setSearchValue] = useState();
   const [goToUpload, setGoToUpload] = useState(false);
-
+  const [cookies] = useCookies(['access_token']);
   const onOff = useRecoilValue(onOffState);
   const navigate = useNavigate();
 
@@ -32,12 +34,20 @@ function MainPage() {
       window.removeEventListener('scroll', handleShowButtons);
     };
   }, []);
+  const handleSearchUser = () => {
+    userSearchApi(searchValue, cookies.access_token)
+      .then((res) => console.log('유저검색', res))
+      .catch((err) => console.error('유저검색 실패', err));
+  };
   return (
     <>
       <div className={styles.container}>
         <div className={styles.upload}>
           <div className={styles.mainSection_header}>
-            <Fab
+            <button onClick={() => navigate('/upload/default/')}>
+              기록하기
+            </button>
+            {/* <Fab
               style={{
                 cursor: 'pointer',
                 boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
@@ -49,13 +59,14 @@ function MainPage() {
               size="small"
             >
               <EditIcon />
-            </Fab>
+            </Fab> */}
             <div>
-              <input
+              {/* <input
                 placeholder="search"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
               />
+              <button onClick={handleSearchUser}>유저 검색</button> */}
             </div>
           </div>
         </div>

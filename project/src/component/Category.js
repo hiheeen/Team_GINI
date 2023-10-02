@@ -17,7 +17,7 @@ function Category() {
   const navigate = useNavigate();
   return (
     <div className={styles.container}>
-      <div style={{ padding: 10 }}>카테고리</div>
+      {/* <div style={{ padding: 10 }}>카테고리</div> */}
       <div className={styles.category_container}>
         <div>
           <AirplanemodeActiveIcon />
@@ -64,7 +64,7 @@ function Category() {
           <div onClick={() => navigate('/hobby')}>취미</div>
         </div>
       </div>
-      <div
+      {/* <div
         style={{ padding: 10 }}
         className={styles.showPeoples}
         onClick={() => setShowPeoples(!showPeoples)}
@@ -88,7 +88,7 @@ function Category() {
         </div>
       ) : (
         ''
-      )}
+      )} */}
     </div>
   );
 }

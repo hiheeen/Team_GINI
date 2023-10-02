@@ -9,7 +9,7 @@ import {
   postReviewApi,
 } from '../apis/api';
 import { useCookies } from 'react-cookie';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { reviewOpenState } from '../recoil/reviewOpen';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,8 +25,16 @@ function PublicFeed() {
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
   const [isLiked, setIsLiked] = useState(false);
   const [reviewValue, setReviewValue] = useState({});
+  const [likeMode, setLikeMode] = useState();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  //   useEffect(() => {
+  //     const storedIsLikedState = localStorage.getItem('isLiked');
+  //     if (storedIsLikedState !== null) {
+  //       setIsLiked(storedIsLikedState === 'true'); // 문자열을 불리언으로 변환
+  //     }
+  //   }, []);
+
   const postReviewMutation = useMutation(
     (data) => {
       const { feedId, formData } = data;
@@ -58,9 +66,21 @@ function PublicFeed() {
       },
     },
   );
+  const feedLikeMutation = useMutation(
+    (feedId) => feedLikeApi(feedId, cookies.access_token),
+    {
+      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
+      onSuccess: (data) => {
+        // 새로운 쿼리를 무효화합니다.
+        queryClient.invalidateQueries('feedData');
+        console.log('좋아요 성공', data);
+      },
+    },
+  );
   const { data: infoData } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),
   );
+  //   console.log(infoData, '인포');
   const { data: feedData, isLoading } = useQuery(
     ['feedData'],
     () => getFeedApi(cookies.access_token),
@@ -68,7 +88,7 @@ function PublicFeed() {
     //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
     // },
   );
-  console.log('feedData false값들', feedData);
+  //   console.log('feedData false값들', feedData);
   if (isLoading) {
     return <div>is loading...</div>;
   }
@@ -123,20 +143,19 @@ function PublicFeed() {
       [feedId]: '',
     });
   };
+
   const handleFeedLike = (feedId) => {
     setIsLiked(!isLiked);
-    if (!isLiked) {
-      feedLikeApi(feedId, cookies.access_token)
-        .then((res) => {
-          console.log(res, '좋아요 전송');
-          //   queryClient.invalidateQueries('feedData');
-        })
-        .catch((err) => console.log(err, '좋아요 에러'));
-    }
+    setLikeMode(feedId);
+    // localStorage.setItem('isLiked', newValue.toString()); // 불리언을 문자열로 저장
+    // // setIsLiked(!isLiked);
+
+    feedLikeMutation.mutate(feedId);
   };
   const handleEdit = (itemId) => {
     navigate(`/edit/${itemId}`);
   };
+
   return (
     <div>
       {feedData.data.results?.map((item, index) => (
@@ -162,6 +181,7 @@ function PublicFeed() {
                     width: 40,
                     borderRadius: '50%',
                     marginRight: 10,
+                    border: '1px solid rgba(107, 112, 119, 0.2)',
                   }}
                   alt=""
                   src={item.writer.profile}
@@ -185,7 +205,7 @@ function PublicFeed() {
                 style={{ marginRight: 5 }}
                 onClick={() => handleFeedLike(item.id)}
               >
-                {isLiked ? (
+                {isLiked && likeMode === item.id ? (
                   <FontAwesomeIcon icon={solidHeart} color="red" />
                 ) : (
                   <FontAwesomeIcon icon={regularHeart} />
@@ -203,20 +223,21 @@ function PublicFeed() {
               <div className={styles.title}>{item.title}</div>
               <div className={styles.content}>{item.content}</div>
             </div>
-            <div
-              style={{
-                cursor: 'pointer',
-                padding: '20px 0',
-                fontSize: '13px',
-                color: 'grey',
-              }}
-              onClick={() => handleModify(item.id)}
-            >
-              {item.review_count !== 0 &&
-                (isReviewOpen && reviewMode === item.id
+            {item.review_count !== 0 && (
+              <div
+                style={{
+                  cursor: 'pointer',
+                  padding: '20px 0 0 0',
+                  fontSize: '13px',
+                  color: 'grey',
+                }}
+                onClick={() => handleModify(item.id)}
+              >
+                {isReviewOpen && reviewMode === item.id
                   ? '댓글 닫기'
-                  : `댓글 ${item.review_count}개 모두 보기`)}
-            </div>
+                  : `댓글 ${item.review_count}개 모두 보기`}
+              </div>
+            )}
             {isReviewOpen && reviewMode === item.id ? (
               <div style={{ display: 'flex' }}>
                 <Review
@@ -234,6 +255,7 @@ function PublicFeed() {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
+                  padding: '20px 0',
                 }}
               >
                 <input

@@ -12,5 +12,7 @@ const routes = {
   edit: '/edit/:id',
   editSecret: '/edit/secret/:id',
   kakao: '/kakao_callback',
+  google: '/google_callback',
+  naver: '/naver_callback',
 };
 export default routes;

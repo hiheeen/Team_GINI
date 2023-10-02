@@ -1,0 +1,25 @@
+.kakao_btn {
+  background-color: rgb(253, 253, 5);
+  color: rgb(92, 51, 4);
+}
+#social_btn {
+  border: none;
+  border-radius: 13px;
+  margin-top: 10px;
+  text-align: center;
+  /* padding: 10px 76px; */
+  width: 300px;
+  height: 40px;
+  font-weight: 550;
+  box-shadow:
+    rgba(17, 17, 26, 0.05) 0px 1px 0px,
+    rgba(17, 17, 26, 0.1) 0px 0px 8px;
+}
+.google_btn {
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+}
+.naver_btn {
+  background-color: rgb(34, 212, 34);
+  color: white;
+}

@@ -177,6 +177,22 @@ export const kakaoLoginApi = (code) => {
   });
   return response;
 };
+export const googleLoginApi = (code) => {
+  const response = instance.get('users/auth/google/callback', {
+    params: {
+      code,
+    },
+  });
+  return response;
+};
+export const naverLoginApi = (code) => {
+  const response = instance.get('users/auth/naver/callback', {
+    params: {
+      code,
+    },
+  });
+  return response;
+};
 export const postReplyApi = async (feedId, reviewId, formData, accessToken) => {
   const response = await instance.post(
     `feeds/${feedId}/reviews/${reviewId}/post_reply/`,
@@ -201,6 +217,15 @@ export const getReviewDetailApi = async (feedId, accessToken) => {
 };
 export const deleteReplyApi = async (replyId, accessToken) => {
   const response = await instance.delete(`updel_reply/${replyId}/`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  });
+  return response;
+};
+export const userSearchApi = async (userId, accessToken) => {
+  const response = await instance.get(`users/${userId}/`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

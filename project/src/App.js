@@ -27,6 +27,7 @@ import EditPage from './page/edit/EditPage';
 import EditSecretPage from './page/edit/EditSecretPage';
 import SecretDetailPage from './page/detail/SecretDetailPage';
 import KakaoCallback from './component/socialLogin/KaKaoCallback';
+import GoogleCallback from './component/socialLogin/GoogleCallback';
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [cookies] = useCookies(['access_token']);
@@ -84,6 +85,7 @@ function App() {
             <Route path={routes.edit} element={<EditPage />} />
             <Route path={routes.editSecret} element={<EditSecretPage />} />
             <Route path={routes.kakao} element={<KakaoCallback />} />
+            <Route path={routes.google} element={<GoogleCallback />} />
           </Routes>
           {isLoggedIn && <Profile />}
         </div>

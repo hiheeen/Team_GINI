@@ -148,8 +148,11 @@ function Review({ feedId, nickname, feedWriter }) {
                 value={replyValue}
                 onChange={(e) => setReplyValue(e.target.value)}
               ></input>
-              <button onClick={() => handlePostReply(item.id)}>
-                답글 쓰기
+              <button
+                className={styles.reply_btn}
+                onClick={() => handlePostReply(item.id)}
+              >
+                작성
               </button>
             </div>
           )}

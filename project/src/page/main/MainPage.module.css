@@ -13,7 +13,7 @@
 .mainSection_header {
   display: flex;
   padding: 20px;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
