@@ -7,6 +7,10 @@ import { loggedInState } from '../../recoil/loggedIn';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import { loginApi } from '../../apis/api';
+import Kakao from '../../component/socialLogin/Kakao';
+
+import Naver from '../../component/socialLogin/Naver';
+import Google from '../../component/socialLogin/Google';
 function LoginPage() {
   const [userId, setUserId] = useState();
   const [password, setPassword] = useState();
@@ -68,6 +72,7 @@ function LoginPage() {
               로그인
             </button>
           </div>
+
           <div
             style={{
               display: 'flex',
@@ -92,6 +97,11 @@ function LoginPage() {
             >
               회원가입
             </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Kakao />
+            <Google />
+            <Naver />
           </div>
         </form>
       </div>

@@ -5,15 +5,16 @@
 #social_btn {
   border: none;
   border-radius: 13px;
-  margin-top: 10px;
+
   text-align: center;
   /* padding: 10px 76px; */
-  width: 300px;
+  width: 90px;
   height: 40px;
   font-weight: 550;
   box-shadow:
     rgba(17, 17, 26, 0.05) 0px 1px 0px,
-    rgba(17, 17, 26, 0.1) 0px 0px 8px;
+    rgba(17, 17, 26, 0.05) 0px 0px 8px;
+  margin: 10px 7px 0 7px;
 }
 .google_btn {
   background-color: rgb(255, 255, 255);

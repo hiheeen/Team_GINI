@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { naverLoginApi } from '../../apis/api';
+import { useEffect } from 'react';
 
 function NaverCallback() {
   const queryClient = useQueryClient();
@@ -21,6 +22,7 @@ function NaverCallback() {
   const confirmLogin = async () => {
     const params = new URL(document.location.toString()).searchParams;
     const code = params.get('code');
+    console.log('code', code);
     if (code) {
       mutation.mutate(code);
     }

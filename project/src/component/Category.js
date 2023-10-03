@@ -19,43 +19,43 @@ function Category() {
     <div className={styles.container}>
       {/* <div style={{ padding: 10 }}>카테고리</div> */}
       <div className={styles.category_container}>
-        <div>
+        <div className={styles.category_item}>
           <AirplanemodeActiveIcon />
           <div onClick={() => navigate('/travel')}>여행지</div>
         </div>
-        <div>
+        <div className={styles.category_item}>
           <MenuBookOutlinedIcon />
           <div onClick={() => navigate('/phrase')}>책/글귀</div>
         </div>
-        <div>
+        <div className={styles.category_item}>
           <MusicNoteOutlinedIcon />
           <div onClick={() => navigate('/sing')}>노래</div>
         </div>
-        <div>
+        <div className={styles.category_item}>
           <LiveTvOutlinedIcon />
           <div onClick={() => navigate('/movie_drama')}>영화/드라마</div>
         </div>
-        <div>
+        <div className={styles.category_item}>
           <SportsEsportsOutlinedIcon />
           <div onClick={() => navigate('/game')}>게임</div>
         </div>
-        <div>
+        <div className={styles.category_item}>
           <LocalPostOfficeOutlinedIcon />
           <div onClick={() => navigate('/memory')}>추억</div>
         </div>
-        <div>
+        <div className={styles.category_item}>
           <PhotoOutlinedIcon />
           <div onClick={() => navigate('/paint')}>그림</div>
         </div>
-        <div>
+        <div className={styles.category_item}>
           <LightbulbOutlinedIcon />
           <div onClick={() => navigate('/idea')}>아이디어</div>
         </div>
-        <div>
+        <div className={styles.category_item}>
           <LunchDiningOutlinedIcon />
           <div onClick={() => navigate('/food')}>음식</div>
         </div>
-        <div>
+        <div className={styles.category_item}>
           <PlaceOutlinedIcon />
           <div onClick={() => navigate('/place')}>장소</div>
         </div>

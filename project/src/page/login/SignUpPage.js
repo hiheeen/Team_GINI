@@ -242,7 +242,7 @@ function SignUpPage() {
               <input
                 onChange={(e) => setValue(e.target.name, e.target.value)}
                 className={styles.signUp_input}
-                style={{ width: 250 }}
+                style={{ width: 230 }}
                 id="userId"
                 type="text"
                 name="userId"
@@ -260,7 +260,11 @@ function SignUpPage() {
                   {errors?.userId?.message}
                 </div>
               )}
+              <label className={styles.val} for="val_email">
+                중복확인
+              </label>
             </div>
+
             {/* <button onClick={handleSubmit(onSubmit)}>아이디 중복 확인</button> */}
             {/* 비밀번호 */}
             <div>
@@ -309,6 +313,7 @@ function SignUpPage() {
 
             <div>
               <input
+                style={{ width: 230 }}
                 onChange={(e) => setValue(e.target.name, e.target.value)}
                 className={styles.signUp_input}
                 id="nickname"
@@ -325,6 +330,9 @@ function SignUpPage() {
                   {errors?.nickname?.message}
                 </div>
               )}
+              <label className={styles.val} for="val_nickname">
+                중복확인
+              </label>
             </div>
 
             {/* 성별 */}
@@ -364,11 +372,16 @@ function SignUpPage() {
           </div>
           {/* <Kakao /> */}
         </form>
-        <button onClick={valNickName}>닉네임 중복 확인</button>
-        <button onClick={valEmail}>아이디 중복 확인</button>
-        <Kakao />
-        <Google />
-        <Naver />
+        <button
+          style={{ display: 'none' }}
+          id="val_nickname"
+          onClick={valNickName}
+        >
+          닉네임 중복 확인
+        </button>
+        <button style={{ display: 'none' }} id="val_email" onClick={valEmail}>
+          아이디 중복 확인
+        </button>
       </div>
     </div>
   );

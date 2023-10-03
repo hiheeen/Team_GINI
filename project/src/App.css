@@ -12,8 +12,8 @@
 } */
 .scroll {
   position: fixed;
-  right: 25%;
-  bottom: 5%;
+  right: 20%;
+  bottom: 8%;
   z-index: 1;
 
   font-weight: bold;
@@ -28,4 +28,24 @@
 }
 .scroll:hover {
   background-color: rgb(223, 226, 230);
+}
+@media screen and (max-width: 768px) {
+  /* 모바일 스타일 */
+  #category_show {
+    display: none;
+  }
+}
+
+/* @font-face {
+  font-family: 'iceJaram-Rg';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/iceJaram-Rg.woff2')
+    format('woff2');
+  font-weight: 700;
+  font-style: normal;
+} */
+.App {
+  /* font-family: 'iceJaram-Rg'; */
+  /* font-family: 'NPSfontBold'; */
+  /* font-family: 'AR One Sans', sans-serif;
+font-family: 'Rubik', sans-serif; */
 }

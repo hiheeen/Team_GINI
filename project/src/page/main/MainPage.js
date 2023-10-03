@@ -1,7 +1,7 @@
 import styles from './MainPage.module.css';
 import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFolderClosed } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faFolderClosed } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Fab from '@mui/material/Fab';
@@ -13,9 +13,12 @@ import SecretFeed from '../../component/SecretFeed';
 import PublicFeed from '../../component/PublicFeed';
 import { userSearchApi } from '../../apis/api';
 import { useCookies } from 'react-cookie';
+import MiniHeader from '../../component/MiniHeader';
 function MainPage() {
   const [searchValue, setSearchValue] = useState();
   const [goToUpload, setGoToUpload] = useState(false);
+  const [filter, setFilter] = useState('myPosts');
+  const [order, setOrder] = useState('new');
   const [cookies] = useCookies(['access_token']);
   const onOff = useRecoilValue(onOffState);
   const navigate = useNavigate();
@@ -39,15 +42,22 @@ function MainPage() {
       .then((res) => console.log('유저검색', res))
       .catch((err) => console.error('유저검색 실패', err));
   };
+  const handleFilterPosts = (e) => {
+    setFilter(e.target.value);
+  };
+  const handleFilterOrder = (e) => {
+    setOrder(e.target.value);
+  };
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.upload}>
+        {/* <div className={styles.upload}> */}
+        <div className={styles.feed}>
           <div className={styles.mainSection_header}>
-            <button onClick={() => navigate('/upload/default/')}>
+            {/* <button onClick={() => navigate('/upload/default/')}>
               기록하기
-            </button>
-            {/* <Fab
+            </button> */}
+            <Fab
               style={{
                 cursor: 'pointer',
                 boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
@@ -59,19 +69,42 @@ function MainPage() {
               size="small"
             >
               <EditIcon />
-            </Fab> */}
-            <div>
-              {/* <input
-                placeholder="search"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-              />
-              <button onClick={handleSearchUser}>유저 검색</button> */}
+            </Fab>
+            <div style={{ display: 'flex' }}>
+              {!onOff && (
+                <select
+                  style={{ marginRight: 10 }}
+                  onChange={handleFilterPosts}
+                  value={filter}
+                >
+                  <option value="all">모두 보기</option>
+                  <option value="myPosts">나만 보기</option>
+                </select>
+              )}
+
+              <div>
+                {/* <FontAwesomeIcon icon={faBars} size="xl" /> */}
+                <select onChange={handleFilterOrder} value={order}>
+                  <option value="new">최신 순</option>
+                  <option value="old">오래된 순</option>
+                  {!onOff && <option value="like">좋아요 순</option>}
+                </select>
+              </div>
             </div>
           </div>
-        </div>
-        <div className={styles.feed}>
-          {onOff ? <SecretFeed /> : <PublicFeed />}
+          {/* </div> */}
+          {/* <MiniHeader
+          handleFilterOrder={handleFilterOrder}
+          handleFilterPosts={handleFilterPosts}
+          filter={filter}
+          order={order}
+        /> */}
+
+          {onOff ? (
+            <SecretFeed order={order} />
+          ) : (
+            <PublicFeed filter={filter} order={order} />
+          )}
         </div>
       </div>
       {goToUpload && (

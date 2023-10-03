@@ -28,6 +28,8 @@ import EditSecretPage from './page/edit/EditSecretPage';
 import SecretDetailPage from './page/detail/SecretDetailPage';
 import KakaoCallback from './component/socialLogin/KaKaoCallback';
 import GoogleCallback from './component/socialLogin/GoogleCallback';
+import Footer from './component/footer/Footer';
+import NaverCallback from './component/socialLogin/NaverCallback';
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [cookies] = useCookies(['access_token']);
@@ -60,8 +62,8 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <Header />
-        <div className="main">
-          {isLoggedIn && <Category />}
+        <div className="main" style={{ position: 'relative', zIndex: 1 }}>
+          {isLoggedIn && <Category id="category_show" />}
           {showButton && (
             <button className="scroll" onClick={onScrollToTop}>
               Top
@@ -86,9 +88,11 @@ function App() {
             <Route path={routes.editSecret} element={<EditSecretPage />} />
             <Route path={routes.kakao} element={<KakaoCallback />} />
             <Route path={routes.google} element={<GoogleCallback />} />
+            <Route path={routes.naver} element={<NaverCallback />} />
           </Routes>
           {isLoggedIn && <Profile />}
         </div>
+        <Footer />
       </div>
     </BrowserRouter>
   );

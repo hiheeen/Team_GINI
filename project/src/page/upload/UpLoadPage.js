@@ -168,7 +168,7 @@ function UpLoadPage() {
                 }))
               }
               className={styles.title}
-              placeholder="제목"
+              placeholder="제목을 입력하세요"
               value={value.title}
             />
             <hr style={{ borderColor: 'rgba(120,120,120 , 0.2)' }} />
@@ -192,15 +192,21 @@ function UpLoadPage() {
             <hr style={{ borderColor: 'rgba(120,120,120 , 0.2)' }} />
 
             <div className={styles.photo}>
+              <label htmlFor="fileInput" className={styles.customFileInput}>
+                이미지 업로드
+              </label>
               <input
+                id="fileInput"
                 type="file"
                 name="file"
                 accept=".jpg, .jpeg, .png"
                 onChange={handleFileChange}
+                style={{ display: 'none' }}
               />
             </div>
             <div>
               <textarea
+                placeholder="내용을 입력하세요"
                 onChange={(e) =>
                   setValue((prevValue) => ({
                     ...prevValue,
@@ -212,52 +218,57 @@ function UpLoadPage() {
               />
             </div>
           </div>
-
-          <div className={styles.category}>
-            {' '}
-            <select
-              onChange={(e) =>
-                setValue((prevValue) => ({
-                  ...prevValue,
-                  category: e.target.value, // category 상태 업데이트
-                }))
-              }
-              value={value.category}
-            >
-              <option value="" disabled selected>
-                카테고리
-              </option>
-              <option value={'travel'}>여행지</option>
-              <option value={'phrase'}>책/글귀</option>
-              <option value={'sing'}>노래</option>
-              <option value={'movie_drama'}>영화/드라마</option>
-              <option value={'game'}>게임</option>
-              <option value={'memory'}>추억</option>
-              <option value={'paint'}>그림</option>
-              <option value={'idea'}>아이디어</option>
-              <option value={'food'}>음식</option>
-              <option value={'place'}>장소</option>
-              <option value={'hobby'}>취미</option>
-            </select>
+          <div className={styles.select_zone}>
+            <div>
+              {' '}
+              <select
+                className={styles.category}
+                onChange={(e) =>
+                  setValue((prevValue) => ({
+                    ...prevValue,
+                    category: e.target.value, // category 상태 업데이트
+                  }))
+                }
+                value={value.category}
+              >
+                <option value="" disabled selected>
+                  카테고리
+                </option>
+                <option value={'travel'}>여행지</option>
+                <option value={'phrase'}>책/글귀</option>
+                <option value={'sing'}>노래</option>
+                <option value={'movie_drama'}>영화/드라마</option>
+                <option value={'game'}>게임</option>
+                <option value={'memory'}>추억</option>
+                <option value={'paint'}>그림</option>
+                <option value={'idea'}>아이디어</option>
+                <option value={'food'}>음식</option>
+                <option value={'place'}>장소</option>
+                <option value={'hobby'}>취미</option>
+              </select>
+            </div>
+            <div>
+              <select
+                className={styles.category}
+                onChange={(e) =>
+                  setValue((prevValue) => ({
+                    ...prevValue,
+                    is_secret: e.target.value, // is_secret 상태 업데이트
+                  }))
+                }
+                value={value.is_secret}
+              >
+                <option value="" disabled selected>
+                  on/off
+                </option>
+                <option value="true">on</option>
+                <option value="false">off</option>
+              </select>
+            </div>
+            <button className={styles.submit_btn} type="submit">
+              저장하기
+            </button>
           </div>
-          <div>
-            <select
-              onChange={(e) =>
-                setValue((prevValue) => ({
-                  ...prevValue,
-                  is_secret: e.target.value, // is_secret 상태 업데이트
-                }))
-              }
-              value={value.is_secret}
-            >
-              <option value="" disabled selected>
-                on/off
-              </option>
-              <option value="true">on</option>
-              <option value="false">off</option>
-            </select>
-          </div>
-          <button type="submit">저장하기</button>
         </form>
       </div>
     </div>

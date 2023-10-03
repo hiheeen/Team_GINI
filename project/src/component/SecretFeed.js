@@ -5,7 +5,7 @@ import { deleteSecretFeedApi, getInfoApi, getSecretFeedApi } from '../apis/api';
 import { useCookies } from 'react-cookie';
 import EditButton from './EditButton';
 import { useNavigate } from 'react-router-dom';
-function SecretFeed() {
+function SecretFeed({ order }) {
   const [cookies] = useCookies(['access_token']);
   const navigate = useNavigate();
   const getCategoryText = (category) => {
@@ -69,9 +69,13 @@ function SecretFeed() {
   if (secretIsLoading) {
     return <div>is loading...</div>;
   }
+
   return (
     <div>
-      {secretData.data?.map((item, index) => (
+      {(order === 'old'
+        ? secretData.data.slice().reverse()
+        : secretData.data
+      )?.map((item, index) => (
         <div key={index}>
           <div className={styles.container}>
             <div

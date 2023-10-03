@@ -3,36 +3,43 @@ import styles from './Profile.module.css';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { useQuery, useQueryErrorResetBoundary } from '@tanstack/react-query';
-import { getInfoApi } from '../apis/api';
+import { getFeedApi, getInfoApi, getSecretFeedApi } from '../apis/api';
+import { useNavigate } from 'react-router-dom';
 
 function Profile() {
   const profileImg = process.env.PUBLIC_URL + '/images/profileTest.png';
   const profile = process.env.PUBLIC_URL + '/images/profile.png';
   const [cookies] = useCookies(['access_token']);
   const [infoData, setInfoData] = useState();
-  // useEffect(() => {
-  //   if (cookies.access_token) {
-  //     axios
-  //       .get('http://27.96.134.191/api/v1/users/get_info/', {
-  //         headers: {
-  //           Authorization: `Bearer ${cookies.access_token}`,
-  //         },
-  //         withCredentials: true,
-  //       })
-  //       .then((res) => {
-  //         console.log('인포', res.data);
-  //         setInfoData(res.data);
-  //       })
-  //       .catch((err) => console.log('인포 get에러', err));
-  //   }
-  // }, []);
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),
   );
-  // console.log(data, '인포 데이터');
+  console.log(data, '인포 데이터');
+  const { data: feedData, isLoading: dataIsLoading } = useQuery(
+    ['feedData'],
+    () => getFeedApi(cookies.access_token),
+    // {
+    //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
+    // },
+  );
+  const { data: secretData, isLoading: secretIsLoading } = useQuery(
+    ['secretData'],
+    () => getSecretFeedApi(cookies.access_token),
+  );
+  console.log('secretdata', secretData);
+  if (secretIsLoading) {
+    return <div>is loading...</div>;
+  }
   if (isLoading) {
     return <div>is Loading...</div>;
   }
+  if (dataIsLoading) {
+    return <div>data is loading...</div>;
+  }
+  const filteredMyPosts = feedData.data.results.filter(
+    (it) => it.writer.nickname === data.data.nickname,
+  );
   return (
     <div className={styles.container}>
       <div className={styles.profileImg}>
@@ -46,12 +53,25 @@ function Profile() {
             height: '150px',
             position: 'absolute',
             borderRadius: '50%',
+            border: '1px solid rgba(112,112,112,0.2)',
           }}
         />
       </div>
+      <button
+        onClick={() => navigate('/myPage')}
+        className={styles.profileEdit}
+      >
+        프로필 편집
+      </button>
       <div className={styles.nickname}>{data.data?.nickname}</div>
       <div className={styles.description}>{data.data?.description}</div>
-      <div className={styles.liked}>좋아요 한 기록물</div>
+      <div>
+        나의 기록{' '}
+        <span style={{ fontWeight: 600, padding: '0 0 0 5px' }}>{`${
+          filteredMyPosts.length + secretData?.data.length
+        }`}</span>
+        개
+      </div>
     </div>
   );
 }

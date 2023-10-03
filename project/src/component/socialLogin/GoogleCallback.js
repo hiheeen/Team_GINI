@@ -13,7 +13,7 @@ function GoogleCallback() {
     onSuccess: (data) => {
       console.log(data, '로그인 성공');
       reset();
-      queryClient.refetchQueries(['me']);
+      queryClient.refetchQueries(['google']);
       navigate('/');
     },
     onError: (error) => {
@@ -23,6 +23,7 @@ function GoogleCallback() {
   const confirmLogin = async () => {
     const params = new URL(document.location.toString()).searchParams;
     const code = params.get('code');
+    console.log('code', code);
     if (code) {
       mutation.mutate(code);
     }

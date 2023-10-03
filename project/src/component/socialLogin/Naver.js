@@ -27,7 +27,7 @@ function Naver() {
       id={styles.social_btn}
       onClick={naverLogin}
     >
-      네이버 로그인
+      네이버
     </button>
   );
 }

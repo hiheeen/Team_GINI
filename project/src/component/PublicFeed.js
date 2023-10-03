@@ -9,7 +9,7 @@ import {
   postReviewApi,
 } from '../apis/api';
 import { useCookies } from 'react-cookie';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { reviewOpenState } from '../recoil/reviewOpen';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,7 +19,8 @@ import Review from './Review';
 import dayjs from 'dayjs';
 import EditButton from './EditButton';
 import { useNavigate } from 'react-router-dom';
-function PublicFeed() {
+import KakaoShareBtn from './kakaoShare/KakaoShareBtn';
+function PublicFeed({ filter, order }) {
   const [cookies] = useCookies(['access_token']);
   const [reviewMode, setReviewMode] = useState();
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
@@ -34,6 +35,9 @@ function PublicFeed() {
   //       setIsLiked(storedIsLikedState === 'true'); // 문자열을 불리언으로 변환
   //     }
   //   }, []);
+  useEffect(() => {
+    setIsReviewOpen(true);
+  }, [reviewMode]);
 
   const postReviewMutation = useMutation(
     (data) => {
@@ -88,7 +92,7 @@ function PublicFeed() {
     //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
     // },
   );
-  //   console.log('feedData false값들', feedData);
+  console.log('feedData false값들', feedData);
   if (isLoading) {
     return <div>is loading...</div>;
   }
@@ -155,10 +159,29 @@ function PublicFeed() {
   const handleEdit = (itemId) => {
     navigate(`/edit/${itemId}`);
   };
-
+  const filteredPosts = feedData?.data?.results?.filter(
+    (item) => item.writer.nickname === infoData.data.nickname,
+  );
+  const filterLikePosts = feedData?.data?.results
+    ?.slice()
+    .sort((a, b) => b.likes_count - a.likes_count);
+  const filterLikeMyPosts = filteredPosts.sort(
+    (a, b) => b.likes_count - a.likes_count,
+  );
   return (
     <div>
-      {feedData.data.results?.map((item, index) => (
+      {(filter === 'myPosts'
+        ? order === 'old'
+          ? filteredPosts.slice().reverse()
+          : order === 'like'
+          ? filterLikeMyPosts
+          : filteredPosts
+        : order === 'old'
+        ? feedData.data.results.slice().reverse()
+        : order === 'like'
+        ? filterLikePosts
+        : feedData.data.results
+      )?.map((item, index) => (
         <div key={index}>
           <div className={styles.container}>
             <div
@@ -190,22 +213,32 @@ function PublicFeed() {
                 <div>{item.writer.nickname}</div>
               </div>
               {item.writer.nickname === infoData.data.nickname && (
-                <EditButton
-                  handleEdit={() => handleEdit(item.id)}
-                  handleDeleteClick={() => handleDeleteClick(item.id)}
-                />
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <KakaoShareBtn imgFile={item.file} />
+                  <EditButton
+                    handleEdit={() => handleEdit(item.id)}
+                    handleDeleteClick={() => handleDeleteClick(item.id)}
+                  />
+                </div>
               )}
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <img className={styles.feedImg} alt="" src={item.file} />
             </div>
+
             <div className={styles.date_category}>
               <div
                 style={{ marginRight: 5 }}
                 onClick={() => handleFeedLike(item.id)}
               >
-                {isLiked && likeMode === item.id ? (
+                {item.is_like ? (
                   <FontAwesomeIcon icon={solidHeart} color="red" />
                 ) : (
                   <FontAwesomeIcon icon={regularHeart} />
@@ -219,6 +252,7 @@ function PublicFeed() {
                 {getCategoryText(item.category)}
               </div>
             </div>
+
             <div>
               <div className={styles.title}>{item.title}</div>
               <div className={styles.content}>{item.content}</div>

@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage } from '@fortawesome/free-solid-svg-icons';
 import styles from './LoginCss.module.css';
 function Kakao(props) {
-  // const CLIENT_ID = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}`
-  // const REDIRECT_URI = `${process.env.REDIRECT_URI}`;
-  const REST_API_KEY = process.env.REACT_APP_KAKAO_REST_API_KEY;
-  const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI;
+  const REST_API_KEY = 'e6059c2ea550960bf466add06939cfbc';
+  const REDIRECT_URI = 'http://localhost:3000/kakao_callback';
+  // const REST_API_KEY = process.env.REACT_APP_KAKAO_REST_API_KEY;
+  // const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI;
   const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
   const handleKakaoLogin = () => {
     setTimeout(() => {
@@ -21,10 +21,10 @@ function Kakao(props) {
       onClick={handleKakaoLogin}
       type="submit"
     >
-      <span style={{ marginRight: '10px' }}>
+      {/* <span style={{ marginRight: '10px' }}>
         <FontAwesomeIcon icon={faMessage} size="1x" />
-      </span>
-      카카오로 시작하기
+      </span> */}
+      카카오
     </button>
   );
 }

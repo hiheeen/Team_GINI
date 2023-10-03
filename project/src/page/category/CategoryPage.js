@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import styles from './CategoryPage.module.css';
 import { useCookies } from 'react-cookie';
-import { getFeedApi, getSecretFeedApi } from '../../apis/api';
+import { getFeedApi, getInfoApi, getSecretFeedApi } from '../../apis/api';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -18,7 +18,8 @@ function CategoryPage() {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState();
   const onOff = useRecoilValue(onOffState);
-
+  const [filter, setFilter] = useState('myPosts');
+  const [order, setOrder] = useState('new');
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
     ['secretData'],
     () => getSecretFeedApi(cookies.access_token),
@@ -33,9 +34,21 @@ function CategoryPage() {
     //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
     // },
   );
+  const { data: infoData } = useQuery(['getInfo'], () =>
+    getInfoApi(cookies.access_token),
+  );
   if (secretIsLoading) {
     return <div>is loading...??</div>;
   }
+  const handleFilterPosts = (e) => {
+    setFilter(e.target.value);
+  };
+  const handleFilterOrder = (e) => {
+    setOrder(e.target.value);
+  };
+  const filteredPosts = feedData?.data?.results?.filter(
+    (item) => item.writer.nickname === infoData.data.nickname,
+  );
   return (
     <div className={styles.container}>
       <div className={styles.upload}>
@@ -53,12 +66,23 @@ function CategoryPage() {
           >
             <EditIcon />
           </Fab>
-          <div>
-            <input
-              placeholder="search"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
+          <div style={{ display: 'flex' }}>
+            {!onOff && (
+              <select
+                style={{ marginRight: 10 }}
+                onChange={handleFilterPosts}
+                value={filter}
+              >
+                <option value="all">모두 보기</option>
+                <option value="myPosts">나만 보기</option>
+              </select>
+            )}
+
+            <select onChange={handleFilterOrder} value={order}>
+              <option value="new">최신 순</option>
+              <option value="old">오래된 순</option>
+              <option value="like">좋아요 순</option>
+            </select>
           </div>
         </div>
       </div>
@@ -81,7 +105,7 @@ function CategoryPage() {
                   </div>
                 ),
             )
-          : feedData.data.results?.map(
+          : (filter === 'myPosts' ? filteredPosts : feedData.data.results)?.map(
               (item) =>
                 item.category === category && (
                   <div

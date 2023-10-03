@@ -2,7 +2,8 @@
   background-color: white;
   margin: 20px 40px 0 20px;
   width: 100%;
-  max-width: 240px;
+  max-width: 250px;
+  height: 380px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,10 +25,21 @@
 }
 .nickname {
   padding: 10px 0;
+  font-weight: 600;
 }
 .description {
-  padding: 10px 0;
+  padding: 10px 0 20px 0;
 }
 .liked {
   padding: 10px 0;
+}
+.profileEdit {
+  border: 1px solid grey;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  padding: 5px 10px;
+  box-shadow:
+    rgba(17, 17, 26, 0.05) 0px 1px 0px,
+    rgba(17, 17, 26, 0.05) 0px 0px 8px;
+  border: none;
 }
