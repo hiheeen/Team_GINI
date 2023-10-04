@@ -92,7 +92,7 @@ function PublicFeed({ filter, order }) {
     //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
     // },
   );
-  console.log('feedData false값들', feedData);
+  // console.log('feedData false값들', feedData);
   if (isLoading) {
     return <div>is loading...</div>;
   }
@@ -159,28 +159,38 @@ function PublicFeed({ filter, order }) {
   const handleEdit = (itemId) => {
     navigate(`/edit/${itemId}`);
   };
-  const filteredPosts = feedData?.data?.results?.filter(
-    (item) => item.writer.nickname === infoData.data.nickname,
-  );
-  const filterLikePosts = feedData?.data?.results
-    ?.slice()
-    .sort((a, b) => b.likes_count - a.likes_count);
-  const filterLikeMyPosts = filteredPosts.sort(
-    (a, b) => b.likes_count - a.likes_count,
-  );
+  const filteredPosts =
+    feedData &&
+    feedData?.data?.results?.filter(
+      (item) => item.writer.nickname === infoData.data.nickname,
+    );
+  const filterLikePosts =
+    feedData &&
+    feedData?.data?.results
+      ?.slice()
+      .sort((a, b) => b.likes_count - a.likes_count);
+  const filterLikeMyPosts =
+    filteredPosts &&
+    filteredPosts.sort((a, b) => b.likes_count - a.likes_count);
   return (
     <div>
       {(filter === 'myPosts'
-        ? order === 'old'
+        ? order === 'new'
           ? filteredPosts.slice().reverse()
           : order === 'like'
           ? filterLikeMyPosts
-          : filteredPosts
-        : order === 'old'
-        ? feedData.data.results.slice().reverse()
-        : order === 'like'
-        ? filterLikePosts
-        : feedData.data.results
+          : order === 'old'
+          ? filteredPosts
+          : null
+        : filter === 'all'
+        ? order === 'old'
+          ? feedData.data.results.slice().reverse()
+          : order === 'like'
+          ? filterLikePosts
+          : order === 'new'
+          ? feedData.data.results
+          : null
+        : null
       )?.map((item, index) => (
         <div key={index}>
           <div className={styles.container}>

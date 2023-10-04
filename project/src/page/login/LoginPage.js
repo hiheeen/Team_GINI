@@ -73,18 +73,7 @@ function LoginPage() {
             </button>
           </div>
 
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              width: 300,
-              fontSize: 13,
-              padding: '5px 0 0 0',
-              textDecoration: 'underline',
-              color: 'grey',
-              cursor: 'pointer',
-            }}
-          >
+          <div className={styles.passwordSearch}>
             <div
               style={{ cursor: 'pointer' }}
               onClick={() => navigate('/password_search')}

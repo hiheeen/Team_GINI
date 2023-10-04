@@ -72,7 +72,7 @@ function SecretFeed({ order }) {
 
   return (
     <div>
-      {(order === 'old'
+      {(order && order === 'old'
         ? secretData.data.slice().reverse()
         : secretData.data
       )?.map((item, index) => (

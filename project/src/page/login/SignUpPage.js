@@ -157,6 +157,7 @@ function SignUpPage() {
           .then((response) => {
             if (response.status === 200) {
               console.log('200', response);
+              alert('이메일 인증을 진행 후 로그인 해주세요');
               navigate('/');
             }
           })

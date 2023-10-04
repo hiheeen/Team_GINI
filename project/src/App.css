@@ -1,8 +1,13 @@
 .main {
   display: flex;
   justify-content: center;
-  height: 100vh;
+  /* height: 100vh; */
   padding-top: 120px;
+}
+@media screen and (max-width: 820px) {
+  .main {
+    padding-top: 155px;
+  }
 }
 * {
   box-sizing: border-box;
@@ -30,12 +35,15 @@
   background-color: rgb(223, 226, 230);
 }
 @media screen and (max-width: 768px) {
-  /* 모바일 스타일 */
-  #category_show {
+  .web_profile {
     display: none;
   }
 }
-
+@media screen and (min-width: 769px) {
+  #mobile_profile {
+    display: none;
+  }
+}
 /* @font-face {
   font-family: 'iceJaram-Rg';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/iceJaram-Rg.woff2')
@@ -49,3 +57,9 @@
   /* font-family: 'AR One Sans', sans-serif;
 font-family: 'Rubik', sans-serif; */
 }
+/* .mobile_container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+} */

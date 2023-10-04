@@ -170,19 +170,11 @@ export const valNicknameApi = async (formData) => {
   return response;
 };
 export const kakaoLoginApi = (code) => {
-  const response = instance.get('users/auth/kakao/callback', {
-    params: {
-      code,
-    },
-  });
+  const response = instance.post('users/auth/kakao/callback', { code });
   return response;
 };
 export const googleLoginApi = (code) => {
-  const response = instance.get('users/auth/google/callback', {
-    params: {
-      code,
-    },
-  });
+  const response = instance.post('users/auth/google/callback', { code });
   return response;
 };
 export const naverLoginApi = (code) => {

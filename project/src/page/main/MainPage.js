@@ -21,6 +21,8 @@ function MainPage() {
   const [order, setOrder] = useState('new');
   const [cookies] = useCookies(['access_token']);
   const onOff = useRecoilValue(onOffState);
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 820);
+
   const navigate = useNavigate();
 
   const onGoToUpload = () => {
@@ -51,55 +53,45 @@ function MainPage() {
   return (
     <>
       <div className={styles.container}>
-        {/* <div className={styles.upload}> */}
         <div className={styles.feed}>
-          <div className={styles.mainSection_header}>
-            {/* <button onClick={() => navigate('/upload/default/')}>
-              기록하기
-            </button> */}
-            <Fab
-              style={{
-                cursor: 'pointer',
-                boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
-                zIndex: 50,
-              }}
-              onClick={() => navigate('/upload/default/')}
-              color="white"
-              aria-label="edit"
-              size="small"
-            >
-              <EditIcon />
-            </Fab>
-            <div style={{ display: 'flex' }}>
-              {!onOff && (
-                <select
-                  style={{ marginRight: 10 }}
-                  onChange={handleFilterPosts}
-                  value={filter}
-                >
-                  <option value="all">모두 보기</option>
-                  <option value="myPosts">나만 보기</option>
-                </select>
-              )}
+          {isLargeScreen && (
+            <div className={styles.mainSection_header}>
+              <Fab
+                style={{
+                  cursor: 'pointer',
+                  boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
+                  zIndex: 50,
+                }}
+                onClick={() => navigate('/upload/default/')}
+                color="white"
+                aria-label="edit"
+                size="small"
+              >
+                <EditIcon />
+              </Fab>
+              <div style={{ display: 'flex' }}>
+                {!onOff && (
+                  <select
+                    style={{ marginRight: 10 }}
+                    onChange={handleFilterPosts}
+                    value={filter}
+                  >
+                    <option value="all">모두 보기</option>
+                    <option value="myPosts">나만 보기</option>
+                  </select>
+                )}
 
-              <div>
-                {/* <FontAwesomeIcon icon={faBars} size="xl" /> */}
-                <select onChange={handleFilterOrder} value={order}>
-                  <option value="new">최신 순</option>
-                  <option value="old">오래된 순</option>
-                  {!onOff && <option value="like">좋아요 순</option>}
-                </select>
+                <div>
+                  {/* <FontAwesomeIcon icon={faBars} size="xl" /> */}
+                  <select onChange={handleFilterOrder} value={order}>
+                    <option value="new">최신 순</option>
+                    <option value="old">오래된 순</option>
+                    {!onOff && <option value="like">좋아요 순</option>}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
-          {/* </div> */}
-          {/* <MiniHeader
-          handleFilterOrder={handleFilterOrder}
-          handleFilterPosts={handleFilterPosts}
-          filter={filter}
-          order={order}
-        /> */}
-
+          )}
           {onOff ? (
             <SecretFeed order={order} />
           ) : (

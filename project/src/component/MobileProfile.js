@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import styles from './Profile.module.css';
+import styles from './MobileProfile.module.css';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { useQuery, useQueryErrorResetBoundary } from '@tanstack/react-query';
 import { getFeedApi, getInfoApi, getSecretFeedApi } from '../apis/api';
 import { useNavigate } from 'react-router-dom';
 
-function Profile({ web_profile, mobile_profile }) {
+function MobileProfile({ web_profile, mobile_profile }) {
   const profileImg = process.env.PUBLIC_URL + '/images/profileTest.png';
   const profile = process.env.PUBLIC_URL + '/images/profile.png';
   const [cookies] = useCookies(['access_token']);
@@ -42,29 +42,37 @@ function Profile({ web_profile, mobile_profile }) {
   );
   return (
     <div className={styles.container}>
-      <div className={styles.profileImg}>
-        <img
-          alt=""
-          src={
-            data.data.profileImg !== null ? data.data.profileImg : profileImg
-          }
-          style={{
-            width: '150px',
-            height: '150px',
-            position: 'absolute',
-            borderRadius: '50%',
-            border: '1px solid rgba(112,112,112,0.2)',
-          }}
-        />
+      <div>
+        <div className={styles.profile}>
+          <div>
+            <img
+              alt=""
+              src={
+                data.data.profileImg !== null
+                  ? data.data.profileImg
+                  : profileImg
+              }
+              style={{
+                width: '100px',
+                height: '100px',
+                borderRadius: '50%',
+                border: '1px solid rgba(112,112,112,0.2)',
+              }}
+            />
+          </div>
+
+          <button
+            onClick={() => navigate('/myPage')}
+            className={styles.profileEdit}
+          >
+            프로필 편집
+          </button>
+        </div>
       </div>
-      <button
-        onClick={() => navigate('/myPage')}
-        className={styles.profileEdit}
-      >
-        프로필 편집
-      </button>
-      <div className={styles.nickname}>{data.data?.nickname}</div>
-      <div className={styles.description}>{data.data?.description}</div>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className={styles.nickname}>{data.data?.nickname}</div>
+        <div className={styles.description}>{data.data?.description}</div>
+      </div>
       <div>
         나의 기록{' '}
         <span style={{ fontWeight: 600, padding: '0 0 0 5px' }}>{`${
@@ -75,4 +83,4 @@ function Profile({ web_profile, mobile_profile }) {
     </div>
   );
 }
-export default Profile;
+export default MobileProfile;

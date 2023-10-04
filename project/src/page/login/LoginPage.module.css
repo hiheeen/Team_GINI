@@ -8,6 +8,22 @@
     rgba(17, 17, 26, 0.05) 0px 1px 0px,
     rgba(17, 17, 26, 0.1) 0px 0px 8px;
   margin-top: 20px;
+  margin-bottom: 50px;
+}
+@media screen and (max-width: 768px) {
+  .container {
+    max-width: 600px;
+  }
+}
+@media screen and (max-width: 650px) {
+  .container {
+    max-width: 500px;
+  }
+}
+@media screen and (max-width: 414px) {
+  .container {
+    max-width: 380px;
+  }
 }
 .wrapper {
   display: flex;
@@ -40,6 +56,38 @@
   border: none;
   border-radius: 15px;
 }
+.passwordSearch {
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+  font-size: 13px;
+  padding: 5px 0 0 0;
+  text-decoration: underline;
+
+  color: grey;
+  cursor: pointer;
+}
+@media screen and (max-width: 450px) {
+  .login_input {
+    width: 250px;
+  }
+  .login_submit {
+    width: 250px;
+  }
+  .passwordSearch {
+    width: 250px;
+  }
+}
 .login_submit:hover {
   background-color: white;
+}
+@media screen and (max-width: 768px) {
+  .web_profile {
+    display: none;
+  }
+}
+@media screen and (min-width: 769px) {
+  #mobile_profile {
+    display: none;
+  }
 }

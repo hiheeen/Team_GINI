@@ -36,7 +36,7 @@ function MyPage() {
       onSuccess: (data) => {
         // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('infoData');
-        console.log('마이페이지 업데이트 성공', data);
+        // console.log('마이페이지 업데이트 성공', data);
         navigate('/');
       },
     },

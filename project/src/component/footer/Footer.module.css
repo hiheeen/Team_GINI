@@ -2,5 +2,14 @@
   bottom: 0;
   width: 100%;
   /* border-top: 1px solid rgba(112, 112, 112, 0.2); */
-  height: 200px;
+  height: 150px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid rgba(112, 112, 112, 0.2);
+}
+.container > div {
+  padding: 10px 0;
 }

@@ -30,10 +30,11 @@ import KakaoCallback from './component/socialLogin/KaKaoCallback';
 import GoogleCallback from './component/socialLogin/GoogleCallback';
 import Footer from './component/footer/Footer';
 import NaverCallback from './component/socialLogin/NaverCallback';
+import MobileProfile from './component/MobileProfile';
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [cookies] = useCookies(['access_token']);
-
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 820);
   useEffect(() => {
     if (!cookies.access_token) {
       setIsLoggedIn(false);
@@ -62,35 +63,114 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <Header />
-        <div className="main" style={{ position: 'relative', zIndex: 1 }}>
-          {isLoggedIn && <Category id="category_show" />}
-          {showButton && (
-            <button className="scroll" onClick={onScrollToTop}>
-              Top
-            </button>
+        <div
+          className="main"
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            paddingTop: !isLargeScreen && '100px',
+          }}
+        >
+          {isLargeScreen ? (
+            <>
+              {isLoggedIn && <Category id="category_show" />}
+              <Routes>
+                <Route
+                  path={routes.main}
+                  element={
+                    isLoggedIn ? (
+                      <>
+                        <MainPage />
+                        {showButton && (
+                          <button className="scroll" onClick={onScrollToTop}>
+                            Top
+                          </button>
+                        )}
+                      </>
+                    ) : (
+                      <LoginPage />
+                    )
+                  }
+                />
+                <Route path={routes.upload} element={<UpLoadPage />} />
+                <Route path={routes.login} element={<LoginPage />} />
+                <Route path={routes.signUp} element={<SignUpPage />} />
+                <Route path={routes.myPage} element={<MyPage />} />
+                <Route path={routes.category} element={<CategoryPage />} />
+                <Route path={routes.detail} element={<DetailPage />} />
+                <Route
+                  path={routes.secretDetail}
+                  element={<SecretDetailPage />}
+                />
+                <Route
+                  path={routes.passwordSearch}
+                  element={<PwSearchPage />}
+                />
+                <Route
+                  path={routes.newPassword}
+                  element={<NewPasswordPage />}
+                />
+                <Route path={routes.edit} element={<EditPage />} />
+                <Route path={routes.editSecret} element={<EditSecretPage />} />
+                <Route path={routes.kakao} element={<KakaoCallback />} />
+                <Route path={routes.google} element={<GoogleCallback />} />
+                <Route path={routes.naver} element={<NaverCallback />} />
+              </Routes>
+              {isLoggedIn && <Profile />}
+            </>
+          ) : (
+            <>
+              {/* {showButton && (
+                <button className="scroll" onClick={onScrollToTop}>
+                  Top
+                </button>
+              )} */}
+              {/* {isLoggedIn && <MobileProfile />} */}
+              <Routes>
+                <Route
+                  path={routes.main}
+                  element={
+                    isLoggedIn ? (
+                      <div className="mobile_container">
+                        <MobileProfile />
+                        <MainPage />
+                        {showButton && (
+                          <button className="scroll" onClick={onScrollToTop}>
+                            Top
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <LoginPage />
+                    )
+                  }
+                />
+                <Route path={routes.upload} element={<UpLoadPage />} />
+                <Route path={routes.login} element={<LoginPage />} />
+                <Route path={routes.signUp} element={<SignUpPage />} />
+                <Route path={routes.myPage} element={<MyPage />} />
+                <Route path={routes.category} element={<CategoryPage />} />
+                <Route path={routes.detail} element={<DetailPage />} />
+                <Route
+                  path={routes.secretDetail}
+                  element={<SecretDetailPage />}
+                />
+                <Route
+                  path={routes.passwordSearch}
+                  element={<PwSearchPage />}
+                />
+                <Route
+                  path={routes.newPassword}
+                  element={<NewPasswordPage />}
+                />
+                <Route path={routes.edit} element={<EditPage />} />
+                <Route path={routes.editSecret} element={<EditSecretPage />} />
+                <Route path={routes.kakao} element={<KakaoCallback />} />
+                <Route path={routes.google} element={<GoogleCallback />} />
+                <Route path={routes.naver} element={<NaverCallback />} />
+              </Routes>
+            </>
           )}
-
-          <Routes>
-            <Route
-              path={routes.main}
-              element={isLoggedIn ? <MainPage /> : <LoginPage />}
-            />
-            <Route path={routes.upload} element={<UpLoadPage />} />
-            <Route path={routes.login} element={<LoginPage />} />
-            <Route path={routes.signUp} element={<SignUpPage />} />
-            <Route path={routes.myPage} element={<MyPage />} />
-            <Route path={routes.category} element={<CategoryPage />} />
-            <Route path={routes.detail} element={<DetailPage />} />
-            <Route path={routes.secretDetail} element={<SecretDetailPage />} />
-            <Route path={routes.passwordSearch} element={<PwSearchPage />} />
-            <Route path={routes.newPassword} element={<NewPasswordPage />} />
-            <Route path={routes.edit} element={<EditPage />} />
-            <Route path={routes.editSecret} element={<EditSecretPage />} />
-            <Route path={routes.kakao} element={<KakaoCallback />} />
-            <Route path={routes.google} element={<GoogleCallback />} />
-            <Route path={routes.naver} element={<NaverCallback />} />
-          </Routes>
-          {isLoggedIn && <Profile />}
         </div>
         <Footer />
       </div>

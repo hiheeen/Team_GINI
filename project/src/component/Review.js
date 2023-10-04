@@ -9,7 +9,7 @@ import {
 } from '../apis/api';
 import { useCookies } from 'react-cookie';
 import styles from './Reviews.module.css';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { reviewOpenState } from '../recoil/reviewOpen';
 import { useRecoilState } from 'recoil';
 function Review({ feedId, nickname, feedWriter }) {
@@ -19,6 +19,12 @@ function Review({ feedId, nickname, feedWriter }) {
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyValue, setReplyValue] = useState();
+  const inputRef = useRef(null);
+  useEffect(() => {
+    if (inputRef.current && replyOpen) {
+      inputRef.current.focus();
+    }
+  }, [replyOpen]);
   const { data, isLoading } = useQuery(['detailData', feedId], () =>
     getDetailApi(cookies.access_token, feedId),
   );
@@ -88,6 +94,10 @@ function Review({ feedId, nickname, feedWriter }) {
       deleteReplyMutation.mutate(replyId);
     }
   };
+  const handleReplyOpen = () => {
+    setReplyOpen(!replyOpen);
+  };
+
   return (
     <div>
       {data.data.reviews?.map((item, index) => (
@@ -108,7 +118,7 @@ function Review({ feedId, nickname, feedWriter }) {
             {nickname === feedWriter && nickname !== item.writer && (
               <div
                 style={{ cursor: 'pointer', color: 'black' }}
-                onClick={() => setReplyOpen(!replyOpen)}
+                onClick={handleReplyOpen}
               >
                 {replyOpen ? '닫기' : '답글 달기'}
               </div>
@@ -143,6 +153,7 @@ function Review({ feedId, nickname, feedWriter }) {
           {replyOpen && nickname !== item.writer && (
             <div style={{ padding: '10px 20px' }}>
               <input
+                ref={inputRef}
                 className={styles.reply_input}
                 placeholder="답글을 남겨보세요"
                 value={replyValue}

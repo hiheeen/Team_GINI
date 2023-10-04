@@ -13,7 +13,7 @@ function GoogleCallback() {
     onSuccess: (data) => {
       console.log(data, '로그인 성공');
       reset();
-      queryClient.refetchQueries(['google']);
+      // queryClient.refetchQueries(['google']);
       navigate('/');
     },
     onError: (error) => {

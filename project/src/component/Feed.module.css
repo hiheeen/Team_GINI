@@ -1,5 +1,5 @@
 .container {
-  padding: 30px 35px 0 35px;
+  padding: 30px 35px 30px 35px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -8,6 +8,20 @@
   width: 100%;
   height: 500px;
   /* border-radius: 20px; */
+}
+@media screen and (max-width: 390px) {
+  .feedImg {
+    width: 100%;
+    height: 300px;
+    /* border-radius: 20px; */
+  }
+}
+@media screen and (max-width: 414px) {
+  .feedImg {
+    width: 100%;
+    height: 300px;
+    /* border-radius: 20px; */
+  }
 }
 .date_category {
   display: flex;

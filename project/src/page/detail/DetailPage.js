@@ -148,100 +148,112 @@ function DetailPage() {
   };
   return (
     <div className={styles.container}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          padding: '0 0 10px 0',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div>
+            <img
+              style={{
+                width: 40,
+                borderRadius: '50%',
+                marginRight: 10,
+              }}
+              alt=""
+              src={data.data.feed_writer.profileImg}
+            />
+          </div>
+          <div>{data.data.feed_writer.nickname}</div>
+        </div>
+        {data.data.feed_writer.nickname === infoData.data.nickname && (
+          <EditButton
+            handleDeleteClick={() => handleDeleteClick(data.data.id)}
+            handleEdit={() => handleEdit(data.data.id)}
+          />
+        )}
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <img className={styles.feedImg} alt="" src={data.data.file} />
+      </div>
+      <div className={styles.date_category}>
+        <div
+          style={{ marginRight: 5 }}
+          onClick={() => handleFeedLike(data.data.id)}
+        >
+          {isLiked ? (
+            <FontAwesomeIcon icon={solidHeart} color="red" />
+          ) : (
+            <FontAwesomeIcon icon={regularHeart} />
+          )}
+        </div>
+        <div style={{ marginRight: 10 }}> {data.data.likes}</div>
+        <div className={styles.date}>
+          {' '}
+          {dayjs(data.data.created_at).format('YYYY-MM-DD')}
+        </div>
+        <div className={styles.category}>
+          {getCategoryText(data.data.category)}
+        </div>
+      </div>
       <div>
+        <div className={styles.title}>{data.data.title}</div>
+        <div className={styles.content}>{data.data.content}</div>
+      </div>
+      <div
+        style={{
+          cursor: 'pointer',
+          padding: '20px 0 0 0',
+          fontSize: '13px',
+          color: 'grey',
+        }}
+        onClick={() => handleModify(data.data.id)}
+      >
+        {data.data.reviews.length !== 0 &&
+          (isReviewOpen && reviewMode === data.data.id
+            ? '댓글 닫기'
+            : `댓글 ${data.data.reviews.length}개 모두 보기`)}
+      </div>
+      {isReviewOpen && reviewMode === data.data.id ? (
+        <div style={{ display: 'flex' }}>
+          <Review feedId={data.data.id} nickname={infoData.data.nickname} />
+        </div>
+      ) : (
+        ''
+      )}
+      <form onSubmit={(e) => handleReviewPost(e, data.data.id)}>
         <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
-            padding: '0 0 10px 0',
+            alignItems: 'center',
+            padding: '20px 0',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div>
-              <img
-                style={{
-                  width: 40,
-                  borderRadius: '50%',
-                  marginRight: 10,
-                }}
-                alt=""
-                src={data.data.feed_writer.profileImg}
-              />
-            </div>
-            <div>{data.data.feed_writer.nickname}</div>
-          </div>
-          {data.data.feed_writer.nickname === infoData.data.nickname && (
-            <EditButton
-              handleDeleteClick={() => handleDeleteClick(data.data.id)}
-              handleEdit={() => handleEdit(data.data.id)}
-            />
-          )}
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <img className={styles.feedImg} alt="" src={data.data.file} />
-        </div>
-        <div className={styles.date_category}>
-          <div
-            style={{ marginRight: 5 }}
-            onClick={() => handleFeedLike(data.data.id)}
+          <input
+            className={styles.review_input}
+            value={reviewValue[data.data.id] || ''}
+            onChange={(e) =>
+              setReviewValue({
+                ...reviewValue,
+                [data.data.id]: e.target.value,
+              })
+            }
+            placeholder="댓글을 남겨보세요"
+          ></input>
+          <button
+            className={styles.review_button}
+            type="submit"
+            // onClick={() => handleReviewPost(item.id)}
           >
-            {isLiked ? (
-              <FontAwesomeIcon icon={solidHeart} color="red" />
-            ) : (
-              <FontAwesomeIcon icon={regularHeart} />
-            )}
-          </div>
-          <div style={{ marginRight: 10 }}> {data.data.likes}</div>
-          <div className={styles.date}>
-            {' '}
-            {dayjs(data.data.created_at).format('YYYY-MM-DD')}
-          </div>
-          <div className={styles.category}>
-            {getCategoryText(data.data.category)}
-          </div>
+            작성
+          </button>
         </div>
-        <div>
-          <div className={styles.title}>{data.data.title}</div>
-          <div className={styles.content}>{data.data.content}</div>
-        </div>
-        <div
-          style={{ cursor: 'pointer', padding: '10px 0' }}
-          onClick={() => handleModify(data.data.id)}
-        >
-          {data.data.reviews.length !== 0 &&
-            (isReviewOpen && reviewMode === data.data.id
-              ? '댓글 닫기'
-              : `댓글 ${data.data.reviews.length}개 모두 보기`)}
-        </div>
-        {isReviewOpen && reviewMode === data.data.id ? (
-          <div style={{ display: 'flex' }}>
-            <Review feedId={data.data.id} nickname={infoData.data.nickname} />
-          </div>
-        ) : (
-          ''
-        )}
-        <form onSubmit={(e) => handleReviewPost(e, data.data.id)}>
-          <div>
-            <input
-              value={reviewValue[data.data.id] || ''}
-              onChange={(e) =>
-                setReviewValue({
-                  ...reviewValue,
-                  [data.data.id]: e.target.value,
-                })
-              }
-              placeholder="댓글을 입력하세요"
-            ></input>
-            <button
-              type="submit"
-              // onClick={() => handleReviewPost(item.id)}
-            >
-              댓글 쓰기
-            </button>
-          </div>
-        </form>
-      </div>
+      </form>
     </div>
   );
 }

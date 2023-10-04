@@ -3,16 +3,25 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { naverLoginApi } from '../../apis/api';
 import { useEffect } from 'react';
+import { useCookies } from 'react-cookie';
+import { useRecoilState } from 'recoil';
+import { loggedInState } from '../../recoil/loggedIn';
 
 function NaverCallback() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { reset } = useForm();
+  const [cookies, setCookie] = useCookies(['access_token']);
+
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
   const mutation = useMutation((code) => naverLoginApi(code), {
     onSuccess: (data) => {
       console.log(data, '로그인 성공');
       reset();
       queryClient.refetchQueries(['me']);
+      setCookie('access_token', data.data.token.access_token);
+      setCookie('refresh_token', data.data.token.refresh_token);
+      setIsLoggedIn(true);
       navigate('/');
     },
     onError: (error) => {
@@ -22,7 +31,7 @@ function NaverCallback() {
   const confirmLogin = async () => {
     const params = new URL(document.location.toString()).searchParams;
     const code = params.get('code');
-    console.log('code', code);
+    // console.log('code', code);
     if (code) {
       mutation.mutate(code);
     }
