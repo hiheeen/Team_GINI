@@ -225,3 +225,11 @@ export const userSearchApi = async (userId, accessToken) => {
   });
   return response;
 };
+export const putEmailApi = async (formData) => {
+  const response = await instance.put('users/reset_mail/', formData);
+  return response;
+};
+export const putNewPasswordApi = async (formData) => {
+  const response = await instance.put('users/reset_passwd/', formData);
+  return response;
+};

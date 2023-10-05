@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Switch } from '@mui/material';
 import { styled } from '@mui/material/styles'; // styled import 추가
 import { useRecoilState } from 'recoil';
@@ -32,6 +32,7 @@ import MusicNoteOutlinedIcon from '@mui/icons-material/MusicNoteOutlined';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 function Header() {
   const navigate = useNavigate();
+  const modalRef = useRef();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
   const [cookies] = useCookies(['access_token']);
   const headerImg = process.env.PUBLIC_URL + '/images/Group 2.png';
@@ -90,6 +91,24 @@ function Header() {
       })
       .catch((err) => console.error('로그아웃 실패', err));
   };
+  // const handleDropDown = () => {
+  //   setShowDropDown(!showDropDown);
+  // };
+
+  // const handleOutsideClick = (e) => {
+  //   if ( !modalRef.current.contains(e.target)) {
+  //     setShowDropDown(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   // click이벤트로 하게되면 edit버튼 클릭할 때 이벤트 감지, 열리자마자 닫혀버림
+  //   document.addEventListener('mousedown', handleOutsideClick);
+
+  //   // 컴포넌트가 언마운트될 때 이벤트 리스너 해제
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleOutsideClick);
+  //   };
+  // }, [showDropDown]);
   return (
     <div className={styles.container} style={{ height: !isLoggedIn && 80 }}>
       <div className={styles.header} style={{ border: !isLoggedIn && 'none' }}>
@@ -146,53 +165,16 @@ function Header() {
               <div onClick={() => navigate('/signUp')}>회원가입</div>
             </>
           )}
-          {/* {isLoggedIn ? (
-            isSmallScreen ? (
-              <>
-                <div onClick={handleLogOut}>
-                  <FontAwesomeIcon icon={faArrowRightFromBracket} />
-                </div>
-                <div>/</div>
-                <div onClick={() => navigate('/myPage')}>
-                  <FontAwesomeIcon icon={faUser} />
-                </div>
-              </>
-            ) : (
-              <>
-                <div onClick={handleLogOut}>로그아웃</div>
-                <div>/</div>
-                <div onClick={() => navigate('/myPage')}>마이페이지</div>
-              </>
-            )
-          ) : isSmallScreen ? (
-            <>
-              <div onClick={() => navigate('/login')}>
-                <FontAwesomeIcon icon={faArrowRightToBracket} />
-              </div>
-              <div>/</div>
-              <div onClick={() => navigate('/signUp')}>
-                <FontAwesomeIcon icon={faUserPlus} />
-              </div>
-            </>
-          ) : (
-            <>
-              <div onClick={() => navigate('/login')}>로그인</div>
-              <div>/</div>
-              <div onClick={() => navigate('/signUp')}>회원가입</div>
-            </>
-          )} */}
         </div>
       </div>
       {!isLargeScreen && isLoggedIn && (
         <div className={styles.mobile_header}>
-          <div style={{ cursor: 'pointer' }}>글쓰기</div>
           <div
             onClick={() => setShowDropDown(!showDropDown)}
             style={{ cursor: 'pointer' }}
           >
             카테고리
           </div>
-          <div style={{ cursor: 'pointer' }}>최신순</div>
         </div>
       )}
       {!isLargeScreen && showDropDown && (
@@ -200,6 +182,7 @@ function Header() {
           <div className={styles.category_item}>
             <AirplanemodeActiveIcon style={{ marginRight: 7 }} />
             <div
+              ref={modalRef}
               onClick={() => {
                 navigate('/travel');
                 setShowDropDown(!showDropDown);
@@ -211,6 +194,7 @@ function Header() {
           <div className={styles.category_item}>
             <MenuBookOutlinedIcon style={{ marginRight: 7 }} />
             <div
+              ref={modalRef}
               onClick={() => {
                 navigate('/phrase');
                 setShowDropDown(!showDropDown);
@@ -222,6 +206,7 @@ function Header() {
           <div className={styles.category_item}>
             <MusicNoteOutlinedIcon style={{ marginRight: 7 }} />
             <div
+              ref={modalRef}
               onClick={() => {
                 navigate('/sing');
                 setShowDropDown(!showDropDown);
@@ -233,6 +218,7 @@ function Header() {
           <div className={styles.category_item}>
             <LiveTvOutlinedIcon style={{ marginRight: 7 }} />
             <div
+              ref={modalRef}
               onClick={() => {
                 navigate('/movie_drama');
                 setShowDropDown(!showDropDown);
@@ -244,6 +230,7 @@ function Header() {
           <div className={styles.category_item}>
             <SportsEsportsOutlinedIcon style={{ marginRight: 7 }} />
             <div
+              ref={modalRef}
               onClick={() => {
                 navigate('/game');
                 setShowDropDown(!showDropDown);
@@ -255,6 +242,7 @@ function Header() {
           <div className={styles.category_item}>
             <LocalPostOfficeOutlinedIcon style={{ marginRight: 7 }} />
             <div
+              ref={modalRef}
               onClick={() => {
                 navigate('/memory');
                 setShowDropDown(!showDropDown);
@@ -266,6 +254,7 @@ function Header() {
           <div className={styles.category_item}>
             <PhotoOutlinedIcon style={{ marginRight: 7 }} />
             <div
+              ref={modalRef}
               onClick={() => {
                 navigate('/paint');
                 setShowDropDown(!showDropDown);
@@ -277,6 +266,7 @@ function Header() {
           <div className={styles.category_item}>
             <LightbulbOutlinedIcon style={{ marginRight: 7 }} />
             <div
+              ref={modalRef}
               onClick={() => {
                 navigate('/idea');
                 setShowDropDown(!showDropDown);
@@ -288,6 +278,7 @@ function Header() {
           <div className={styles.category_item}>
             <LunchDiningOutlinedIcon style={{ marginRight: 7 }} />
             <div
+              ref={modalRef}
               onClick={() => {
                 navigate('/food');
                 setShowDropDown(!showDropDown);
@@ -299,6 +290,7 @@ function Header() {
           <div className={styles.category_item}>
             <PlaceOutlinedIcon style={{ marginRight: 7 }} />
             <div
+              ref={modalRef}
               onClick={() => {
                 navigate('/place');
                 setShowDropDown(!showDropDown);
@@ -310,6 +302,7 @@ function Header() {
           <div className={styles.category_item}>
             <SurfingOutlinedIcon style={{ marginRight: 7 }} />
             <div
+              ref={modalRef}
               onClick={() => {
                 navigate('/hobby');
                 setShowDropDown(!showDropDown);

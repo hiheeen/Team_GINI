@@ -1,8 +1,29 @@
 import { useNavigate } from 'react-router-dom';
 import styles from './PwSearchPage.module.css';
+import { putEmailApi } from '../../apis/api';
+import { useCookies } from 'react-cookie';
+import { useState } from 'react';
 function PwSearchPage() {
   const navigate = useNavigate();
-  const handleSubmit = () => {};
+  const [userId, setUserId] = useState();
+  const [cookies] = useCookies(['access_token']);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = {
+      email: userId,
+    };
+    putEmailApi(formData, cookies.access_token)
+      .then((res) => {
+        console.log('인증메일 발송', res.data);
+        alert(res.data);
+        setUserId('');
+      })
+      .catch((err) => {
+        console.log('인증메일 발송 에러', err);
+        setUserId('');
+      });
+  };
+
   return (
     <div className={styles.container}>
       <form onSubmit={handleSubmit} className={styles.wrapper}>
@@ -22,7 +43,8 @@ function PwSearchPage() {
           <input
             className={styles.login_input}
             name="userId"
-            // value={userId}
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
             placeholder="아이디(e-mail)"
           />
         </div>

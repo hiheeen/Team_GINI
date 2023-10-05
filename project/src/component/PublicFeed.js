@@ -26,7 +26,7 @@ function PublicFeed({ filter, order }) {
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
   const [isLiked, setIsLiked] = useState(false);
   const [reviewValue, setReviewValue] = useState({});
-  const [likeMode, setLikeMode] = useState();
+  // const [likeMode, setLikeMode] = useState();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   //   useEffect(() => {
@@ -150,7 +150,7 @@ function PublicFeed({ filter, order }) {
 
   const handleFeedLike = (feedId) => {
     setIsLiked(!isLiked);
-    setLikeMode(feedId);
+    // setLikeMode(feedId);
     // localStorage.setItem('isLiked', newValue.toString()); // 불리언을 문자열로 저장
     // // setIsLiked(!isLiked);
 

@@ -7,7 +7,7 @@
   box-shadow:
     rgba(17, 17, 26, 0.05) 0px 1px 0px,
     rgba(17, 17, 26, 0.1) 0px 0px 8px;
-  margin-top: 20px;
+  /* margin-top: 20px; */
   margin-bottom: 50px;
 }
 @media screen and (max-width: 768px) {
@@ -46,6 +46,7 @@
     rgba(17, 17, 26, 0.05) 0px 1px 0px,
     rgba(17, 17, 26, 0.1) 0px 0px 8px;
   border: none;
+  padding: 0 5px;
 }
 .signUp_submit {
   width: 300px;
@@ -88,4 +89,5 @@
     rgba(17, 17, 26, 0.05) 0px 0px 8px;
   padding: 12px 8px;
   background-color: #f0f0f0;
+  height: 40px;
 }

@@ -19,6 +19,7 @@ import Google from '../../component/socialLogin/Google';
 import Naver from '../../component/socialLogin/Naver';
 function SignUpPage() {
   const profileImg = process.env.PUBLIC_URL + '/images/Vector.png';
+  const profileImgUrl = new URL(profileImg, window.location.href).href;
   const [profile, setProfile] = useState();
   const [cookies, setCookie] = useCookies(['access_token', 'refresh_token']);
   const [selectedFile, setSelectedFile] = useState();
@@ -135,38 +136,65 @@ function SignUpPage() {
     });
 
     try {
-      const res = await S3.putObject({
-        Bucket: 'jini',
-        Key: selectedFile.name,
-        ACL: 'public-read',
-        Body: selectedFile,
-      }).promise();
-      console.log('s3 업로드 어쩌고', res);
-      const encodedKey = encodeURIComponent(selectedFile.name);
-      const signUpData = {
-        email: data.userId,
-        password: data.password,
-        nickname: data.nickname,
-        gender: data.gender,
-        name: data.username,
-        profileImg: `https://kr.object.ncloudstorage.com/jini/${encodedKey}`,
-      };
+      if (selectedFile) {
+        const res = await S3.putObject({
+          Bucket: 'jini',
+          Key: selectedFile.name,
+          ACL: 'public-read',
+          Body: selectedFile,
+        }).promise();
+        console.log('s3 업로드', res);
+        const encodedKey = encodeURIComponent(selectedFile.name);
+        const signUpData = {
+          email: data.userId,
+          password: data.password,
+          nickname: data.nickname,
+          gender: data.gender,
+          name: data.username,
+          profileImg: `https://kr.object.ncloudstorage.com/jini/${encodedKey}`,
+        };
 
-      if (emailChecked && nicknameChecked) {
-        signUpApi(signUpData)
-          .then((response) => {
-            if (response.status === 200) {
-              console.log('200', response);
-              alert('이메일 인증을 진행 후 로그인 해주세요');
-              navigate('/');
-            }
-          })
-          .catch((error) => console.log('err data', error));
-      } else if (!emailChecked) {
-        alert('이메일 중복체크를 해 주세요');
-        return;
-      } else if (!nicknameChecked) {
-        alert('닉네임 중복체크를 해 주세요');
+        if (emailChecked && nicknameChecked) {
+          signUpApi(signUpData)
+            .then((response) => {
+              if (response.status === 200) {
+                console.log('200', response);
+                alert('이메일 인증을 진행 후 로그인 해주세요');
+                navigate('/');
+              }
+            })
+            .catch((error) => console.log('err data', error));
+        } else if (!emailChecked) {
+          alert('이메일 중복체크를 해 주세요');
+          return;
+        } else if (!nicknameChecked) {
+          alert('닉네임 중복체크를 해 주세요');
+        }
+      } else {
+        const signUpData = {
+          email: data.userId,
+          password: data.password,
+          nickname: data.nickname,
+          gender: data.gender,
+          name: data.username,
+          profileImg: profileImgUrl,
+        };
+        if (emailChecked && nicknameChecked) {
+          signUpApi(signUpData)
+            .then((response) => {
+              if (response.status === 200) {
+                console.log('200', response);
+                alert('이메일 인증을 진행 후 로그인 해주세요');
+                navigate('/');
+              }
+            })
+            .catch((error) => console.log('err data', error));
+        } else if (!emailChecked) {
+          alert('이메일 중복체크를 해 주세요');
+          return;
+        } else if (!nicknameChecked) {
+          alert('닉네임 중복체크를 해 주세요');
+        }
       }
     } catch (err) {
       console.error('업로드 중 오류 발생', err);
@@ -239,28 +267,30 @@ function SignUpPage() {
               )}
             </div>
             {/* 아이디 */}
-            <div>
-              <input
-                onChange={(e) => setValue(e.target.name, e.target.value)}
-                className={styles.signUp_input}
-                style={{ width: 230 }}
-                id="userId"
-                type="text"
-                name="userId"
-                placeholder="onandoff@naver.com"
-                // autoComplete="userId"
-                // input의 기본 config를 작성
-                {...register('userId', {
-                  required: '아이디는 필수 입력입니다.',
+            <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <input
+                  onChange={(e) => setValue(e.target.name, e.target.value)}
+                  className={styles.signUp_input}
+                  style={{ width: 230 }}
+                  id="userId"
+                  type="text"
+                  name="userId"
+                  placeholder="onandoff@naver.com"
+                  // autoComplete="userId"
+                  // input의 기본 config를 작성
+                  {...register('userId', {
+                    required: '아이디는 필수 입력입니다.',
 
-                  validate: validateId,
-                })}
-              />
-              {errors.userId && (
-                <div className={styles.alert} role="alert">
-                  {errors?.userId?.message}
-                </div>
-              )}
+                    validate: validateId,
+                  })}
+                />
+                {errors.userId && (
+                  <div className={styles.alert} role="alert">
+                    {errors?.userId?.message}
+                  </div>
+                )}
+              </div>
               <label className={styles.val} for="val_email">
                 중복확인
               </label>
@@ -312,25 +342,27 @@ function SignUpPage() {
             </div>
             {/* 닉네임 */}
 
-            <div>
-              <input
-                style={{ width: 230 }}
-                onChange={(e) => setValue(e.target.name, e.target.value)}
-                className={styles.signUp_input}
-                id="nickname"
-                name="nickname"
-                type="text"
-                placeholder="닉네임"
-                {...register('nickname', {
-                  required: '닉네임을 입력해주세요',
-                  validate: validateNickname,
-                })}
-              />
-              {errors.nickname && (
-                <div className={styles.alert} role="alert">
-                  {errors?.nickname?.message}
-                </div>
-              )}
+            <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <input
+                  style={{ width: 230 }}
+                  onChange={(e) => setValue(e.target.name, e.target.value)}
+                  className={styles.signUp_input}
+                  id="nickname"
+                  name="nickname"
+                  type="text"
+                  placeholder="닉네임"
+                  {...register('nickname', {
+                    required: '닉네임을 입력해주세요',
+                    validate: validateNickname,
+                  })}
+                />
+                {errors.nickname && (
+                  <div className={styles.alert} role="alert">
+                    {errors?.nickname?.message}
+                  </div>
+                )}
+              </div>
               <label className={styles.val} for="val_nickname">
                 중복확인
               </label>

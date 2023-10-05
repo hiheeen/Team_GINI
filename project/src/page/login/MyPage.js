@@ -113,7 +113,7 @@ function MyPage() {
     <div className={styles.container}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.login_form}>
-          <div style={{ display: 'flex', alignItems: 'center', marginTop: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginTop: 20 }}>
             <div>
               <img
                 style={{

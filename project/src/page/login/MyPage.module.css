@@ -9,6 +9,11 @@
     rgba(17, 17, 26, 0.1) 0px 0px 8px;
   margin-top: 20px;
 }
+@media screen and (max-width: 768px) {
+  .container {
+    margin-top: 80px;
+  }
+}
 .wrapper {
   display: flex;
   flex-direction: column;

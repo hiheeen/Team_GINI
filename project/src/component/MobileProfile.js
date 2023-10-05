@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styles from './MobileProfile.module.css';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
-import { useQuery, useQueryErrorResetBoundary } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getFeedApi, getInfoApi, getSecretFeedApi } from '../apis/api';
 import { useNavigate } from 'react-router-dom';
 

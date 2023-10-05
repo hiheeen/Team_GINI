@@ -62,41 +62,39 @@ function CategoryPage() {
   return (
     <div className={styles.container}>
       <div className={styles.feed}>
-        {isLargeScreen && (
-          <div className={styles.mainSection_header}>
-            <Fab
-              style={{
-                cursor: 'pointer',
-                boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
-                zIndex: 50,
-              }}
-              onClick={() => navigate(`/upload/${category}`)}
-              color="white"
-              aria-label="edit"
-              size="small"
-            >
-              <EditIcon />
-            </Fab>
-            <div style={{ display: 'flex' }}>
-              {!onOff && (
-                <select
-                  style={{ marginRight: 10 }}
-                  onChange={handleFilterPosts}
-                  value={filter}
-                >
-                  <option value="all">모두 보기</option>
-                  <option value="myPosts">나만 보기</option>
-                </select>
-              )}
-
-              <select onChange={handleFilterOrder} value={order}>
-                <option value="new">최신 순</option>
-                <option value="old">오래된 순</option>
-                {!onOff && <option value="like">좋아요 순</option>}
+        <div className={styles.mainSection_header}>
+          <Fab
+            style={{
+              cursor: 'pointer',
+              boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px',
+              zIndex: 50,
+            }}
+            onClick={() => navigate(`/upload/${category}`)}
+            color="white"
+            aria-label="edit"
+            size="small"
+          >
+            <EditIcon />
+          </Fab>
+          <div style={{ display: 'flex' }}>
+            {!onOff && (
+              <select
+                style={{ marginRight: 10 }}
+                onChange={handleFilterPosts}
+                value={filter}
+              >
+                <option value="all">모두 보기</option>
+                <option value="myPosts">나만 보기</option>
               </select>
-            </div>
+            )}
+
+            <select onChange={handleFilterOrder} value={order}>
+              <option value="new">최신 순</option>
+              <option value="old">오래된 순</option>
+              {!onOff && <option value="like">좋아요 순</option>}
+            </select>
           </div>
-        )}
+        </div>
 
         <div className={styles.grid_container}>
           {onOff

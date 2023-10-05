@@ -43,7 +43,14 @@ function LoginPage() {
           navigate('/');
         }
       })
-      .catch((error) => console.log('로그인 실패', error));
+      .catch((error) => {
+        console.log('로그인 실패', error);
+        if (error.response.status === 400) {
+          alert('메일 인증을 완료해주세요');
+          setUserId('');
+          setPassword('');
+        }
+      });
   };
   return (
     <div className={styles.container}>
@@ -53,6 +60,7 @@ function LoginPage() {
             <input
               className={styles.login_input}
               name="userId"
+              type="text"
               value={userId}
               placeholder="아이디(e-mail)"
               onChange={onChange}
@@ -62,6 +70,7 @@ function LoginPage() {
             <input
               className={styles.login_input}
               name="password"
+              type="password"
               value={password}
               placeholder="비밀번호"
               onChange={onChange}
