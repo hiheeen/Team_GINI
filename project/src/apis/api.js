@@ -2,13 +2,16 @@ import { accordionActionsClasses } from '@mui/material';
 import { assignNestedKeys } from '@mui/system/cssVars/cssVarsParser';
 import axios from 'axios';
 
-const instance = axios.create({ baseURL: 'http://www.jinii.shop/api/v1/' });
+export const instance = axios.create({
+  baseURL: 'http://www.jinii.shop/api/v1/',
+});
 
 // instance.interceptors.request.use((config) => {
 //   const [cookies] = useCookies(['access_token']);
 //   config.headers.Authorization = `Bearer ${cookies.access_token}`;
 //   return config;
 // });
+
 export const signUpApi = async (signUpData) => {
   const response = await instance.post('users/', signUpData);
   return response;

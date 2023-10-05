@@ -31,9 +31,11 @@ import GoogleCallback from './component/socialLogin/GoogleCallback';
 import Footer from './component/footer/Footer';
 import NaverCallback from './component/socialLogin/NaverCallback';
 import MobileProfile from './component/MobileProfile';
+import { instance } from './apis/api';
+import axios from 'axios';
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [cookies] = useCookies(['access_token']);
+  const [cookies, setCookie] = useCookies(['access_token', 'refresh_token']);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 820);
   useEffect(() => {
     if (!cookies.access_token) {
@@ -58,7 +60,55 @@ function App() {
       behavior: 'smooth',
     });
   };
+  // instance.interceptors.response.use(
+  //   (res) => console.log(res, 'interceptors response'),
+  //   async (error) => {
+  //     if (error.response.status === 401 || error.response.status === 400) {
+  //       console.log('itititti');
+  //       const response = await instance.post(
+  //         'token/refresh/',
+  //         { refresh: cookies.refresh_token },
 
+  //         // { withCredentials: true }
+  //       );
+  //       if (response.data.status === 200) {
+  //         instance.defaults.headers.common['Authorization'] = `Bearer
+  //      ${response.data['access']}`;
+  //         setCookie('access_token', response.data.token.access_token);
+  //         setCookie('refresh_token', response.data.token.refresh_token);
+  //         setIsLoggedIn(true);
+  //       }
+  //     }
+
+  //     return error;
+  //   },
+  // );
+  let refresh = false;
+  axios.interceptors.response.use(
+    (resp) => resp,
+    async (error) => {
+      if (error.response.status === 401 && !refresh) {
+        refresh = true;
+        console.log(localStorage.getItem('refresh_token'));
+        const response = await instance.post(
+          'users/Refresh/',
+          {
+            refresh: cookies.refresh_token,
+          },
+          { withCredentials: true },
+        );
+        if (response.status === 200) {
+          axios.defaults.headers.common['Authorization'] = `Bearer 
+       ${response.data['access']}`;
+          setCookie('access_token', response.data.token.access_token);
+          setCookie('refresh_token', response.data.token.refresh_token); // 실제로 뭐 오는지 알아야 함
+          return axios(error.config);
+        }
+      }
+      refresh = false;
+      return error;
+    },
+  );
   return (
     <BrowserRouter>
       <div className="App">

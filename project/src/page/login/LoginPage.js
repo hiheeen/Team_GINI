@@ -46,7 +46,7 @@ function LoginPage() {
       .catch((error) => {
         console.log('로그인 실패', error);
         if (error.response.status === 400) {
-          alert('메일 인증을 완료해주세요');
+          alert('로그인에 실패하였습니다');
           setUserId('');
           setPassword('');
         }
