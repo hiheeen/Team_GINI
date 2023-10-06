@@ -5,6 +5,17 @@ import { deleteSecretFeedApi, getInfoApi, getSecretFeedApi } from '../apis/api';
 import { useCookies } from 'react-cookie';
 import EditButton from './EditButton';
 import { useNavigate } from 'react-router-dom';
+import AirplanemodeActiveIcon from '@mui/icons-material/AirplanemodeActive';
+import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
+import LiveTvOutlinedIcon from '@mui/icons-material/LiveTvOutlined';
+import SportsEsportsOutlinedIcon from '@mui/icons-material/SportsEsportsOutlined';
+import LocalPostOfficeOutlinedIcon from '@mui/icons-material/LocalPostOfficeOutlined';
+import LunchDiningOutlinedIcon from '@mui/icons-material/LunchDiningOutlined';
+import PhotoOutlinedIcon from '@mui/icons-material/PhotoOutlined';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import SurfingOutlinedIcon from '@mui/icons-material/SurfingOutlined';
+import MusicNoteOutlinedIcon from '@mui/icons-material/MusicNoteOutlined';
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 function SecretFeed({ order }) {
   const [cookies] = useCookies(['access_token']);
   const navigate = useNavigate();
@@ -37,7 +48,8 @@ function SecretFeed({ order }) {
     }
   };
   const queryClient = useQueryClient();
-
+  const toggleOn = process.env.PUBLIC_URL + '/images/toggleOn.png';
+  const toggleOff = process.env.PUBLIC_URL + '/images/toggleOff.png';
   const deleteSecretFeedMutation = useMutation(
     (itemId) => deleteSecretFeedApi(itemId, cookies.access_token),
     {
@@ -79,7 +91,7 @@ function SecretFeed({ order }) {
 
   return (
     <div>
-      {secretData.data.length === 0 ? (
+      {secretData?.data?.length === 0 ? (
         <>
           <div className={styles.container}>
             <div
@@ -98,16 +110,69 @@ function SecretFeed({ order }) {
                       marginRight: 10,
                     }}
                     alt=""
-                    src=""
+                    src={infoData.data.profileImg}
                   />
                 </div>
                 <div>on&off</div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <img className={styles.feedImg} alt="" src="" />
+            <div className={styles.fakeImg}>
+              <div>안녕하세요, on&off입니다.</div>
+              <div>간직하고 싶은 소중한 모든 것들을 기록해보세요.</div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <AirplanemodeActiveIcon />
+                <MenuBookOutlinedIcon />
+                <MusicNoteOutlinedIcon />
+                <LocalPostOfficeOutlinedIcon />
+                <LiveTvOutlinedIcon />
+                <PlaceOutlinedIcon />
+                <SurfingOutlinedIcon />
+                <LunchDiningOutlinedIcon />
+              </div>
+              <div>다양한 카테고리 별로 나누어 기록할 수 있고,</div>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <img
+                    style={{ height: 20, padding: '0 10px' }}
+                    alt=""
+                    src={toggleOff}
+                  />
+                  <div>off</div>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <img
+                    style={{ height: 20, padding: '0 10px' }}
+                    alt=""
+                    src={toggleOn}
+                  />
+                  <div>on</div>
+                </div>
+              </div>
+              <div>
+                모두에게 공유하고픈 기록, 나만 아껴보고 싶은 기록을 나눌 수
+                있어요.
+              </div>
+              <div>맛집을 다녀와서 기억해두었다가 다시 가고 싶을 때</div>
+              <div>친구와 함께 여행을 가서 보았던 풍경이 너무 예쁠 때</div>
+              <div>몇번이고 다시 보고싶은 영화가 생겼을 때</div>
+              <div>on&off에서 모든 순간을 기록하고, 기억할 수 있어요.</div>
             </div>
+
             <div className={styles.date_category}>
               <div className={styles.date}>2023-10-05</div>
               <div className={styles.category}>카테고리</div>

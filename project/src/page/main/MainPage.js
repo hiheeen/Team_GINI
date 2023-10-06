@@ -17,7 +17,7 @@ import MiniHeader from '../../component/MiniHeader';
 function MainPage() {
   const [searchValue, setSearchValue] = useState();
   const [goToUpload, setGoToUpload] = useState(false);
-  const [filter, setFilter] = useState('myPosts');
+  const [filter, setFilter] = useState('all');
   const [order, setOrder] = useState('new');
   const [cookies] = useCookies(['access_token']);
   const onOff = useRecoilValue(onOffState);

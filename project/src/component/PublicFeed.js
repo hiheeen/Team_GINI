@@ -162,7 +162,7 @@ function PublicFeed({ filter, order }) {
   const filteredPosts =
     feedData &&
     feedData?.data?.results?.filter(
-      (item) => item.writer.nickname === infoData.data.nickname,
+      (item) => item.writer.nickname === infoData?.data.nickname,
     );
 
   const filterLikePosts =
@@ -219,7 +219,7 @@ function PublicFeed({ filter, order }) {
       ) : (
         (filter === 'myPosts'
           ? order === 'new'
-            ? filteredPosts.sort(
+            ? filteredPosts?.sort(
                 (a, b) => new Date(b.created_at) - new Date(a.created_at),
               )
             : order === 'like'
@@ -232,11 +232,11 @@ function PublicFeed({ filter, order }) {
             : null
           : filter === 'all'
           ? order === 'old'
-            ? feedData.data.results.slice().reverse()
+            ? feedData?.data?.results?.slice().reverse()
             : order === 'like'
             ? filterLikePosts
             : order === 'new'
-            ? feedData.data.results
+            ? feedData?.data.results
             : null
           : null
         )?.map((item, index) => (

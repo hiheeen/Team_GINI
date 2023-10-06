@@ -37,7 +37,10 @@ import axios from 'axios';
 
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [cookies, setCookie] = useCookies(['access_token', 'refresh_token']);
+  const [cookies, setCookie, removeCookie] = useCookies([
+    'access_token',
+    'refresh_token',
+  ]);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 820);
   useEffect(() => {
     if (!cookies.access_token) {
@@ -143,38 +146,41 @@ function App() {
     (resp) => resp,
     async (error) => {
       if (error.response.status === 401 && !refresh) {
+        console.log(error, '에러 확인');
         // 401 상태 코드에 대한 처리
         refresh = true;
-        const response = await instance.post(
-          'users/Refresh/',
-          {
-            refresh: cookies.refresh_token,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
+        try {
+          const response = await instance.post(
+            'users/Refresh/',
+            {
+              refresh: cookies.refresh_token,
             },
-            withCredentials: true,
-          },
-        );
-        if (response.status === 200) {
-          console.log('200번', response);
-          setCookie('access_token', response.data.access);
-          setCookie('refresh_token', response.data.refresh);
-          instance.defaults.headers.common[
-            'Authorization'
-          ] = `Bearer ${response.data.access}`;
-
-          await instance.get('feeds/', {
-            headers: {
-              Authorization: `Bearer ${response.data.access}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              withCredentials: true,
             },
-            withCredentials: true,
-          });
+          );
+          if (response.status === 200) {
+            console.log('200번', response);
+            removeCookie('access_token');
+            removeCookie('refresh_token');
+            setCookie('access_token', response.data.access);
+            setCookie('refresh_token', response.data.refresh);
+            instance.defaults.headers.common[
+              'Authorization'
+            ] = `Bearer ${response.data.access}`;
+            window.location.reload();
+            return instance.request(error.config);
+          }
+        } catch (refreshError) {
+          console.error('refresh 에러발생', refreshError);
         }
+        refresh = false;
       }
-      refresh = false;
-      return error;
+
+      return Promise.reject(error);
     },
   );
 

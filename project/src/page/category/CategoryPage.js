@@ -134,6 +134,7 @@ function CategoryPage() {
                 (item) =>
                   item.category === category && (
                     <div
+                      key={item.id}
                       style={{ backgroundImage: `url(${item.file})` }}
                       className={styles.grid_item}
                       onClick={() => navigate(`/${category}/${item.id}`)}
