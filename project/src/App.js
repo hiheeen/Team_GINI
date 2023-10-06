@@ -33,6 +33,8 @@ import NaverCallback from './component/socialLogin/NaverCallback';
 import MobileProfile from './component/MobileProfile';
 import { instance } from './apis/api';
 import axios from 'axios';
+// import axios from 'axios';
+
 function App() {
   // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [cookies, setCookie] = useCookies(['access_token', 'refresh_token']);
@@ -42,6 +44,9 @@ function App() {
       setIsLoggedIn(false);
     }
   }, []);
+  useEffect(() => {
+    console.log(cookies.access_token, '토큰 바뀌는지 확인');
+  }, [cookies.access_token]);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
   const [showButton, setShowButton] = useState(false);
   useEffect(() => {
@@ -59,6 +64,18 @@ function App() {
       top: 0,
       behavior: 'smooth',
     });
+  };
+  const privateApi = axios.create({
+    baseURL: 'http://www.jinii.shop/api/v1/',
+    headers: {
+      Authorization: `Bearer ${cookies.access_token}`,
+    },
+  });
+  const getFeedApi = async () => {
+    const response = await privateApi.get('feeds/', {
+      withCredentials: true,
+    });
+    return response;
   };
   // instance.interceptors.response.use(
   //   (res) => console.log(res, 'interceptors response'),
@@ -83,32 +100,84 @@ function App() {
   //     return error;
   //   },
   // );
+
+  // axios.interceptors.response.use(
+  //   (resp) => resp,
+  //   async (error) => {
+  //     if (error.response.status === 401 && !refresh) {
+  //       refresh = true;
+  //       const response = await instance
+  //         .post(
+  //           'users/Refresh/',
+  //           {
+  //             refresh: cookies.refresh_token,
+  //           },
+  //           { withCredentials: true },
+  //         )
+  //         .then((res) => {
+  //           console.log('리프레시데이터', res);
+  //           if (res.status === 200) {
+  //             setCookie('access_token', res.data.access);
+  //             setCookie('refresh_token', res.data.refresh);
+  //             axios.defaults.headers.common['Authorization'] = `Bearer
+  //             ${cookies.access_token}`;
+  //             return axios(error.config);
+  //           }
+  //         })
+  //         .catch((err) => console.log('리프레시에러', err));
+  //       //   if (response.status === 200) {
+  //       //     console.log(response, '리프레시');
+  //       //     axios.defaults.headers.common['Authorization'] = `Bearer
+  //       //  ${response.data['access']}`;
+  //       //     setCookie('access_token', response.data.access);
+  //       //     setCookie('refresh_token', response.data.refresh); // 실제로 뭐 오는지 알아야 함
+  //       //     return axios(error.config);
+  //     }
+  //     refresh = false;
+  //     return error;
+  //   },
+  // );
+
   let refresh = false;
-  axios.interceptors.response.use(
+  instance.interceptors.response.use(
     (resp) => resp,
     async (error) => {
       if (error.response.status === 401 && !refresh) {
+        // 401 상태 코드에 대한 처리
         refresh = true;
-        console.log(localStorage.getItem('refresh_token'));
         const response = await instance.post(
           'users/Refresh/',
           {
             refresh: cookies.refresh_token,
           },
-          { withCredentials: true },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            withCredentials: true,
+          },
         );
         if (response.status === 200) {
-          axios.defaults.headers.common['Authorization'] = `Bearer 
-       ${response.data['access']}`;
-          setCookie('access_token', response.data.token.access_token);
-          setCookie('refresh_token', response.data.token.refresh_token); // 실제로 뭐 오는지 알아야 함
-          return axios(error.config);
+          console.log('200번', response);
+          setCookie('access_token', response.data.access);
+          setCookie('refresh_token', response.data.refresh);
+          instance.defaults.headers.common[
+            'Authorization'
+          ] = `Bearer ${response.data.access}`;
+
+          await instance.get('feeds/', {
+            headers: {
+              Authorization: `Bearer ${response.data.access}`,
+            },
+            withCredentials: true,
+          });
         }
       }
       refresh = false;
       return error;
     },
   );
+
   return (
     <BrowserRouter>
       <div className="App">

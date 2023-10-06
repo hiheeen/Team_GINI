@@ -11,6 +11,7 @@ import Kakao from '../../component/socialLogin/Kakao';
 
 import Naver from '../../component/socialLogin/Naver';
 import Google from '../../component/socialLogin/Google';
+import { onOffState } from '../../recoil/onOff';
 function LoginPage() {
   const [userId, setUserId] = useState();
   const [password, setPassword] = useState();
@@ -18,6 +19,8 @@ function LoginPage() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
   const setLoggedInUseSetRecoilState = useSetRecoilState(loggedInState);
+  const [isOnOffState, setIsOnOffState] = useRecoilState(onOffState);
+
   const onChange = (e) => {
     const { name, value } = e.currentTarget;
     if (name === 'userId') {
@@ -40,6 +43,7 @@ function LoginPage() {
           setCookie('access_token', response.data.token.access_token);
           setCookie('refresh_token', response.data.token.refresh_token);
           setIsLoggedIn(true);
+          setIsOnOffState(true);
           navigate('/');
         }
       })

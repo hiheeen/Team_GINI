@@ -58,14 +58,21 @@ function SecretFeed({ order }) {
   const handleSecretEdit = (itemId) => {
     navigate(`/edit/secret/${itemId}`);
   };
-  const { data: infoData } = useQuery(['getInfo'], () =>
-    getInfoApi(cookies.access_token),
+  const { data: infoData } = useQuery(
+    ['getInfo'],
+    () => getInfoApi(cookies.access_token),
+    {
+      staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
+    },
   );
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
     ['secretData'],
     () => getSecretFeedApi(cookies.access_token),
+    {
+      staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
+    },
   );
-  console.log('secretdata', secretData);
+  // console.log('secretdata', secretData);
   if (secretIsLoading) {
     return <div>is loading...</div>;
   }

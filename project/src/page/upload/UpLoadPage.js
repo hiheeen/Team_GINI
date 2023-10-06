@@ -231,7 +231,7 @@ function UpLoadPage() {
                 }
                 value={value.category}
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   카테고리
                 </option>
                 <option value={'travel'}>여행지</option>

@@ -8,7 +8,7 @@ import { loggedInState } from '../recoil/loggedIn';
 import { useCookies } from 'react-cookie';
 import Cookies from 'js-cookie';
 
-import { logOutApi } from '../apis/api';
+import { instance, logOutApi } from '../apis/api';
 import axios from 'axios';
 import { onOffState } from '../recoil/onOff';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -34,7 +34,7 @@ function Header() {
   const navigate = useNavigate();
   const modalRef = useRef();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
-  const [cookies] = useCookies(['access_token']);
+  const [cookies, setCookie] = useCookies(['access_token']);
   const headerImg = process.env.PUBLIC_URL + '/images/Group 2.png';
   const [isOnOffState, setIsOnOffState] = useRecoilState(onOffState);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 820);
@@ -109,6 +109,7 @@ function Header() {
   //     document.removeEventListener('mousedown', handleOutsideClick);
   //   };
   // }, [showDropDown]);
+
   return (
     <div className={styles.container} style={{ height: !isLoggedIn && 80 }}>
       <div className={styles.header} style={{ border: !isLoggedIn && 'none' }}>

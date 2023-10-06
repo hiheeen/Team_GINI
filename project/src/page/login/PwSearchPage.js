@@ -3,10 +3,11 @@ import styles from './PwSearchPage.module.css';
 import { putEmailApi } from '../../apis/api';
 import { useCookies } from 'react-cookie';
 import { useState } from 'react';
+import axios from 'axios';
 function PwSearchPage() {
   const navigate = useNavigate();
   const [userId, setUserId] = useState();
-  const [cookies] = useCookies(['access_token']);
+  const [cookies, setCookie] = useCookies(['access_token']);
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = {

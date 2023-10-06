@@ -6,12 +6,14 @@ import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { useRecoilState } from 'recoil';
 import { loggedInState } from '../../recoil/loggedIn';
+import { onOffState } from '../../recoil/onOff';
 
 function NaverCallback() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { reset } = useForm();
   const [cookies, setCookie] = useCookies(['access_token']);
+  const [isOnOffState, setIsOnOffState] = useRecoilState(onOffState);
 
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
   const mutation = useMutation((code) => naverLoginApi(code), {
@@ -21,7 +23,9 @@ function NaverCallback() {
       queryClient.refetchQueries(['me']);
       setCookie('access_token', data.data.token.access_token);
       setCookie('refresh_token', data.data.token.refresh_token);
+
       setIsLoggedIn(true);
+      setIsOnOffState(true);
       navigate('/');
     },
     onError: (error) => {

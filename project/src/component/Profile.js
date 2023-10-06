@@ -12,8 +12,12 @@ function Profile({ web_profile, mobile_profile }) {
   const [cookies] = useCookies(['access_token']);
   const [infoData, setInfoData] = useState();
   const navigate = useNavigate();
-  const { data, isLoading } = useQuery(['getInfo'], () =>
-    getInfoApi(cookies.access_token),
+  const { data, isLoading } = useQuery(
+    ['getInfo'],
+    () => getInfoApi(cookies.access_token),
+    {
+      staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
+    },
   );
   // console.log(data, '인포 데이터');
   const { data: feedData, isLoading: dataIsLoading } = useQuery(

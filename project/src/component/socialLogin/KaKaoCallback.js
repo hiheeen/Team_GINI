@@ -8,12 +8,14 @@ import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import { useRecoilState } from 'recoil';
 import { loggedInState } from '../../recoil/loggedIn';
+import { onOffState } from '../../recoil/onOff';
 
 function KakaoCallback() {
   // const code = params.get('code');
   const queryClient = useQueryClient();
   const [cookies, setCookie] = useCookies(['access_token']);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
+  const [isOnOffState, setIsOnOffState] = useRecoilState(onOffState);
 
   const navigate = useNavigate();
   const grantType = 'authorization_code';
@@ -29,6 +31,7 @@ function KakaoCallback() {
       setCookie('access_token', data.data.token.access_token);
       setCookie('refresh_token', data.data.token.refresh_token);
       setIsLoggedIn(true);
+      setIsOnOffState(true);
       navigate('/');
     },
     onError: (error) => {

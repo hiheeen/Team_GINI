@@ -88,9 +88,9 @@ function PublicFeed({ filter, order }) {
   const { data: feedData, isLoading } = useQuery(
     ['feedData'],
     () => getFeedApi(cookies.access_token),
-    // {
-    //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
-    // },
+    {
+      staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
+    },
   );
   // console.log('feedData false값들', feedData);
   if (isLoading) {
@@ -164,167 +164,216 @@ function PublicFeed({ filter, order }) {
     feedData?.data?.results?.filter(
       (item) => item.writer.nickname === infoData.data.nickname,
     );
+
   const filterLikePosts =
     feedData &&
     feedData?.data?.results
       ?.slice()
       .sort((a, b) => b.likes_count - a.likes_count);
+
   const filterLikeMyPosts =
     filteredPosts &&
     filteredPosts.sort((a, b) => b.likes_count - a.likes_count);
+
   return (
     <div>
-      {(filter === 'myPosts'
-        ? order === 'new'
-          ? filteredPosts.slice().reverse()
-          : order === 'like'
-          ? filterLikeMyPosts
-          : order === 'old'
-          ? filteredPosts
-          : null
-        : filter === 'all'
-        ? order === 'old'
-          ? feedData.data.results.slice().reverse()
-          : order === 'like'
-          ? filterLikePosts
-          : order === 'new'
-          ? feedData.data.results
-          : null
-        : null
-      )?.map((item, index) => (
-        <div key={index}>
+      {feedData.data.results.length === 0 ? (
+        <>
           <div className={styles.container}>
             <div
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center',
                 padding: '0 0 10px 0',
               }}
             >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'left',
-                  alignItems: 'center',
-                }}
-              >
-                <img
-                  style={{
-                    width: 40,
-                    borderRadius: '50%',
-                    marginRight: 10,
-                    border: '1px solid rgba(107, 112, 119, 0.2)',
-                  }}
-                  alt=""
-                  src={item.writer.profile}
-                />
-
-                <div>{item.writer.nickname}</div>
-              </div>
-              {item.writer.nickname === infoData.data.nickname && (
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  <KakaoShareBtn imgFile={item.file} />
-                  <EditButton
-                    handleEdit={() => handleEdit(item.id)}
-                    handleDeleteClick={() => handleDeleteClick(item.id)}
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div>
+                  <img
+                    style={{
+                      width: 40,
+                      borderRadius: '50%',
+                      marginRight: 10,
+                    }}
+                    alt=""
+                    src=""
                   />
                 </div>
-              )}
+                <div>on&off</div>
+              </div>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <img className={styles.feedImg} alt="" src={item.file} />
+              <img className={styles.feedImg} alt="" src="" />
             </div>
-
             <div className={styles.date_category}>
-              <div
-                style={{ marginRight: 5 }}
-                onClick={() => handleFeedLike(item.id)}
-              >
-                {item.is_like ? (
-                  <FontAwesomeIcon icon={solidHeart} color="red" />
-                ) : (
-                  <FontAwesomeIcon icon={regularHeart} />
-                )}
-              </div>
-              <div style={{ marginRight: 10 }}> {item.likes_count}</div>
-              <div className={styles.date}>
-                {dayjs(item.created_at).format('YYYY-MM-DD')}
-              </div>
-              <div className={styles.category}>
-                {getCategoryText(item.category)}
-              </div>
+              <div className={styles.date}>2023-10-05</div>
+              <div className={styles.category}>카테고리</div>
             </div>
-
             <div>
-              <div className={styles.title}>{item.title}</div>
-              <div className={styles.content}>{item.content}</div>
+              <div className={styles.title}>제목</div>
+              <div className={styles.content}>기록을 남겨주세요!</div>
             </div>
-            {item.review_count !== 0 && (
-              <div
-                style={{
-                  cursor: 'pointer',
-                  padding: '20px 0 0 0',
-                  fontSize: '13px',
-                  color: 'grey',
-                }}
-                onClick={() => handleModify(item.id)}
-              >
-                {isReviewOpen && reviewMode === item.id
-                  ? '댓글 닫기'
-                  : `댓글 ${item.review_count}개 모두 보기`}
-              </div>
-            )}
-            {isReviewOpen && reviewMode === item.id ? (
-              <div style={{ display: 'flex' }}>
-                <Review
-                  feedId={item.id}
-                  nickname={infoData.data.nickname}
-                  feedWriter={item.writer.nickname}
-                />
-              </div>
-            ) : (
-              ''
-            )}
-            <form onSubmit={(e) => handleReviewPost(e, item.id)}>
+          </div>
+        </>
+      ) : (
+        (filter === 'myPosts'
+          ? order === 'new'
+            ? filteredPosts.sort(
+                (a, b) => new Date(b.created_at) - new Date(a.created_at),
+              )
+            : order === 'like'
+            ? filterLikeMyPosts
+            : order === 'old'
+            ? filteredPosts
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                .slice()
+                .reverse()
+            : null
+          : filter === 'all'
+          ? order === 'old'
+            ? feedData.data.results.slice().reverse()
+            : order === 'like'
+            ? filterLikePosts
+            : order === 'new'
+            ? feedData.data.results
+            : null
+          : null
+        )?.map((item, index) => (
+          <div key={index}>
+            <div className={styles.container}>
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  padding: '20px 0',
+                  padding: '0 0 10px 0',
                 }}
               >
-                <input
-                  className={styles.review_input}
-                  value={reviewValue[item.id] || ''}
-                  onChange={(e) =>
-                    setReviewValue({
-                      ...reviewValue,
-                      [item.id]: e.target.value,
-                    })
-                  }
-                  placeholder="댓글을 남겨보세요"
-                ></input>
-                <button
-                  className={styles.review_button}
-                  type="submit"
-                  // onClick={() => handleReviewPost(item.id)}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'left',
+                    alignItems: 'center',
+                  }}
                 >
-                  작성
-                </button>
+                  <img
+                    style={{
+                      width: 40,
+                      borderRadius: '50%',
+                      marginRight: 10,
+                      border: '1px solid rgba(107, 112, 119, 0.2)',
+                    }}
+                    alt=""
+                    src={item.writer.profile}
+                  />
+
+                  <div>{item.writer.nickname}</div>
+                </div>
+                {item.writer.nickname === infoData.data.nickname && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <KakaoShareBtn imgFile={item.file} />
+                    <EditButton
+                      handleEdit={() => handleEdit(item.id)}
+                      handleDeleteClick={() => handleDeleteClick(item.id)}
+                    />
+                  </div>
+                )}
               </div>
-            </form>
+
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <img className={styles.feedImg} alt="" src={item.file} />
+              </div>
+
+              <div className={styles.date_category}>
+                <div
+                  style={{ marginRight: 5 }}
+                  onClick={() => handleFeedLike(item.id)}
+                >
+                  {item.is_like ? (
+                    <FontAwesomeIcon icon={solidHeart} color="red" />
+                  ) : (
+                    <FontAwesomeIcon icon={regularHeart} />
+                  )}
+                </div>
+                <div style={{ marginRight: 10 }}> {item.likes_count}</div>
+                <div className={styles.date}>
+                  {dayjs(item.created_at).format('YYYY-MM-DD')}
+                </div>
+                <div className={styles.category}>
+                  {getCategoryText(item.category)}
+                </div>
+              </div>
+
+              <div>
+                <div className={styles.title}>{item.title}</div>
+                <div className={styles.content}>{item.content}</div>
+              </div>
+              {item.review_count !== 0 && (
+                <div
+                  style={{
+                    cursor: 'pointer',
+                    padding: '20px 0 0 0',
+                    fontSize: '13px',
+                    color: 'grey',
+                  }}
+                  onClick={() => handleModify(item.id)}
+                >
+                  {isReviewOpen && reviewMode === item.id
+                    ? '댓글 닫기'
+                    : `댓글 ${item.review_count}개 모두 보기`}
+                </div>
+              )}
+              {isReviewOpen && reviewMode === item.id ? (
+                <div style={{ display: 'flex' }}>
+                  <Review
+                    feedId={item.id}
+                    nickname={infoData.data.nickname}
+                    feedWriter={item.writer.nickname}
+                  />
+                </div>
+              ) : (
+                ''
+              )}
+              <form onSubmit={(e) => handleReviewPost(e, item.id)}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '20px 0',
+                  }}
+                >
+                  <input
+                    className={styles.review_input}
+                    value={reviewValue[item.id] || ''}
+                    onChange={(e) =>
+                      setReviewValue({
+                        ...reviewValue,
+                        [item.id]: e.target.value,
+                      })
+                    }
+                    placeholder="댓글을 남겨보세요"
+                  ></input>
+                  <button
+                    className={styles.review_button}
+                    type="submit"
+                    // onClick={() => handleReviewPost(item.id)}
+                  >
+                    작성
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 }
