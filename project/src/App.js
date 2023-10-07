@@ -47,9 +47,6 @@ function App() {
       setIsLoggedIn(false);
     }
   }, []);
-  useEffect(() => {
-    console.log(cookies.access_token, '토큰 바뀌는지 확인');
-  }, [cookies.access_token]);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
   const [showButton, setShowButton] = useState(false);
   useEffect(() => {
@@ -68,18 +65,7 @@ function App() {
       behavior: 'smooth',
     });
   };
-  const privateApi = axios.create({
-    baseURL: 'http://www.jinii.shop/api/v1/',
-    headers: {
-      Authorization: `Bearer ${cookies.access_token}`,
-    },
-  });
-  const getFeedApi = async () => {
-    const response = await privateApi.get('feeds/', {
-      withCredentials: true,
-    });
-    return response;
-  };
+
   // instance.interceptors.response.use(
   //   (res) => console.log(res, 'interceptors response'),
   //   async (error) => {
@@ -177,9 +163,8 @@ function App() {
         } catch (refreshError) {
           console.error('refresh 에러발생', refreshError);
         }
-        refresh = false;
       }
-
+      refresh = false;
       return Promise.reject(error);
     },
   );

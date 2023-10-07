@@ -18,7 +18,7 @@ function CategoryPage() {
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState();
   const onOff = useRecoilValue(onOffState);
-  const [filter, setFilter] = useState('myPosts');
+  const [filter, setFilter] = useState('all');
   const [order, setOrder] = useState('new');
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 820);
 

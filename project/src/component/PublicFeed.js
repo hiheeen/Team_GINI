@@ -270,7 +270,7 @@ function PublicFeed({ filter, order }) {
 
                   <div>{item.writer.nickname}</div>
                 </div>
-                {item.writer.nickname === infoData.data.nickname && (
+                {item.writer.nickname === infoData?.data?.nickname && (
                   <div
                     style={{
                       display: 'flex',

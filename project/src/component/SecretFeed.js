@@ -16,6 +16,7 @@ import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import SurfingOutlinedIcon from '@mui/icons-material/SurfingOutlined';
 import MusicNoteOutlinedIcon from '@mui/icons-material/MusicNoteOutlined';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
+import { FaGithub } from 'react-icons/fa';
 function SecretFeed({ order }) {
   const [cookies] = useCookies(['access_token']);
   const navigate = useNavigate();
@@ -108,6 +109,7 @@ function SecretFeed({ order }) {
                       width: 40,
                       borderRadius: '50%',
                       marginRight: 10,
+                      border: '1px solid rgba(107, 112, 119, 0.2)',
                     }}
                     alt=""
                     src={infoData.data.profileImg}
@@ -171,6 +173,33 @@ function SecretFeed({ order }) {
               <div>친구와 함께 여행을 가서 보았던 풍경이 너무 예쁠 때</div>
               <div>몇번이고 다시 보고싶은 영화가 생겼을 때</div>
               <div>on&off에서 모든 순간을 기록하고, 기억할 수 있어요.</div>
+              <div>더 궁금한 게 있다면, 아래로 문의해주세요.</div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ marginRight: 5 }}>
+                  front-end : 김희은 | gmldms0338@naver.com | github
+                </div>
+                <span>
+                  <a
+                    href="https://github.com/hiheeen"
+                    className="github"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <FaGithub size={20} color="black" />
+                  </a>
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ marginRight: 5 }}>back-end : 김진우 | github</div>
+                <a
+                  href="https://github.com/sds7629"
+                  className="github"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <FaGithub size={20} color="black" />
+                </a>
+              </div>
             </div>
 
             <div className={styles.date_category}>
@@ -205,6 +234,7 @@ function SecretFeed({ order }) {
                           width: 40,
                           borderRadius: '50%',
                           marginRight: 10,
+                          border: '1px solid rgba(107, 112, 119, 0.2)',
                         }}
                         alt=""
                         src={item.writer.profile}

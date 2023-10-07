@@ -100,12 +100,12 @@ function LoginPage() {
               회원가입
             </div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Kakao />
-            <Google />
-            <Naver />
-          </div>
         </form>
+        <div className={styles.social_wrapper}>
+          <Kakao />
+          <Google />
+          <Naver />
+        </div>
       </div>
     </div>
   );

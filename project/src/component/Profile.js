@@ -19,7 +19,7 @@ function Profile({ web_profile, mobile_profile }) {
       staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
     },
   );
-  console.log(data, '인포 데이터');
+  // console.log(data, '인포 데이터');
   const { data: feedData, isLoading: dataIsLoading } = useQuery(
     ['feedData'],
     () => getFeedApi(cookies.access_token),
