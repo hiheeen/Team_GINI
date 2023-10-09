@@ -38,9 +38,7 @@ function UpLoadPage() {
         // 파일의 내용을 읽어 이미지로 표시
         const result = e.target.result;
         setImageSrc(result); // 이미지를 표시하기 위해 상태 업데이트
-
         const imageURL = result;
-        // console.log('이미지 URL', imageURL);
       };
       reader.readAsDataURL(file);
     }
@@ -58,10 +56,6 @@ function UpLoadPage() {
         secretAccessKey: secret_key,
       },
     });
-
-    //url
-    // `https://kr.object.ncloudstorage.com/jini/${selectedFile.name}`
-    // 파일 업로드
     try {
       const res = await S3.putObject({
         Bucket: 'jini',
@@ -69,20 +63,10 @@ function UpLoadPage() {
         ACL: 'public-read',
         Body: selectedFile,
       }).promise();
-      console.log('s3 업로드 어쩌고', res);
+      // console.log('s3 업로드 어쩌고', res);
     } catch (err) {
       console.error('업로드 중 오류 발생', err);
     }
-
-    // const upload = S3.upload({
-    //   Bucket: 'jini',
-    //   Key: selectedFile.name,
-    //   ACL: 'public-read',
-    //   Body: selectedFile,
-    // });
-    // if (selectedFile) {
-    //   upload.promise().then((res) => console.log('업로드', res));
-    // }
   };
 
   const onSubmit = async (e) => {
@@ -117,7 +101,7 @@ function UpLoadPage() {
           ACL: 'public-read',
           Body: selectedFile,
         }).promise();
-        console.log('s3 업로드 어쩌고', res);
+        // console.log('s3 업로드 어쩌고', res);
         const encodedKey = encodeURIComponent(selectedFile.name);
         const formData = {
           category: value.category,
@@ -130,13 +114,12 @@ function UpLoadPage() {
         postFeedApi(cookies.access_token, formData)
           .then((res) => {
             queryClient.invalidateQueries('postFeed');
-            console.log('데이터 전송 성공', res);
-            // setIsOnOffState(value.is_secret);
+            // console.log('데이터 전송 성공', res);
             navigate('/');
           })
           .catch((err) => {
-            console.log('데이터 전송 에러', err);
-            console.log('formData', formData);
+            // console.log('데이터 전송 에러', err);
+            // console.log('formData', formData);
           });
       } catch (err) {
         console.error('업로드 중 오류 발생', err);
@@ -147,9 +130,7 @@ function UpLoadPage() {
   const postFeedMutation = useMutation(
     (formData) => postFeedApi(cookies.access_token, formData),
     {
-      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
       onSuccess: () => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('postFeed');
       },
     },

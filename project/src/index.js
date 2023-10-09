@@ -19,13 +19,9 @@ root.render(
       <GoogleOAuthProvider clientId="852732613951-1go534rideb7k8c2opjbrivkt41f8r5h.apps.googleusercontent.com">
         <App />
       </GoogleOAuthProvider>
-      {/* <RecoilTest /> */}
     </RecoilRoot>
   </QueryClientProvider>,
   // </React.StrictMode>,
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

@@ -16,7 +16,6 @@ function CategoryPage() {
   const category = params.category;
   const [cookies] = useCookies(['access_token']);
   const navigate = useNavigate();
-  const [searchValue, setSearchValue] = useState();
   const onOff = useRecoilValue(onOffState);
   const [filter, setFilter] = useState('all');
   const [order, setOrder] = useState('new');
@@ -25,16 +24,9 @@ function CategoryPage() {
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
     ['secretData'],
     () => getSecretFeedApi(cookies.access_token),
-    // {
-    //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
-    // },
   );
-  const { data: feedData, isLoading } = useQuery(
-    ['feedData'],
-    () => getFeedApi(cookies.access_token),
-    // {
-    //   staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
-    // },
+  const { data: feedData, isLoading } = useQuery(['feedData'], () =>
+    getFeedApi(cookies.access_token),
   );
   const { data: infoData } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),

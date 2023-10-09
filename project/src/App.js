@@ -66,73 +66,12 @@ function App() {
     });
   };
 
-  // instance.interceptors.response.use(
-  //   (res) => console.log(res, 'interceptors response'),
-  //   async (error) => {
-  //     if (error.response.status === 401 || error.response.status === 400) {
-  //       console.log('itititti');
-  //       const response = await instance.post(
-  //         'token/refresh/',
-  //         { refresh: cookies.refresh_token },
-
-  //         // { withCredentials: true }
-  //       );
-  //       if (response.data.status === 200) {
-  //         instance.defaults.headers.common['Authorization'] = `Bearer
-  //      ${response.data['access']}`;
-  //         setCookie('access_token', response.data.token.access_token);
-  //         setCookie('refresh_token', response.data.token.refresh_token);
-  //         setIsLoggedIn(true);
-  //       }
-  //     }
-
-  //     return error;
-  //   },
-  // );
-
-  // axios.interceptors.response.use(
-  //   (resp) => resp,
-  //   async (error) => {
-  //     if (error.response.status === 401 && !refresh) {
-  //       refresh = true;
-  //       const response = await instance
-  //         .post(
-  //           'users/Refresh/',
-  //           {
-  //             refresh: cookies.refresh_token,
-  //           },
-  //           { withCredentials: true },
-  //         )
-  //         .then((res) => {
-  //           console.log('리프레시데이터', res);
-  //           if (res.status === 200) {
-  //             setCookie('access_token', res.data.access);
-  //             setCookie('refresh_token', res.data.refresh);
-  //             axios.defaults.headers.common['Authorization'] = `Bearer
-  //             ${cookies.access_token}`;
-  //             return axios(error.config);
-  //           }
-  //         })
-  //         .catch((err) => console.log('리프레시에러', err));
-  //       //   if (response.status === 200) {
-  //       //     console.log(response, '리프레시');
-  //       //     axios.defaults.headers.common['Authorization'] = `Bearer
-  //       //  ${response.data['access']}`;
-  //       //     setCookie('access_token', response.data.access);
-  //       //     setCookie('refresh_token', response.data.refresh); // 실제로 뭐 오는지 알아야 함
-  //       //     return axios(error.config);
-  //     }
-  //     refresh = false;
-  //     return error;
-  //   },
-  // );
-
   let refresh = false;
   instance.interceptors.response.use(
     (resp) => resp,
     async (error) => {
       if (error.response.status === 401 && !refresh) {
-        console.log(error, '에러 확인');
+        // console.log(error, '에러 확인');
         // 401 상태 코드에 대한 처리
         refresh = true;
         try {
@@ -149,7 +88,7 @@ function App() {
             },
           );
           if (response.status === 200) {
-            console.log('200번', response);
+            // console.log('200번', response);
             removeCookie('access_token');
             removeCookie('refresh_token');
             setCookie('access_token', response.data.access);

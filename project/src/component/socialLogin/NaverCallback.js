@@ -18,7 +18,7 @@ function NaverCallback() {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
   const mutation = useMutation((code) => naverLoginApi(code), {
     onSuccess: (data) => {
-      console.log(data, '로그인 성공');
+      // console.log(data, '로그인 성공');
       reset();
       queryClient.refetchQueries(['me']);
       setCookie('access_token', data.data.token.access_token);
@@ -29,7 +29,7 @@ function NaverCallback() {
       navigate('/');
     },
     onError: (error) => {
-      console.log('error', error);
+      // console.log('error', error);
     },
   });
   const confirmLogin = async () => {

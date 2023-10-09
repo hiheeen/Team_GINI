@@ -36,11 +36,9 @@ function Review({ feedId, nickname, feedWriter }) {
   const deleteReviewMutation = useMutation(
     (reviewId) => reviewDeleteApi(cookies.access_token, feedId, reviewId),
     {
-      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
       onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('detailData');
-        console.log('리뷰 삭제 성공', data);
+        // console.log('리뷰 삭제 성공', data);
       },
     },
   );
@@ -49,13 +47,10 @@ function Review({ feedId, nickname, feedWriter }) {
       const { reviewId, formData } = data;
       return postReplyApi(feedId, reviewId, formData, cookies.access_token);
     },
-
     {
-      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
       onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('reviewDetail');
-        console.log('리뷰 post mutation', data);
+        // console.log('리뷰 post mutation', data);
       },
     },
   );
@@ -63,9 +58,8 @@ function Review({ feedId, nickname, feedWriter }) {
     (replyId) => deleteReplyApi(replyId, cookies.access_token),
     {
       onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('reviewDetail');
-        console.log('리뷰 delete mutation', data);
+        // console.log('리뷰 delete mutation', data);
       },
     },
   );

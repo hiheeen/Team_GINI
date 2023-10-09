@@ -18,7 +18,7 @@ function GoogleCallback() {
 
   const mutation = useMutation((code) => googleLoginApi(code), {
     onSuccess: (data) => {
-      console.log(data, '로그인 성공');
+      // console.log(data, '로그인 성공');
       reset();
 
       queryClient.refetchQueries(['google']);
@@ -29,13 +29,13 @@ function GoogleCallback() {
       navigate('/');
     },
     onError: (error) => {
-      console.log('error', error);
+      // console.log('error', error);
     },
   });
   const confirmLogin = async () => {
     const params = new URL(document.location.toString()).searchParams;
     const code = params.get('code');
-    console.log('code', code);
+    // console.log('code', code);
     if (code) {
       mutation.mutate(code);
     }

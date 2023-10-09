@@ -30,11 +30,9 @@ function SecretDetailPage() {
   const deleteSecretFeedMutation = useMutation(
     (itemId) => deleteSecretFeedApi(itemId, cookies.access_token),
     {
-      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
       onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('secretData');
-        console.log('데이터 삭제 성공', data);
+        // console.log('데이터 삭제 성공', data);
       },
     },
   );

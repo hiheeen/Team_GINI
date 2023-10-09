@@ -26,15 +26,8 @@ function PublicFeed({ filter, order }) {
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
   const [isLiked, setIsLiked] = useState(false);
   const [reviewValue, setReviewValue] = useState({});
-  // const [likeMode, setLikeMode] = useState();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  //   useEffect(() => {
-  //     const storedIsLikedState = localStorage.getItem('isLiked');
-  //     if (storedIsLikedState !== null) {
-  //       setIsLiked(storedIsLikedState === 'true'); // 문자열을 불리언으로 변환
-  //     }
-  //   }, []);
   useEffect(() => {
     setIsReviewOpen(true);
   }, [reviewMode]);
@@ -46,9 +39,8 @@ function PublicFeed({ filter, order }) {
     },
     {
       onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('detailData');
-        console.log('리뷰 post 성공', data);
+        // console.log('리뷰 post 성공', data);
         setIsReviewOpen(true);
       },
       onError: (error) => {
@@ -62,22 +54,18 @@ function PublicFeed({ filter, order }) {
   const deleteFeedMutation = useMutation(
     (itemId) => deleteFeedApi(itemId, cookies.access_token),
     {
-      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
       onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('feedData');
-        console.log('데이터 삭제 성공', data);
+        // console.log('데이터 삭제 성공', data);
       },
     },
   );
   const feedLikeMutation = useMutation(
     (feedId) => feedLikeApi(feedId, cookies.access_token),
     {
-      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
       onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('feedData');
-        console.log('좋아요 성공', data);
+        // console.log('좋아요 성공', data);
       },
     },
   );
@@ -89,7 +77,7 @@ function PublicFeed({ filter, order }) {
     ['feedData'],
     () => getFeedApi(cookies.access_token),
     {
-      staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
+      staleTime: 300000,
     },
   );
   // console.log('feedData false값들', feedData);
@@ -140,7 +128,7 @@ function PublicFeed({ filter, order }) {
     const formData = {
       content: reviewValue[feedId],
     };
-    console.log(formData, 'formData');
+    // console.log(formData, 'formData');
     postReviewMutation.mutate({ feedId, formData });
     setReviewValue({
       ...reviewValue,
@@ -150,9 +138,6 @@ function PublicFeed({ filter, order }) {
 
   const handleFeedLike = (feedId) => {
     setIsLiked(!isLiked);
-    // setLikeMode(feedId);
-    // localStorage.setItem('isLiked', newValue.toString()); // 불리언을 문자열로 저장
-    // // setIsLiked(!isLiked);
 
     feedLikeMutation.mutate(feedId);
   };

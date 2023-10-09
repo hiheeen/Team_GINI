@@ -8,9 +8,26 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-top: 1px solid rgba(112, 112, 112, 0.2);
+  /* border-top: 1px solid rgba(112, 112, 112, 0.2); */
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   margin-top: 50px;
+  font-size: 13px;
 }
 .container > div {
   padding: 10px 0;
+}
+.footer_name {
+  margin-right: 5px;
+}
+.footer_links {
+  display: flex;
+  align-items: center;
+}
+.instagram {
+  display: flex;
+  align-items: center;
+}
+.github {
+  display: flex;
+  align-items: center;
 }

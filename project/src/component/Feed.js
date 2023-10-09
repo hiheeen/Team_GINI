@@ -33,7 +33,6 @@ function Feed() {
   const [reviewValue, setReviewValue] = useState({});
   // 댓글 열람 상태관리
   const [reviewMode, setReviewMode] = useState();
-  const [reviewOpen, setReviewOpen] = useState(false);
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
   const [isLiked, setIsLiked] = useState(false);
   // react-query mutation 사용
@@ -51,7 +50,7 @@ function Feed() {
       onSuccess: (data) => {
         // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('detailData');
-        console.log('리뷰 post 성공', data);
+        // console.log('리뷰 post 성공', data);
         setIsReviewOpen(true);
       },
       onError: (error) => {
@@ -69,7 +68,7 @@ function Feed() {
       onSuccess: (data) => {
         // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('secretData');
-        console.log('데이터 삭제 성공', data);
+        // console.log('데이터 삭제 성공', data);
       },
     },
   );
@@ -80,7 +79,7 @@ function Feed() {
       onSuccess: (data) => {
         // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('feedData');
-        console.log('데이터 삭제 성공', data);
+        // console.log('데이터 삭제 성공', data);
       },
     },
   );
@@ -154,7 +153,7 @@ function Feed() {
     const formData = {
       content: reviewValue[feedId],
     };
-    console.log(formData, 'formData');
+    // console.log(formData, 'formData');
     postReviewMutation.mutate({ feedId, formData });
     setReviewValue({
       ...reviewValue,
@@ -166,7 +165,7 @@ function Feed() {
     if (!isLiked) {
       await feedLikeApi(feedId, cookies.access_token)
         .then((res) => {
-          console.log(res, '좋아요 전송');
+          // console.log(res, '좋아요 전송');
           queryClient.invalidateQueries('feedData');
         })
         .catch((err) => console.log(err, '좋아요 에러'));

@@ -54,11 +54,10 @@ function SecretFeed({ order }) {
   const deleteSecretFeedMutation = useMutation(
     (itemId) => deleteSecretFeedApi(itemId, cookies.access_token),
     {
-      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
       onSuccess: (data) => {
         // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('secretData');
-        console.log('데이터 삭제 성공', data);
+        // console.log('데이터 삭제 성공', data);
       },
     },
   );
@@ -75,14 +74,14 @@ function SecretFeed({ order }) {
     ['getInfo'],
     () => getInfoApi(cookies.access_token),
     {
-      staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
+      staleTime: 300000,
     },
   );
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
     ['secretData'],
     () => getSecretFeedApi(cookies.access_token),
     {
-      staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
+      staleTime: 300000,
     },
   );
   // console.log('secretdata', secretData);

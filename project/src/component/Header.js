@@ -40,10 +40,7 @@ function Header() {
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 820);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 600);
   const [showDropDown, setShowDropDown] = useState(false);
-  // const handleChange = (event) => {
-  //   setChecked(!isOnOffState);
-  //   setIsOnOffState(!isOnOffState);
-  // };
+  const logo = process.env.PUBLIC_URL + '/favicon.ico';
 
   // 로컬 스토리지의 값을 초기 recoil 상태로 설정
   useEffect(() => {
@@ -83,7 +80,7 @@ function Header() {
         withCredentials: true,
       })
       .then((res) => {
-        console.log('로그아웃 성공', res);
+        // console.log('로그아웃 성공', res);
         Cookies.remove('access_token');
         Cookies.remove('refresh_token');
         setIsLoggedIn(false);

@@ -37,7 +37,7 @@ function EditSecretPage() {
       is_secret: value.is_secret || data?.data[0].is_secret,
     };
     editSecretFeedApi(cookies.access_token, formData, id).then((res) => {
-      console.log('수정 성공', res);
+      // console.log('수정 성공', res);
       if (formData.is_secret === true) {
         navigate(`/secret/${value.category || data?.data.category}/${id}`);
         setIsOnOffState(true);

@@ -39,7 +39,7 @@ function LoginPage() {
     loginApi(loginData)
       .then((response) => {
         if (response.status === 200) {
-          console.log('로그인 성공', response.data);
+          // console.log('로그인 성공', response.data);
           setCookie('access_token', response.data.token.access_token);
           setCookie('refresh_token', response.data.token.refresh_token);
           setIsLoggedIn(true);
@@ -48,7 +48,7 @@ function LoginPage() {
         }
       })
       .catch((error) => {
-        console.log('로그인 실패', error);
+        // console.log('로그인 실패', error);
         if (error.response.status === 400) {
           alert('로그인에 실패하였습니다');
           setUserId('');

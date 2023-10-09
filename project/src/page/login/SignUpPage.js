@@ -65,9 +65,6 @@ function SignUpPage() {
   };
 
   const fileInputRef = useRef(null);
-  //   const handleButtonClick = () => {
-  //     fileInputRef.current.click();
-  //   };
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setSelectedFile(file);
@@ -90,14 +87,14 @@ function SignUpPage() {
     await valEmailApi(formData)
       .then((res) => {
         console.log(formData);
-        console.log(res, '이메일중복검사');
+        // console.log(res, '이메일중복검사');
         if (res.status === 200) {
           alert('사용 가능한 아이디입니다');
           setEmailChecked(true);
         }
       })
       .catch((err) => {
-        console.log('이메일중복검사 에러', err);
+        // console.log('이메일중복검사 에러', err);
         alert('중복된 아이디입니다');
         setValue('userId', '');
       });
@@ -108,15 +105,15 @@ function SignUpPage() {
     };
     await valNicknameApi(formData)
       .then((res) => {
-        console.log(formData);
-        console.log(res, '닉네임중복검사');
+        // console.log(formData);
+        // console.log(res, '닉네임중복검사');
         if (res.status === 200) {
           alert('사용 가능한 닉네임입니다');
           setNicknameChecked(true);
         }
       })
       .catch((err) => {
-        console.log('닉네임중복검사 에러', err);
+        // console.log('닉네임중복검사 에러', err);
         alert('중복된 닉네임입니다');
         setValue('nickname', '');
       });
@@ -143,7 +140,7 @@ function SignUpPage() {
           ACL: 'public-read',
           Body: selectedFile,
         }).promise();
-        console.log('s3 업로드', res);
+        // console.log('s3 업로드', res);
         const encodedKey = encodeURIComponent(selectedFile.name);
         const signUpData = {
           email: data.userId,
@@ -200,13 +197,6 @@ function SignUpPage() {
       console.error('업로드 중 오류 발생', err);
     }
   };
-  const kakaoLogin = () => {
-    const response = kakaoLoginApi()
-      .then((res) => console.log('카카오', res))
-      .catch((err) => console.log('카카오 에러', err));
-    console.log(response, '카카오');
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>

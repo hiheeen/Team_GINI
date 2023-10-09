@@ -34,9 +34,7 @@ function MyPage() {
     (formData) => updateInfoApi(cookies.access_token, formData),
     {
       onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('infoData');
-        // console.log('마이페이지 업데이트 성공', data);
         navigate('/');
       },
     },
@@ -76,7 +74,7 @@ function MyPage() {
           ACL: 'public-read',
           Body: selectedFile,
         }).promise();
-        console.log('s3 업로드 어쩌고', res);
+        // console.log('s3 업로드 어쩌고', res);
         const encodedKey = encodeURIComponent(selectedFile.name);
         const formData = {
           nickname: updateInfo.nickname || infoData.data.nickname,

@@ -12,9 +12,6 @@ function MiniHeader({ handleFilterOrder, handleFilterPosts, filter, order }) {
   return (
     <div className={styles.upload}>
       <div className={styles.mainSection_header}>
-        {/* <button onClick={() => navigate('/upload/default/')}>
-      기록하기
-    </button> */}
         <Fab
           style={{
             cursor: 'pointer',

@@ -15,12 +15,12 @@ function PwSearchPage() {
     };
     putEmailApi(formData, cookies.access_token)
       .then((res) => {
-        console.log('인증메일 발송', res.data);
+        // console.log('인증메일 발송', res.data);
         alert(res.data);
         setUserId('');
       })
       .catch((err) => {
-        console.log('인증메일 발송 에러', err);
+        // console.log('인증메일 발송 에러', err);
         setUserId('');
       });
   };

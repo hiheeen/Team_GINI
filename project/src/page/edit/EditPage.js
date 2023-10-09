@@ -35,7 +35,7 @@ function EditPage() {
       is_secret: value.is_secret || data?.data.is_secret,
     };
     EditFeedApi(cookies.access_token, formData, id).then((res) => {
-      console.log('수정 성공', res);
+      // console.log('수정 성공', res);
       if (formData.is_secret === false) {
         navigate(`/${value.category || data?.data.category}/${id}`);
         setIsOnOffState(false);

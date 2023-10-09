@@ -39,11 +39,6 @@ function MainPage() {
       window.removeEventListener('scroll', handleShowButtons);
     };
   }, []);
-  const handleSearchUser = () => {
-    userSearchApi(searchValue, cookies.access_token)
-      .then((res) => console.log('유저검색', res))
-      .catch((err) => console.error('유저검색 실패', err));
-  };
   const handleFilterPosts = (e) => {
     setFilter(e.target.value);
   };

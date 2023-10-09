@@ -40,7 +40,7 @@ function DetailPage() {
       onSuccess: (data) => {
         // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('detailData');
-        console.log('리뷰 post 성공', data);
+        // console.log('리뷰 post 성공', data);
         setIsReviewOpen(true);
       },
       onError: (error) => {
@@ -59,7 +59,7 @@ function DetailPage() {
       onSuccess: (data) => {
         // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('feedData');
-        console.log('데이터 삭제 성공', data);
+        // console.log('데이터 삭제 성공', data);
       },
     },
   );
@@ -140,8 +140,8 @@ function DetailPage() {
     if (!isLiked) {
       feedLikeApi(feedId, cookies.access_token)
         .then((res) => {
-          console.log(res, '좋아요 전송');
-          //   queryClient.invalidateQueries('feedData');
+          // console.log(res, '좋아요 전송');
+          queryClient.invalidateQueries('feedData');
         })
         .catch((err) => console.log(err, '좋아요 에러'));
     }
