@@ -9,17 +9,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import EditButton from '../../component/EditButton';
 import styles from './SecretDetailPage.module.css';
-function SecretDetailPage({ infoData }) {
+function SecretDetailPage() {
   const [cookies] = useCookies(['access_token']);
   const navigate = useNavigate();
   const params = useParams();
   const id = params.id;
-
+  const { data: infoData, isLoading: infoLoading } = useQuery(['getInfo'], () =>
+    getInfoApi(cookies.access_token),
+  );
   const { data: secretData, isLoading: isSecretLoading } = useQuery(
     ['getSecretDetail', id],
     () => getSecretDetailApi(cookies.access_token, id),
   );
-  // console.log(secretData, 'secretData');
+  console.log(secretData, 'secretData');
   if (isSecretLoading) {
     <div>is loading...</div>;
   }

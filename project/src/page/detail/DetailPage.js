@@ -19,7 +19,7 @@ import EditButton from '../../component/EditButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
-function DetailPage({ infoData }) {
+function DetailPage() {
   const [cookies] = useCookies(['access_token']);
   const queryClient = useQueryClient();
   const params = useParams();
@@ -65,6 +65,10 @@ function DetailPage({ infoData }) {
     getDetailApi(cookies.access_token, feedId),
   );
   console.log('detailData', data);
+  const { data: infoData, isLoading: infoLoading } = useQuery(['getInfo'], () =>
+    getInfoApi(cookies.access_token),
+  );
+  // console.log(infoData, 'info');
   // offState delete button
   const handleDeleteClick = (itemId) => {
     const confirmDelete = window.confirm('게시글을 삭제하시겠습니까?');
@@ -122,6 +126,9 @@ function DetailPage({ infoData }) {
     return <div>is loading...</div>;
   }
 
+  if (infoLoading) {
+    return <div>is loading...</div>;
+  }
   const handleEdit = (itemId) => {
     navigate(`/edit/${itemId}`);
   };

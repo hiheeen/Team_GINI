@@ -31,9 +31,8 @@ import GoogleCallback from './component/socialLogin/GoogleCallback';
 import Footer from './component/footer/Footer';
 import NaverCallback from './component/socialLogin/NaverCallback';
 import MobileProfile from './component/MobileProfile';
-import { getFeedApi, getInfoApi, getSecretFeedApi, instance } from './apis/api';
+import { instance } from './apis/api';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
 // import axios from 'axios';
 
 function App() {
@@ -65,31 +64,6 @@ function App() {
       behavior: 'smooth',
     });
   };
-  const { data: feedData, isLoading: dataIsLoading } = useQuery(
-    ['feedData'],
-    () => getFeedApi(cookies.access_token),
-  );
-  const { infoData, isLoading } = useQuery(
-    ['getInfo'],
-    () => getInfoApi(cookies.access_token),
-    {
-      staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
-    },
-  );
-  const { data: secretData, isLoading: secretIsLoading } = useQuery(
-    ['secretData'],
-    () => getSecretFeedApi(cookies.access_token),
-  );
-  if (dataIsLoading) {
-    return <div>data is loading...</div>;
-  }
-  if (isLoading) {
-    return <div>is Loading...</div>;
-  }
-
-  if (secretIsLoading) {
-    return <div>is loading...</div>;
-  }
 
   let refresh = false;
   instance.interceptors.response.use(
@@ -121,6 +95,7 @@ function App() {
             instance.defaults.headers.common[
               'Authorization'
             ] = `Bearer ${response.data.access}`;
+            setIsLoggedIn(true);
             window.location.reload();
             return instance.request(error.config);
           }
@@ -166,52 +141,38 @@ function App() {
                     )
                   }
                 />
-                <Route path={routes.upload} element={<UpLoadPage />} />
-                <Route path={routes.login} element={<LoginPage />} />
-                <Route path={routes.signUp} element={<SignUpPage />} />
-                <Route
-                  path={routes.myPage}
-                  element={<MyPage infoData={infoData} />}
-                />
-                <Route
-                  path={routes.category}
-                  element={
-                    <CategoryPage
-                      infoData={infoData}
-                      feedData={feedData}
-                      secretData={secretData}
+                {isLoggedIn && (
+                  <>
+                    <Route path={routes.upload} element={<UpLoadPage />} />
+                    <Route path={routes.login} element={<LoginPage />} />
+                    <Route path={routes.signUp} element={<SignUpPage />} />
+                    <Route path={routes.myPage} element={<MyPage />} />
+                    <Route path={routes.category} element={<CategoryPage />} />
+                    <Route path={routes.detail} element={<DetailPage />} />
+                    <Route
+                      path={routes.secretDetail}
+                      element={<SecretDetailPage />}
                     />
-                  }
-                />
-                <Route
-                  path={routes.detail}
-                  element={<DetailPage infoData={infoData} />}
-                />
-                <Route
-                  path={routes.secretDetail}
-                  element={<SecretDetailPage infoData={infoData} />}
-                />
-                <Route
-                  path={routes.passwordSearch}
-                  element={<PwSearchPage />}
-                />
-                <Route
-                  path={routes.newPassword}
-                  element={<NewPasswordPage />}
-                />
-                <Route path={routes.edit} element={<EditPage />} />
-                <Route path={routes.editSecret} element={<EditSecretPage />} />
-                <Route path={routes.kakao} element={<KakaoCallback />} />
-                <Route path={routes.google} element={<GoogleCallback />} />
-                <Route path={routes.naver} element={<NaverCallback />} />
+                    <Route
+                      path={routes.passwordSearch}
+                      element={<PwSearchPage />}
+                    />
+                    <Route
+                      path={routes.newPassword}
+                      element={<NewPasswordPage />}
+                    />
+                    <Route path={routes.edit} element={<EditPage />} />
+                    <Route
+                      path={routes.editSecret}
+                      element={<EditSecretPage />}
+                    />
+                    <Route path={routes.kakao} element={<KakaoCallback />} />
+                    <Route path={routes.google} element={<GoogleCallback />} />
+                    <Route path={routes.naver} element={<NaverCallback />} />
+                  </>
+                )}
               </Routes>
-              {isLoggedIn && (
-                <Profile
-                  feedData={feedData}
-                  infoData={infoData}
-                  secretData={secretData}
-                />
-              )}
+              {isLoggedIn && <Profile />}
             </>
           ) : (
             <>
@@ -221,11 +182,7 @@ function App() {
                   element={
                     isLoggedIn ? (
                       <div className="mobile_container">
-                        <MobileProfile
-                          infoData={infoData}
-                          secretData={secretData}
-                          feedData={feedData}
-                        />
+                        <MobileProfile />
                         <MainPage />
                         {showButton && (
                           <button className="scroll" onClick={onScrollToTop}>
@@ -238,44 +195,36 @@ function App() {
                     )
                   }
                 />
-                <Route path={routes.upload} element={<UpLoadPage />} />
-                <Route path={routes.login} element={<LoginPage />} />
-                <Route path={routes.signUp} element={<SignUpPage />} />
-                <Route
-                  path={routes.myPage}
-                  element={<MyPage infoData={infoData} />}
-                />
-                <Route
-                  path={routes.category}
-                  element={
-                    <CategoryPage
-                      infoData={infoData}
-                      feedData={feedData}
-                      secretData={secretData}
+                {isLoggedIn && (
+                  <>
+                    <Route path={routes.upload} element={<UpLoadPage />} />
+                    <Route path={routes.login} element={<LoginPage />} />
+                    <Route path={routes.signUp} element={<SignUpPage />} />
+                    <Route path={routes.myPage} element={<MyPage />} />
+                    <Route path={routes.category} element={<CategoryPage />} />
+                    <Route path={routes.detail} element={<DetailPage />} />
+                    <Route
+                      path={routes.secretDetail}
+                      element={<SecretDetailPage />}
                     />
-                  }
-                />
-                <Route
-                  path={routes.detail}
-                  element={<DetailPage infoData={infoData} />}
-                />
-                <Route
-                  path={routes.secretDetail}
-                  element={<SecretDetailPage infoData={infoData} />}
-                />
-                <Route
-                  path={routes.passwordSearch}
-                  element={<PwSearchPage />}
-                />
-                <Route
-                  path={routes.newPassword}
-                  element={<NewPasswordPage />}
-                />
-                <Route path={routes.edit} element={<EditPage />} />
-                <Route path={routes.editSecret} element={<EditSecretPage />} />
-                <Route path={routes.kakao} element={<KakaoCallback />} />
-                <Route path={routes.google} element={<GoogleCallback />} />
-                <Route path={routes.naver} element={<NaverCallback />} />
+                    <Route
+                      path={routes.passwordSearch}
+                      element={<PwSearchPage />}
+                    />
+                    <Route
+                      path={routes.newPassword}
+                      element={<NewPasswordPage />}
+                    />
+                    <Route path={routes.edit} element={<EditPage />} />
+                    <Route
+                      path={routes.editSecret}
+                      element={<EditSecretPage />}
+                    />
+                    <Route path={routes.kakao} element={<KakaoCallback />} />
+                    <Route path={routes.google} element={<GoogleCallback />} />
+                    <Route path={routes.naver} element={<NaverCallback />} />
+                  </>
+                )}
               </Routes>
             </>
           )}

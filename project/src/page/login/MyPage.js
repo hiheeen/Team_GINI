@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import AWS from 'aws-sdk';
 
 import { style } from '@mui/system';
-function MyPage({ infoData }) {
+function MyPage() {
   const profileImg = process.env.PUBLIC_URL + '/images/Vector.png';
   const [profile, setProfile] = useState();
   const [cookies] = useCookies(['access_token']);
@@ -26,12 +26,16 @@ function MyPage({ infoData }) {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
-
+  const { data: infoData, isLoading } = useQuery(['infoData'], () =>
+    getInfoApi(cookies.access_token),
+  );
+  // console.log('인포', infoData);
   const updateInfoMutation = useMutation(
     (formData) => updateInfoApi(cookies.access_token, formData),
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries('infoData');
+        // console.log('마이페이지 업데이트 성공', data);
         navigate('/');
       },
     },
@@ -94,6 +98,9 @@ function MyPage({ infoData }) {
     }
   };
 
+  if (isLoading) {
+    return <div>is Loading...</div>;
+  }
   return (
     <div className={styles.container}>
       <form onSubmit={handleSubmit(onSubmit)}>

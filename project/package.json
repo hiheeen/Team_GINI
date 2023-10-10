@@ -2,6 +2,7 @@
   "name": "project",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://www.jinii.shop",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.418.0",
     "@emotion/react": "^11.11.1",

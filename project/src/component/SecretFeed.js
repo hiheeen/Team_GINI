@@ -17,7 +17,7 @@ import SurfingOutlinedIcon from '@mui/icons-material/SurfingOutlined';
 import MusicNoteOutlinedIcon from '@mui/icons-material/MusicNoteOutlined';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import { FaGithub } from 'react-icons/fa';
-function SecretFeed({ order, infoData }) {
+function SecretFeed({ order }) {
   const [cookies] = useCookies(['access_token']);
   const navigate = useNavigate();
   const getCategoryText = (category) => {
@@ -55,7 +55,6 @@ function SecretFeed({ order, infoData }) {
     (itemId) => deleteSecretFeedApi(itemId, cookies.access_token),
     {
       onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('secretData');
         // console.log('데이터 삭제 성공', data);
       },
@@ -70,13 +69,16 @@ function SecretFeed({ order, infoData }) {
   const handleSecretEdit = (itemId) => {
     navigate(`/edit/secret/${itemId}`);
   };
-
-  const { data: secretData, isLoading: secretIsLoading } = useQuery(
-    ['secretData'],
-    () => getSecretFeedApi(cookies.access_token),
+  const { data: infoData } = useQuery(
+    ['getInfo'],
+    () => getInfoApi(cookies.access_token),
     {
       staleTime: 300000,
     },
+  );
+  const { data: secretData, isLoading: secretIsLoading } = useQuery(
+    ['secretData'],
+    () => getSecretFeedApi(cookies.access_token),
   );
   // console.log('secretdata', secretData);
   if (secretIsLoading) {
@@ -183,9 +185,7 @@ function SecretFeed({ order, infoData }) {
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ marginRight: 5 }}>
-                  back-end : 김진우 | sds7629@naver.com | github
-                </div>
+                <div style={{ marginRight: 5 }}>back-end : 김진우 | github</div>
                 <a
                   href="https://github.com/sds7629"
                   className="github"

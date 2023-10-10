@@ -20,7 +20,7 @@ import dayjs from 'dayjs';
 import EditButton from './EditButton';
 import { useNavigate } from 'react-router-dom';
 import KakaoShareBtn from './kakaoShare/KakaoShareBtn';
-function PublicFeed({ filter, order, infoData }) {
+function PublicFeed({ filter, order }) {
   const [cookies] = useCookies(['access_token']);
   const [reviewMode, setReviewMode] = useState();
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
@@ -69,7 +69,10 @@ function PublicFeed({ filter, order, infoData }) {
       },
     },
   );
-
+  const { data: infoData } = useQuery(['getInfo'], () =>
+    getInfoApi(cookies.access_token),
+  );
+  //   console.log(infoData, '인포');
   const { data: feedData, isLoading } = useQuery(['feedData'], () =>
     getFeedApi(cookies.access_token),
   );
