@@ -5,7 +5,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyle from './GlobalStyle';
 import { RecoilRoot } from 'recoil';
-import RecoilTest from './RecoilTest';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 const root = ReactDOM.createRoot(document.getElementById('root'));
