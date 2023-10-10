@@ -10,7 +10,6 @@ function Profile({ feedData, infoData, secretData }) {
   const profileImg = process.env.PUBLIC_URL + '/images/profileTest.png';
   const profile = process.env.PUBLIC_URL + '/images/profile.png';
   const [cookies] = useCookies(['access_token']);
-  const [infoData, setInfoData] = useState();
   const navigate = useNavigate();
 
   const filteredMyPosts = feedData?.data?.results?.filter(

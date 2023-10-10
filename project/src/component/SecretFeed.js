@@ -183,7 +183,9 @@ function SecretFeed({ order, infoData }) {
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ marginRight: 5 }}>back-end : 김진우 | github</div>
+                <div style={{ marginRight: 5 }}>
+                  back-end : 김진우 | sds7629@naver.com | github
+                </div>
                 <a
                   href="https://github.com/sds7629"
                   className="github"

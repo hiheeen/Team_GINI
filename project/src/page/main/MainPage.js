@@ -6,14 +6,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Fab from '@mui/material/Fab';
 import EditIcon from '@mui/icons-material/Edit';
-import Feed from '../../component/Feed';
 import { useRecoilValue } from 'recoil';
 import { onOffState } from '../../recoil/onOff';
 import SecretFeed from '../../component/SecretFeed';
 import PublicFeed from '../../component/PublicFeed';
-import { userSearchApi } from '../../apis/api';
+import { getInfoApi, userSearchApi } from '../../apis/api';
 import { useCookies } from 'react-cookie';
 import MiniHeader from '../../component/MiniHeader';
+import { useQuery } from '@tanstack/react-query';
 function MainPage() {
   const [searchValue, setSearchValue] = useState();
   const [goToUpload, setGoToUpload] = useState(false);

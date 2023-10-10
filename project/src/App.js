@@ -31,8 +31,9 @@ import GoogleCallback from './component/socialLogin/GoogleCallback';
 import Footer from './component/footer/Footer';
 import NaverCallback from './component/socialLogin/NaverCallback';
 import MobileProfile from './component/MobileProfile';
-import { instance } from './apis/api';
+import { getFeedApi, getInfoApi, getSecretFeedApi, instance } from './apis/api';
 import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 // import axios from 'axios';
 
 function App() {
@@ -68,9 +69,6 @@ function App() {
     ['feedData'],
     () => getFeedApi(cookies.access_token),
   );
-  if (dataIsLoading) {
-    return <div>data is loading...</div>;
-  }
   const { infoData, isLoading } = useQuery(
     ['getInfo'],
     () => getInfoApi(cookies.access_token),
@@ -78,13 +76,17 @@ function App() {
       staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
     },
   );
-  if (isLoading) {
-    return <div>is Loading...</div>;
-  }
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
     ['secretData'],
     () => getSecretFeedApi(cookies.access_token),
   );
+  if (dataIsLoading) {
+    return <div>data is loading...</div>;
+  }
+  if (isLoading) {
+    return <div>is Loading...</div>;
+  }
+
   if (secretIsLoading) {
     return <div>is loading...</div>;
   }
