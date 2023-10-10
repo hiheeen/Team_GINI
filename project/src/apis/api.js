@@ -13,7 +13,7 @@ export const instance = axios.create({
 // });
 
 export const signUpApi = async (signUpData) => {
-  const response = await instance.post('users/', signUpData);
+  const response = await instance.post('users/register_user/', signUpData);
   return response;
 };
 export const loginApi = async (loginData) => {
