@@ -11,7 +11,7 @@ import dayjs from 'dayjs';
 import { useRecoilValue } from 'recoil';
 import { onOffState } from '../../recoil/onOff';
 
-function CategoryPage() {
+function CategoryPage({ infoData, feedData, secretData }) {
   const params = useParams();
   const category = params.category;
   const [cookies] = useCookies(['access_token']);
@@ -21,19 +21,6 @@ function CategoryPage() {
   const [order, setOrder] = useState('new');
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 820);
 
-  const { data: secretData, isLoading: secretIsLoading } = useQuery(
-    ['secretData'],
-    () => getSecretFeedApi(cookies.access_token),
-  );
-  const { data: feedData, isLoading } = useQuery(['feedData'], () =>
-    getFeedApi(cookies.access_token),
-  );
-  const { data: infoData } = useQuery(['getInfo'], () =>
-    getInfoApi(cookies.access_token),
-  );
-  if (secretIsLoading) {
-    return <div>is loading...??</div>;
-  }
   const handleFilterPosts = (e) => {
     setFilter(e.target.value);
   };

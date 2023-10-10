@@ -15,15 +15,13 @@ function NewPasswordPage() {
       password2: passwordCheck,
       uid: uid,
     };
-    putNewPasswordApi(formData)
-      .then((res) => {
-        // console.log('비밀번호 변경 완', res);
-        if (res.status === 200) {
-          alert('비밀번호가 변경되었습니다. 다시 로그인 해주세요');
-          navigate('/');
-        }
-      })
-      .catch((err) => console.log('비밀번호 변경 실패', err));
+    putNewPasswordApi(formData).then((res) => {
+      // console.log('비밀번호 변경 완', res);
+      if (res.status === 200) {
+        alert('비밀번호가 변경되었습니다. 다시 로그인 해주세요');
+        navigate('/');
+      }
+    });
   };
   return (
     <div className={styles.container}>

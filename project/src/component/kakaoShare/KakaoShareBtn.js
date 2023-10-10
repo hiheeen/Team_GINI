@@ -3,13 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect } from 'react';
 
 function KakaoShareBtn({ imgFile }) {
-  const realUrl = 'http://localhost:3000';
+  const realUrl = 'https://www.jinii.shop';
   const resultUrl = window.location.href;
-  //   useEffect(() => {
-  //     Kakao.cleanup();
-  //     Kakao.init('8609afb6c55303d6574ec0790adfdaf8');
-  //     console.log(Kakao.isinitialized());
-  //   }, []);
   const shareKakao = () => {
     if (window.Kakao) {
       const kakao = window.Kakao;
@@ -27,15 +22,6 @@ function KakaoShareBtn({ imgFile }) {
             webUrl: realUrl,
           },
         },
-        // itemContent: {
-        //   profileText: 'Kakao',
-        //   profileImageUrl:
-        //     'https://mud-kage.kakao.com/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png',
-        //   titleImageUrl:
-        //     'https://mud-kage.kakao.com/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png',
-        //   titleImageText: 'Cheese cake',
-        //   titleImageCategory: 'Cake',
-        // },
 
         buttons: [
           {

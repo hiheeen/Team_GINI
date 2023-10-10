@@ -17,7 +17,7 @@ import SurfingOutlinedIcon from '@mui/icons-material/SurfingOutlined';
 import MusicNoteOutlinedIcon from '@mui/icons-material/MusicNoteOutlined';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import { FaGithub } from 'react-icons/fa';
-function SecretFeed({ order }) {
+function SecretFeed({ order, infoData }) {
   const [cookies] = useCookies(['access_token']);
   const navigate = useNavigate();
   const getCategoryText = (category) => {
@@ -70,13 +70,7 @@ function SecretFeed({ order }) {
   const handleSecretEdit = (itemId) => {
     navigate(`/edit/secret/${itemId}`);
   };
-  const { data: infoData } = useQuery(
-    ['getInfo'],
-    () => getInfoApi(cookies.access_token),
-    {
-      staleTime: 300000,
-    },
-  );
+
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
     ['secretData'],
     () => getSecretFeedApi(cookies.access_token),

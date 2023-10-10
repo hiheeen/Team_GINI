@@ -16,8 +16,6 @@ function EditButton({ handleDeleteClick, handleEdit }) {
   useEffect(() => {
     // click이벤트로 하게되면 edit버튼 클릭할 때 이벤트 감지, 열리자마자 닫혀버림
     document.addEventListener('mousedown', handleOutsideClick);
-
-    // 컴포넌트가 언마운트될 때 이벤트 리스너 해제
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };

@@ -3,7 +3,7 @@ import { assignNestedKeys } from '@mui/system/cssVars/cssVarsParser';
 import axios from 'axios';
 
 export const instance = axios.create({
-  baseURL: 'http://www.jinii.shop/api/v1/',
+  baseURL: 'https://www.jinii.shop/api/v1/',
 });
 
 // instance.interceptors.request.use((config) => {

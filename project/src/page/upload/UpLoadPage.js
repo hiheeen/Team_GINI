@@ -65,7 +65,7 @@ function UpLoadPage() {
       }).promise();
       // console.log('s3 업로드 어쩌고', res);
     } catch (err) {
-      console.error('업로드 중 오류 발생', err);
+      throw err;
     }
   };
 
@@ -122,7 +122,7 @@ function UpLoadPage() {
             // console.log('formData', formData);
           });
       } catch (err) {
-        console.error('업로드 중 오류 발생', err);
+        throw err;
       }
     }
   };

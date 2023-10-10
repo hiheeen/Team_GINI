@@ -73,7 +73,7 @@ function Header() {
   }));
   const handleLogOut = async () => {
     await axios
-      .delete('http://www.jinii.shop/api/v1/users/logout/', {
+      .delete('https://www.jinii.shop/api/v1/users/logout/', {
         headers: {
           Authorization: `Bearer ${cookies.access_token}`,
         },
@@ -85,8 +85,7 @@ function Header() {
         Cookies.remove('refresh_token');
         setIsLoggedIn(false);
         navigate('/');
-      })
-      .catch((err) => console.error('로그아웃 실패', err));
+      });
   };
   // const handleDropDown = () => {
   //   setShowDropDown(!showDropDown);

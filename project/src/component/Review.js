@@ -64,7 +64,7 @@ function Review({ feedId, nickname, feedWriter }) {
     },
   );
   if (isLoading) {
-    return <div>is Loading...</div>;
+    return <div>detail Data is Loading...</div>;
   }
   if (detailReviewLoading) {
     return <div>is Loading...</div>;

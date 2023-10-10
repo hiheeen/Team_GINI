@@ -19,7 +19,7 @@ import EditButton from '../../component/EditButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
-function DetailPage() {
+function DetailPage({ infoData }) {
   const [cookies] = useCookies(['access_token']);
   const queryClient = useQueryClient();
   const params = useParams();
@@ -38,7 +38,6 @@ function DetailPage() {
     },
     {
       onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('detailData');
         // console.log('리뷰 post 성공', data);
         setIsReviewOpen(true);
@@ -55,9 +54,7 @@ function DetailPage() {
   const deleteFeedMutation = useMutation(
     (itemId) => deleteFeedApi(itemId, cookies.access_token),
     {
-      // 성공 시에 QueryCache 대신 onSuccess 내에서 invalidateQueries 사용
       onSuccess: (data) => {
-        // 새로운 쿼리를 무효화합니다.
         queryClient.invalidateQueries('feedData');
         // console.log('데이터 삭제 성공', data);
       },
@@ -68,10 +65,6 @@ function DetailPage() {
     getDetailApi(cookies.access_token, feedId),
   );
   console.log('detailData', data);
-  const { data: infoData, isLoading: infoLoading } = useQuery(['getInfo'], () =>
-    getInfoApi(cookies.access_token),
-  );
-  // console.log(infoData, 'info');
   // offState delete button
   const handleDeleteClick = (itemId) => {
     const confirmDelete = window.confirm('게시글을 삭제하시겠습니까?');
@@ -90,7 +83,7 @@ function DetailPage() {
     const formData = {
       content: reviewValue[feedId],
     };
-    console.log(formData, 'formData');
+    // console.log(formData, 'formData');
     postReviewMutation.mutate({ feedId, formData });
     setReviewValue({
       ...reviewValue,
@@ -129,21 +122,16 @@ function DetailPage() {
     return <div>is loading...</div>;
   }
 
-  if (infoLoading) {
-    return <div>is loading...</div>;
-  }
   const handleEdit = (itemId) => {
     navigate(`/edit/${itemId}`);
   };
   const handleFeedLike = (feedId) => {
     setIsLiked(!isLiked);
     if (!isLiked) {
-      feedLikeApi(feedId, cookies.access_token)
-        .then((res) => {
-          // console.log(res, '좋아요 전송');
-          queryClient.invalidateQueries('feedData');
-        })
-        .catch((err) => console.log(err, '좋아요 에러'));
+      feedLikeApi(feedId, cookies.access_token).then((res) => {
+        // console.log(res, '좋아요 전송');
+        queryClient.invalidateQueries('feedData');
+      });
     }
   };
   return (

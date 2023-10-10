@@ -86,7 +86,7 @@ function SignUpPage() {
 
     await valEmailApi(formData)
       .then((res) => {
-        console.log(formData);
+        // console.log(formData);
         // console.log(res, '이메일중복검사');
         if (res.status === 200) {
           alert('사용 가능한 아이디입니다');
@@ -152,15 +152,13 @@ function SignUpPage() {
         };
 
         if (emailChecked && nicknameChecked) {
-          signUpApi(signUpData)
-            .then((response) => {
-              if (response.status === 200) {
-                console.log('200', response);
-                alert('이메일 인증을 진행 후 로그인 해주세요');
-                navigate('/');
-              }
-            })
-            .catch((error) => console.log('err data', error));
+          signUpApi(signUpData).then((response) => {
+            if (response.status === 200) {
+              // console.log('200', response);
+              alert('이메일 인증을 진행 후 로그인 해주세요');
+              navigate('/');
+            }
+          });
         } else if (!emailChecked) {
           alert('이메일 중복체크를 해 주세요');
           return;
@@ -177,15 +175,13 @@ function SignUpPage() {
           profileImg: profileImgUrl,
         };
         if (emailChecked && nicknameChecked) {
-          signUpApi(signUpData)
-            .then((response) => {
-              if (response.status === 200) {
-                console.log('200', response);
-                alert('이메일 인증을 진행 후 로그인 해주세요');
-                navigate('/');
-              }
-            })
-            .catch((error) => console.log('err data', error));
+          signUpApi(signUpData).then((response) => {
+            if (response.status === 200) {
+              // console.log('200', response);
+              alert('이메일 인증을 진행 후 로그인 해주세요');
+              navigate('/');
+            }
+          });
         } else if (!emailChecked) {
           alert('이메일 중복체크를 해 주세요');
           return;
@@ -194,7 +190,7 @@ function SignUpPage() {
         }
       }
     } catch (err) {
-      console.error('업로드 중 오류 발생', err);
+      throw err;
     }
   };
   return (

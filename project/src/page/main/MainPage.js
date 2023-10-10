@@ -24,7 +24,13 @@ function MainPage() {
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 820);
 
   const navigate = useNavigate();
-
+  const { data: infoData } = useQuery(
+    ['getInfo'],
+    () => getInfoApi(cookies.access_token),
+    {
+      staleTime: 300000,
+    },
+  );
   const onGoToUpload = () => {
     navigate('/upload/default');
   };
@@ -87,9 +93,9 @@ function MainPage() {
           </div>
 
           {onOff ? (
-            <SecretFeed order={order} />
+            <SecretFeed order={order} infoData={infoData} />
           ) : (
-            <PublicFeed filter={filter} order={order} />
+            <PublicFeed filter={filter} order={order} infoData={infoData} />
           )}
         </div>
       </div>

@@ -36,7 +36,6 @@ import axios from 'axios';
 // import axios from 'axios';
 
 function App() {
-  // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [cookies, setCookie, removeCookie] = useCookies([
     'access_token',
     'refresh_token',
@@ -65,6 +64,30 @@ function App() {
       behavior: 'smooth',
     });
   };
+  const { data: feedData, isLoading: dataIsLoading } = useQuery(
+    ['feedData'],
+    () => getFeedApi(cookies.access_token),
+  );
+  if (dataIsLoading) {
+    return <div>data is loading...</div>;
+  }
+  const { infoData, isLoading } = useQuery(
+    ['getInfo'],
+    () => getInfoApi(cookies.access_token),
+    {
+      staleTime: 300000, // 5분 동안 데이터를 "느껴지게" 함
+    },
+  );
+  if (isLoading) {
+    return <div>is Loading...</div>;
+  }
+  const { data: secretData, isLoading: secretIsLoading } = useQuery(
+    ['secretData'],
+    () => getSecretFeedApi(cookies.access_token),
+  );
+  if (secretIsLoading) {
+    return <div>is loading...</div>;
+  }
 
   let refresh = false;
   instance.interceptors.response.use(
@@ -100,7 +123,7 @@ function App() {
             return instance.request(error.config);
           }
         } catch (refreshError) {
-          console.error('refresh 에러발생', refreshError);
+          throw refreshError;
         }
       }
       refresh = false;
@@ -144,12 +167,27 @@ function App() {
                 <Route path={routes.upload} element={<UpLoadPage />} />
                 <Route path={routes.login} element={<LoginPage />} />
                 <Route path={routes.signUp} element={<SignUpPage />} />
-                <Route path={routes.myPage} element={<MyPage />} />
-                <Route path={routes.category} element={<CategoryPage />} />
-                <Route path={routes.detail} element={<DetailPage />} />
+                <Route
+                  path={routes.myPage}
+                  element={<MyPage infoData={infoData} />}
+                />
+                <Route
+                  path={routes.category}
+                  element={
+                    <CategoryPage
+                      infoData={infoData}
+                      feedData={feedData}
+                      secretData={secretData}
+                    />
+                  }
+                />
+                <Route
+                  path={routes.detail}
+                  element={<DetailPage infoData={infoData} />}
+                />
                 <Route
                   path={routes.secretDetail}
-                  element={<SecretDetailPage />}
+                  element={<SecretDetailPage infoData={infoData} />}
                 />
                 <Route
                   path={routes.passwordSearch}
@@ -165,23 +203,27 @@ function App() {
                 <Route path={routes.google} element={<GoogleCallback />} />
                 <Route path={routes.naver} element={<NaverCallback />} />
               </Routes>
-              {isLoggedIn && <Profile />}
+              {isLoggedIn && (
+                <Profile
+                  feedData={feedData}
+                  infoData={infoData}
+                  secretData={secretData}
+                />
+              )}
             </>
           ) : (
             <>
-              {/* {showButton && (
-                <button className="scroll" onClick={onScrollToTop}>
-                  Top
-                </button>
-              )} */}
-              {/* {isLoggedIn && <MobileProfile />} */}
               <Routes>
                 <Route
                   path={routes.main}
                   element={
                     isLoggedIn ? (
                       <div className="mobile_container">
-                        <MobileProfile />
+                        <MobileProfile
+                          infoData={infoData}
+                          secretData={secretData}
+                          feedData={feedData}
+                        />
                         <MainPage />
                         {showButton && (
                           <button className="scroll" onClick={onScrollToTop}>
@@ -197,12 +239,27 @@ function App() {
                 <Route path={routes.upload} element={<UpLoadPage />} />
                 <Route path={routes.login} element={<LoginPage />} />
                 <Route path={routes.signUp} element={<SignUpPage />} />
-                <Route path={routes.myPage} element={<MyPage />} />
-                <Route path={routes.category} element={<CategoryPage />} />
-                <Route path={routes.detail} element={<DetailPage />} />
+                <Route
+                  path={routes.myPage}
+                  element={<MyPage infoData={infoData} />}
+                />
+                <Route
+                  path={routes.category}
+                  element={
+                    <CategoryPage
+                      infoData={infoData}
+                      feedData={feedData}
+                      secretData={secretData}
+                    />
+                  }
+                />
+                <Route
+                  path={routes.detail}
+                  element={<DetailPage infoData={infoData} />}
+                />
                 <Route
                   path={routes.secretDetail}
-                  element={<SecretDetailPage />}
+                  element={<SecretDetailPage infoData={infoData} />}
                 />
                 <Route
                   path={routes.passwordSearch}
