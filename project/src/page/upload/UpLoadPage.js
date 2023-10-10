@@ -43,31 +43,6 @@ function UpLoadPage() {
       reader.readAsDataURL(file);
     }
   };
-  const uploadImage = async () => {
-    const endpoint = new AWS.Endpoint('https://kr.object.ncloudstorage.com');
-    const region = 'kr-standard';
-    const access_key = 'bwsXS9Z0teKUNcnoZvNQ';
-    const secret_key = 'ctHagAeEtaT5bq2ly9JqmzGutvO2Mq4zUUTtZOjM';
-    const S3 = new AWS.S3({
-      endpoint: endpoint,
-      region: region,
-      credentials: {
-        accessKeyId: access_key,
-        secretAccessKey: secret_key,
-      },
-    });
-    try {
-      const res = await S3.putObject({
-        Bucket: 'jini',
-        Key: selectedFile.name,
-        ACL: 'public-read',
-        Body: selectedFile,
-      }).promise();
-      // console.log('s3 업로드 어쩌고', res);
-    } catch (err) {
-      throw err;
-    }
-  };
 
   const onSubmit = async (e) => {
     e.preventDefault();

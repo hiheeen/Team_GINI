@@ -24,9 +24,9 @@ function GoogleCallback() {
       queryClient.refetchQueries(['google']);
       setCookie('access_token', data.data.token.access);
       setCookie('refresh_token', data.data.token.refresh);
-      setIsLoggedIn(true);
+
       setIsOnOffState(true);
-      navigate('/');
+      setTimeout(() => navigate('/'), 500);
     },
     onError: (error) => {
       // console.log('error', error);

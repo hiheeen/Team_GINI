@@ -17,8 +17,12 @@ import SurfingOutlinedIcon from '@mui/icons-material/SurfingOutlined';
 import MusicNoteOutlinedIcon from '@mui/icons-material/MusicNoteOutlined';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import { FaGithub } from 'react-icons/fa';
+import { useRecoilState } from 'recoil';
+import { loggedInState } from '../recoil/loggedIn';
 function SecretFeed({ order }) {
   const [cookies] = useCookies(['access_token']);
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
+
   const navigate = useNavigate();
   const getCategoryText = (category) => {
     switch (category) {
@@ -69,21 +73,21 @@ function SecretFeed({ order }) {
   const handleSecretEdit = (itemId) => {
     navigate(`/edit/secret/${itemId}`);
   };
+
   const { data: infoData } = useQuery(
     ['getInfo'],
     () => getInfoApi(cookies.access_token),
-    {
-      staleTime: 300000,
-    },
+    { enabled: !!isLoggedIn },
   );
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
     ['secretData'],
     () => getSecretFeedApi(cookies.access_token),
+    { enabled: !!isLoggedIn },
   );
-  // console.log('secretdata', secretData);
   if (secretIsLoading) {
-    return <div>is loading...</div>;
+    return <div></div>;
   }
+  // console.log('secretdata', secretData);
 
   return (
     <div>
@@ -107,7 +111,7 @@ function SecretFeed({ order }) {
                       border: '1px solid rgba(107, 112, 119, 0.2)',
                     }}
                     alt=""
-                    src={infoData.data.profileImg}
+                    src={infoData?.data?.profileImg}
                   />
                 </div>
                 <div>on&off</div>
@@ -185,7 +189,9 @@ function SecretFeed({ order }) {
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ marginRight: 5 }}>back-end : 김진우 | github</div>
+                <div style={{ marginRight: 5 }}>
+                  back-end : 김진우 | sds7629@naver.com | github
+                </div>
                 <a
                   href="https://github.com/sds7629"
                   className="github"
@@ -210,8 +216,8 @@ function SecretFeed({ order }) {
       ) : (
         <>
           {(order && order === 'old'
-            ? secretData.data.slice().reverse()
-            : secretData.data
+            ? secretData?.data.slice().reverse()
+            : secretData?.data
           )?.map((item, index) => (
             <div key={index}>
               <div className={styles.container}>
@@ -237,7 +243,7 @@ function SecretFeed({ order }) {
                     </div>
                     <div>{item.writer.nickname}</div>
                   </div>
-                  {item.writer.nickname === infoData.data.nickname && (
+                  {item.writer.nickname === infoData?.data?.nickname && (
                     <EditButton
                       handleEdit={() => handleSecretEdit(item.id)}
                       handleDeleteClick={() => handleDeleteSecretClick(item.id)}

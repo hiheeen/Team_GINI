@@ -96,3 +96,23 @@
 .fakeImg > div {
   padding: 9px 0;
 }
+@media screen and (max-width: 414px) {
+  .fakeImg {
+    width: 100%;
+    height: 420px;
+    font-size: 9px;
+  }
+  .fakeImg > div {
+    padding: 5px 0;
+  }
+}
+@media screen and (max-width: 390px) {
+  .fakeImg {
+    width: 100%;
+    height: 320px;
+    font-size: 8px;
+  }
+  .fakeImg > div {
+    padding: 4px 0;
+  }
+}

@@ -5,41 +5,45 @@ import { useCookies } from 'react-cookie';
 import { useQuery } from '@tanstack/react-query';
 import { getFeedApi, getInfoApi, getSecretFeedApi } from '../apis/api';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { loggedInState } from '../recoil/loggedIn';
 
-function MobileProfile({ web_profile, mobile_profile }) {
+function MobileProfile() {
   const profileImg = process.env.PUBLIC_URL + '/images/profileTest.png';
   const profile = process.env.PUBLIC_URL + '/images/profile.png';
   const [cookies] = useCookies(['access_token']);
-  const [infoData, setInfoData] = useState();
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
+
+  // const [infoData, setInfoData] = useState();
   const navigate = useNavigate();
-  const { data, isLoading } = useQuery(
-    ['getInfo'],
-    () => getInfoApi(cookies.access_token),
-    {
-      staleTime: 300000,
-    },
-  );
-  // console.log(data, '인포 데이터');
   const { data: feedData, isLoading: dataIsLoading } = useQuery(
     ['feedData'],
     () => getFeedApi(cookies.access_token),
+    { enabled: !!isLoggedIn },
   );
   const { data: secretData, isLoading: secretIsLoading } = useQuery(
     ['secretData'],
     () => getSecretFeedApi(cookies.access_token),
+    { enabled: !!isLoggedIn },
+  );
+  const { data: infoData, isLoading: infoLoading } = useQuery(
+    ['getInfo'],
+    () => getInfoApi(cookies.access_token),
+    { enabled: !!isLoggedIn },
   );
   // console.log('secretdata', secretData);
   if (secretIsLoading) {
     return <div>is loading...</div>;
   }
-  if (isLoading) {
+  if (infoLoading) {
     return <div>is Loading...</div>;
   }
-  // if (dataIsLoading) {
-  //   return <div>data is loading...</div>;
-  // }
-  const filteredMyPosts = feedData.data.results.filter(
-    (it) => it.writer.nickname === data.data.nickname,
+  if (dataIsLoading) {
+    return <div>data is loading...</div>;
+  }
+
+  const filteredMyPosts = feedData?.data.results.filter(
+    (it) => it.writer.nickname === infoData?.data.nickname,
   );
   return (
     <div className={styles.container}>
@@ -49,8 +53,8 @@ function MobileProfile({ web_profile, mobile_profile }) {
             <img
               alt=""
               src={
-                data.data.profileImg !== null
-                  ? data.data.profileImg
+                infoData?.data.profileImg !== null
+                  ? infoData?.data.profileImg
                   : profileImg
               }
               style={{
@@ -71,8 +75,8 @@ function MobileProfile({ web_profile, mobile_profile }) {
         </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <div className={styles.nickname}>{data.data?.nickname}</div>
-        <div className={styles.description}>{data.data?.description}</div>
+        <div className={styles.nickname}>{infoData?.data?.nickname}</div>
+        <div className={styles.description}>{infoData?.data?.description}</div>
       </div>
       <div>
         나의 기록{' '}

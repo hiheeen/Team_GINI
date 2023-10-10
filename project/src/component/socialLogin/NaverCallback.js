@@ -24,9 +24,8 @@ function NaverCallback() {
       setCookie('access_token', data.data.token.access_token);
       setCookie('refresh_token', data.data.token.refresh_token);
 
-      setIsLoggedIn(true);
       setIsOnOffState(true);
-      navigate('/');
+      setTimeout(() => navigate('/'), 500);
     },
     onError: (error) => {
       // console.log('error', error);

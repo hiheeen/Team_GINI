@@ -69,7 +69,7 @@ function PublicFeed({ filter, order }) {
       },
     },
   );
-  const { data: infoData } = useQuery(['getInfo'], () =>
+  const { data: infoData, isLoading: infoLoading } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),
   );
   //   console.log(infoData, '인포');
@@ -77,6 +77,9 @@ function PublicFeed({ filter, order }) {
     getFeedApi(cookies.access_token),
   );
   // console.log('feedData false값들', feedData);
+  if (infoLoading) {
+    return <div>is loading...</div>;
+  }
   if (isLoading) {
     return <div>is loading...</div>;
   }
@@ -154,11 +157,11 @@ function PublicFeed({ filter, order }) {
 
   const filterLikeMyPosts =
     filteredPosts &&
-    filteredPosts.sort((a, b) => b.likes_count - a.likes_count);
+    filteredPosts?.sort((a, b) => b.likes_count - a.likes_count);
 
   return (
     <div>
-      {feedData.data.results.length === 0 ? (
+      {feedData?.data?.results?.length === 0 ? (
         <>
           <div className={styles.container}>
             <div
@@ -217,7 +220,7 @@ function PublicFeed({ filter, order }) {
             : order === 'like'
             ? filterLikePosts
             : order === 'new'
-            ? feedData?.data.results
+            ? feedData?.data?.results
             : null
           : null
         )?.map((item, index) => (
@@ -315,7 +318,7 @@ function PublicFeed({ filter, order }) {
                 <div style={{ display: 'flex' }}>
                   <Review
                     feedId={item.id}
-                    nickname={infoData.data.nickname}
+                    nickname={infoData?.data?.nickname}
                     feedWriter={item.writer.nickname}
                   />
                 </div>

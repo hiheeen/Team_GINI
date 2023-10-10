@@ -79,6 +79,11 @@
     rgba(17, 17, 26, 0.1) 0px 0px 8px;
   border: none;
 }
+@media screen and (max-width: 414px) {
+  .category {
+    width: 85px;
+  }
+}
 .select_zone {
   display: flex;
   justify-content: space-between;

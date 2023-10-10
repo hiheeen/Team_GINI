@@ -6,14 +6,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Fab from '@mui/material/Fab';
 import EditIcon from '@mui/icons-material/Edit';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { onOffState } from '../../recoil/onOff';
 import SecretFeed from '../../component/SecretFeed';
 import PublicFeed from '../../component/PublicFeed';
-import { getInfoApi, userSearchApi } from '../../apis/api';
+import { getInfoApi, getSecretFeedApi, userSearchApi } from '../../apis/api';
 import { useCookies } from 'react-cookie';
 import MiniHeader from '../../component/MiniHeader';
 import { useQuery } from '@tanstack/react-query';
+import { loggedInState } from '../../recoil/loggedIn';
 function MainPage() {
   const [searchValue, setSearchValue] = useState();
   const [goToUpload, setGoToUpload] = useState(false);
@@ -22,19 +23,21 @@ function MainPage() {
   const [cookies] = useCookies(['access_token']);
   const onOff = useRecoilValue(onOffState);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 820);
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
+  const [secretData, setSecretData] = useState();
 
   const navigate = useNavigate();
-  const { data: infoData } = useQuery(
-    ['getInfo'],
-    () => getInfoApi(cookies.access_token),
-    {
-      staleTime: 300000,
-    },
-  );
+
   const onGoToUpload = () => {
     navigate('/upload/default');
   };
-
+  useEffect(() => {
+    if (cookies.access_token) {
+      getSecretFeedApi(cookies.access_token).then((res) => {
+        setSecretData(res);
+      });
+    }
+  }, [isLoggedIn]);
   useEffect(() => {
     const handleShowButtons = () => {
       window.scrollY > 200 ? setGoToUpload(true) : setGoToUpload(false);
@@ -93,9 +96,9 @@ function MainPage() {
           </div>
 
           {onOff ? (
-            <SecretFeed order={order} infoData={infoData} />
+            <SecretFeed order={order} secretData={secretData} />
           ) : (
-            <PublicFeed filter={filter} order={order} infoData={infoData} />
+            <PublicFeed filter={filter} order={order} />
           )}
         </div>
       </div>

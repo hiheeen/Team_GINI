@@ -29,7 +29,15 @@ function DetailPage() {
   const [reviewValue, setReviewValue] = useState({});
   const [reviewMode, setReviewMode] = useState();
   const [isLiked, setIsLiked] = useState(false);
-
+  const feedLikeMutation = useMutation(
+    (feedId) => feedLikeApi(feedId, cookies.access_token),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries('feedData');
+        // console.log('좋아요 성공', data);
+      },
+    },
+  );
   // offState postMutation
   const postReviewMutation = useMutation(
     (data) => {
@@ -64,7 +72,7 @@ function DetailPage() {
   const { data, isLoading } = useQuery(['detailData', feedId], () =>
     getDetailApi(cookies.access_token, feedId),
   );
-  console.log('detailData', data);
+  // console.log('detailData', data);
   const { data: infoData, isLoading: infoLoading } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),
   );
@@ -134,12 +142,7 @@ function DetailPage() {
   };
   const handleFeedLike = (feedId) => {
     setIsLiked(!isLiked);
-    if (!isLiked) {
-      feedLikeApi(feedId, cookies.access_token).then((res) => {
-        // console.log(res, '좋아요 전송');
-        queryClient.invalidateQueries('feedData');
-      });
-    }
+    feedLikeMutation.mutate(feedId);
   };
   return (
     <div className={styles.container}>
@@ -159,45 +162,44 @@ function DetailPage() {
                 marginRight: 10,
               }}
               alt=""
-              src={data.data.feed_writer.profileImg}
+              src={data?.data?.feed_writer?.profileImg}
             />
           </div>
-          <div>{data.data.feed_writer.nickname}</div>
+          <div>{data?.data?.feed_writer?.nickname}</div>
         </div>
-        {data.data.feed_writer.nickname === infoData.data.nickname && (
+        {data?.data?.feed_writer.nickname === infoData?.data?.nickname && (
           <EditButton
-            handleDeleteClick={() => handleDeleteClick(data.data.id)}
-            handleEdit={() => handleEdit(data.data.id)}
+            handleDeleteClick={() => handleDeleteClick(data?.data?.id)}
+            handleEdit={() => handleEdit(data?.data?.id)}
           />
         )}
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <img className={styles.feedImg} alt="" src={data.data.file} />
+        <img className={styles.feedImg} alt="" src={data?.data?.file} />
       </div>
       <div className={styles.date_category}>
         <div
           style={{ marginRight: 5 }}
-          onClick={() => handleFeedLike(data.data.id)}
+          onClick={() => handleFeedLike(data?.data?.id)}
         >
-          {isLiked ? (
+          {data?.data?.is_like ? (
             <FontAwesomeIcon icon={solidHeart} color="red" />
           ) : (
             <FontAwesomeIcon icon={regularHeart} />
           )}
         </div>
-        <div style={{ marginRight: 10 }}> {data.data.likes}</div>
+        <div style={{ marginRight: 10 }}> {data?.data?.likes}</div>
         <div className={styles.date}>
-          {' '}
-          {dayjs(data.data.created_at).format('YYYY-MM-DD')}
+          {dayjs(data?.data.created_at).format('YYYY-MM-DD')}
         </div>
         <div className={styles.category}>
-          {getCategoryText(data.data.category)}
+          {getCategoryText(data?.data.category)}
         </div>
       </div>
       <div>
-        <div className={styles.title}>{data.data.title}</div>
-        <div className={styles.content}>{data.data.content}</div>
+        <div className={styles.title}>{data?.data.title}</div>
+        <div className={styles.content}>{data?.data.content}</div>
       </div>
       <div
         style={{
@@ -206,21 +208,21 @@ function DetailPage() {
           fontSize: '13px',
           color: 'grey',
         }}
-        onClick={() => handleModify(data.data.id)}
+        onClick={() => handleModify(data?.data.id)}
       >
-        {data.data.reviews.length !== 0 &&
-          (isReviewOpen && reviewMode === data.data.id
+        {data?.data?.reviews.length !== 0 &&
+          (isReviewOpen && reviewMode === data?.data.id
             ? '댓글 닫기'
-            : `댓글 ${data.data.reviews.length}개 모두 보기`)}
+            : `댓글 ${data?.data.reviews.length}개 모두 보기`)}
       </div>
-      {isReviewOpen && reviewMode === data.data.id ? (
+      {isReviewOpen && reviewMode === data?.data.id ? (
         <div style={{ display: 'flex' }}>
-          <Review feedId={data.data.id} nickname={infoData.data.nickname} />
+          <Review feedId={data?.data.id} nickname={infoData?.data.nickname} />
         </div>
       ) : (
         ''
       )}
-      <form onSubmit={(e) => handleReviewPost(e, data.data.id)}>
+      <form onSubmit={(e) => handleReviewPost(e, data?.data.id)}>
         <div
           style={{
             display: 'flex',
@@ -231,11 +233,11 @@ function DetailPage() {
         >
           <input
             className={styles.review_input}
-            value={reviewValue[data.data.id] || ''}
+            value={reviewValue[data?.data.id] || ''}
             onChange={(e) =>
               setReviewValue({
                 ...reviewValue,
-                [data.data.id]: e.target.value,
+                [data?.data.id]: e.target.value,
               })
             }
             placeholder="댓글을 남겨보세요"
