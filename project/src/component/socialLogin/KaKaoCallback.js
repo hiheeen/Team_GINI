@@ -29,6 +29,7 @@ function KakaoCallback() {
 
       setIsOnOffState(true);
       setTimeout(() => navigate('/'), 500);
+      window.location.reload();
     },
     onError: (error) => {
       // console.log('error', error);
