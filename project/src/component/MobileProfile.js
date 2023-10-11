@@ -42,7 +42,7 @@ function MobileProfile() {
     return <div>data is loading...</div>;
   }
 
-  const filteredMyPosts = feedData?.data.results.filter(
+  const filteredMyPosts = feedData?.data?.filter(
     (it) => it.writer.nickname === infoData?.data.nickname,
   );
   return (

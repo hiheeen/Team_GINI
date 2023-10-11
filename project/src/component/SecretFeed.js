@@ -106,6 +106,7 @@ function SecretFeed({ order }) {
                   <img
                     style={{
                       width: 40,
+                      height: 40,
                       borderRadius: '50%',
                       marginRight: 10,
                       border: '1px solid rgba(107, 112, 119, 0.2)',
@@ -233,6 +234,7 @@ function SecretFeed({ order }) {
                       <img
                         style={{
                           width: 40,
+                          height: 40,
                           borderRadius: '50%',
                           marginRight: 10,
                           border: '1px solid rgba(107, 112, 119, 0.2)',

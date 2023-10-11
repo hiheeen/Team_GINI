@@ -26,7 +26,10 @@ function GoogleCallback() {
       setCookie('refresh_token', data.data.token.refresh);
 
       setIsOnOffState(true);
-      setTimeout(() => navigate('/'), 500);
+      setTimeout(() => {
+        navigate('/');
+        window.location.reload();
+      }, 1000);
     },
     onError: (error) => {
       // console.log('error', error);

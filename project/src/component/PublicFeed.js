@@ -145,15 +145,13 @@ function PublicFeed({ filter, order }) {
   };
   const filteredPosts =
     feedData &&
-    feedData?.data?.results?.filter(
+    feedData?.data?.filter(
       (item) => item.writer.nickname === infoData?.data.nickname,
     );
 
   const filterLikePosts =
     feedData &&
-    feedData?.data?.results
-      ?.slice()
-      .sort((a, b) => b.likes_count - a.likes_count);
+    feedData?.data?.slice().sort((a, b) => b.likes_count - a.likes_count);
 
   const filterLikeMyPosts =
     filteredPosts &&
@@ -161,7 +159,7 @@ function PublicFeed({ filter, order }) {
 
   return (
     <div>
-      {feedData?.data?.results?.length === 0 ? (
+      {feedData?.data?.length === 0 ? (
         <>
           <div className={styles.container}>
             <div
@@ -176,8 +174,10 @@ function PublicFeed({ filter, order }) {
                   <img
                     style={{
                       width: 40,
+                      height: 40,
                       borderRadius: '50%',
                       marginRight: 10,
+                      border: '1px solid rgba(107, 112, 119, 0.2)',
                     }}
                     alt=""
                     src=""
@@ -216,11 +216,11 @@ function PublicFeed({ filter, order }) {
             : null
           : filter === 'all'
           ? order === 'old'
-            ? feedData?.data?.results?.slice().reverse()
+            ? feedData?.data?.slice().reverse()
             : order === 'like'
             ? filterLikePosts
             : order === 'new'
-            ? feedData?.data?.results
+            ? feedData?.data
             : null
           : null
         )?.map((item, index) => (
@@ -244,6 +244,7 @@ function PublicFeed({ filter, order }) {
                   <img
                     style={{
                       width: 40,
+                      height: 40,
                       borderRadius: '50%',
                       marginRight: 10,
                       border: '1px solid rgba(107, 112, 119, 0.2)',

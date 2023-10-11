@@ -41,7 +41,7 @@ function Profile() {
   if (dataIsLoading) {
     return <div></div>;
   }
-  const filteredMyPosts = feedData?.data?.results?.filter(
+  const filteredMyPosts = feedData?.data?.filter(
     (it) => it.writer.nickname === infoData?.data.nickname,
   );
   return (

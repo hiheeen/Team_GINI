@@ -24,6 +24,7 @@ function DetailPage() {
   const queryClient = useQueryClient();
   const params = useParams();
   const feedId = params.id;
+  const category = params.category;
   const navigate = useNavigate();
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
   const [reviewValue, setReviewValue] = useState({});
@@ -64,6 +65,7 @@ function DetailPage() {
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries('feedData');
+        navigate(`/${category}`);
         // console.log('데이터 삭제 성공', data);
       },
     },

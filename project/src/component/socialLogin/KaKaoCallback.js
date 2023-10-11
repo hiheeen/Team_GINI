@@ -24,12 +24,15 @@ function KakaoCallback() {
       // console.log(data, '로그인 성공');
       reset();
       queryClient.refetchQueries(['kakao']);
+      // console.log(data, '카카오');
       setCookie('access_token', data.data.token.access_token);
       setCookie('refresh_token', data.data.token.refresh_token);
 
       setIsOnOffState(true);
-      setTimeout(() => navigate('/'), 500);
-      window.location.reload();
+      setTimeout(() => {
+        navigate('/');
+        window.location.reload();
+      }, 1000);
     },
     onError: (error) => {
       // console.log('error', error);

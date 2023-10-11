@@ -41,7 +41,7 @@ function CategoryPage() {
   const handleFilterOrder = (e) => {
     setOrder(e.target.value);
   };
-  const filteredPosts = feedData?.data?.results?.filter(
+  const filteredPosts = feedData?.data?.filter(
     (item) => item.writer.nickname === infoData.data.nickname,
   );
   const filterLikeMyPosts = filteredPosts.sort(
@@ -49,9 +49,7 @@ function CategoryPage() {
   );
   const filterLikePosts =
     feedData &&
-    feedData?.data?.results
-      ?.slice()
-      .sort((a, b) => b.likes_count - a.likes_count);
+    feedData?.data?.slice().sort((a, b) => b.likes_count - a.likes_count);
   return (
     <div className={styles.container}>
       <div className={styles.feed}>
@@ -119,10 +117,10 @@ function CategoryPage() {
                   ? filterLikeMyPosts
                   : filteredPosts
                 : order === 'old'
-                ? feedData.data.results.slice().reverse()
+                ? feedData.data.slice().reverse()
                 : order === 'like'
                 ? filterLikePosts
-                : feedData.data.results
+                : feedData.data
               )?.map(
                 (item) =>
                   item.category === category && (

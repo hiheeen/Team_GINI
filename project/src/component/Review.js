@@ -18,13 +18,17 @@ function Review({ feedId, nickname, feedWriter }) {
   const [reviewValue, setReviewValue] = useState({});
   const [isReviewOpen, setIsReviewOpen] = useRecoilState(reviewOpenState);
   const [replyOpen, setReplyOpen] = useState(false);
-  const [replyValue, setReplyValue] = useState();
+  const [replyValue, setReplyValue] = useState({});
+  const [replyMode, setReplyMode] = useState();
   const inputRef = useRef(null);
   useEffect(() => {
     if (inputRef.current && replyOpen) {
       inputRef.current.focus();
     }
   }, [replyOpen]);
+  useEffect(() => {
+    setReplyOpen(true);
+  }, [replyMode]);
   const { data, isLoading } = useQuery(['detailData', feedId], () =>
     getDetailApi(cookies.access_token, feedId),
   );
@@ -77,10 +81,13 @@ function Review({ feedId, nickname, feedWriter }) {
   };
   const handlePostReply = (reviewId) => {
     const formData = {
-      content: replyValue,
+      content: replyValue[reviewId],
     };
     postReplyMutation.mutate({ reviewId, formData });
-    setReplyValue('');
+    setReplyValue({
+      ...replyValue,
+      [reviewId]: '',
+    });
   };
   const handleDeleteReply = (replyId) => {
     const confirmDelete = window.confirm('댓글을 삭제하시겠습니까?');
@@ -88,8 +95,9 @@ function Review({ feedId, nickname, feedWriter }) {
       deleteReplyMutation.mutate(replyId);
     }
   };
-  const handleReplyOpen = () => {
+  const handleReplyOpen = (itemId) => {
     setReplyOpen(!replyOpen);
+    setReplyMode(itemId);
   };
 
   return (
@@ -112,9 +120,9 @@ function Review({ feedId, nickname, feedWriter }) {
             {nickname === feedWriter && nickname !== item.writer && (
               <div
                 style={{ cursor: 'pointer', color: 'black' }}
-                onClick={handleReplyOpen}
+                onClick={() => handleReplyOpen(item.id)}
               >
-                {replyOpen ? '닫기' : '답글 달기'}
+                {replyOpen && replyMode === item.id ? '닫기' : '답글 달기'}
               </div>
             )}
           </div>
@@ -144,14 +152,19 @@ function Review({ feedId, nickname, feedWriter }) {
                 ),
             ),
           )}
-          {replyOpen && nickname !== item.writer && (
+          {replyOpen && replyMode === item.id && (
             <div style={{ padding: '10px 20px' }}>
               <input
                 ref={inputRef}
                 className={styles.reply_input}
                 placeholder="답글을 남겨보세요"
-                value={replyValue}
-                onChange={(e) => setReplyValue(e.target.value)}
+                value={replyValue[item.id] || ''}
+                onChange={(e) =>
+                  setReplyValue({
+                    ...replyValue,
+                    [item.id]: e.target.value,
+                  })
+                }
               ></input>
               <button
                 className={styles.reply_btn}
@@ -163,19 +176,6 @@ function Review({ feedId, nickname, feedWriter }) {
           )}
         </div>
       ))}
-      {/* <div>
-        <input
-          value={reviewValue[feedId] || ''}
-          onChange={(e) =>
-            setReviewValue({
-              ...reviewValue,
-              [feedId]: e.target.value,
-            })
-          }
-          placeholder="댓글을 입력하세요"
-        ></input>
-        <button onClick={() => handleReviewPost(feedId)}>댓글 쓰기</button>
-      </div> */}
     </div>
   );
 }

@@ -13,7 +13,7 @@ function PwSearchPage() {
     const formData = {
       email: userId,
     };
-    putEmailApi(formData, cookies.access_token)
+    putEmailApi(formData)
       .then((res) => {
         // console.log('인증메일 발송', res.data);
         alert(res.data);

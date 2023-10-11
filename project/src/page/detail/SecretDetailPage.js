@@ -14,6 +14,8 @@ function SecretDetailPage() {
   const navigate = useNavigate();
   const params = useParams();
   const id = params.id;
+  const category = params.category;
+
   const { data: infoData, isLoading: infoLoading } = useQuery(['getInfo'], () =>
     getInfoApi(cookies.access_token),
   );
@@ -32,6 +34,7 @@ function SecretDetailPage() {
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries('secretData');
+        navigate(`/${category}`);
         // console.log('데이터 삭제 성공', data);
       },
     },
