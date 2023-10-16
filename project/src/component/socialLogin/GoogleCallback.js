@@ -12,40 +12,31 @@ function GoogleCallback() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(['access_token', 'refresh_token']);
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
   const { reset } = useForm();
   const [isOnOffState, setIsOnOffState] = useRecoilState(onOffState);
-
+  useEffect(() => {
+    confirmLogin();
+  }, []);
   const mutation = useMutation((code) => googleLoginApi(code), {
     onSuccess: (data) => {
-      // console.log(data, '로그인 성공');
       reset();
-
       queryClient.refetchQueries(['google']);
       setCookie('access_token', data.data.token.access);
       setCookie('refresh_token', data.data.token.refresh);
-
       setIsOnOffState(true);
       setTimeout(() => {
         navigate('/');
         window.location.reload();
       }, 1000);
     },
-    onError: (error) => {
-      // console.log('error', error);
-    },
   });
   const confirmLogin = async () => {
     const params = new URL(document.location.toString()).searchParams;
     const code = params.get('code');
-    // console.log('code', code);
     if (code) {
       mutation.mutate(code);
     }
   };
-  useEffect(() => {
-    confirmLogin();
-  }, []);
   return <div></div>;
 }
 export default GoogleCallback;

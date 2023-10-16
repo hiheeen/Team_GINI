@@ -13,9 +13,8 @@ function Profile() {
   const profile = process.env.PUBLIC_URL + '/images/profile.png';
   const [cookies] = useCookies(['access_token']);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loggedInState);
-
-  // const [infoData, setInfoData] = useState();
   const navigate = useNavigate();
+
   const { data: feedData, isLoading: dataIsLoading } = useQuery(
     ['feedData'],
     () => getFeedApi(cookies.access_token),
@@ -31,7 +30,7 @@ function Profile() {
     () => getInfoApi(cookies.access_token),
     { enabled: !!isLoggedIn },
   );
-  // console.log('secretdata', secretData);
+
   if (secretIsLoading) {
     return <div></div>;
   }

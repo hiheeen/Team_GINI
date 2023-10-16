@@ -29,13 +29,11 @@ function MyPage() {
   const { data: infoData, isLoading } = useQuery(['infoData'], () =>
     getInfoApi(cookies.access_token),
   );
-  // console.log('인포', infoData);
   const updateInfoMutation = useMutation(
     (formData) => updateInfoApi(cookies.access_token, formData),
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries('infoData');
-        // console.log('마이페이지 업데이트 성공', data);
         navigate('/');
       },
     },
@@ -66,7 +64,6 @@ function MyPage() {
         secretAccessKey: secret_key,
       },
     });
-
     try {
       if (selectedFile) {
         const res = await S3.putObject({
@@ -75,7 +72,6 @@ function MyPage() {
           ACL: 'public-read',
           Body: selectedFile,
         }).promise();
-        // console.log('s3 업로드 어쩌고', res);
         const encodedKey = encodeURIComponent(selectedFile.name);
         const formData = {
           nickname: updateInfo.nickname || infoData.data.nickname,

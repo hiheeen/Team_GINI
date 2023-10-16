@@ -38,13 +38,11 @@ function PublicFeed({ filter, order }) {
       return postReviewApi(cookies.access_token, feedId, formData);
     },
     {
-      onSuccess: (data) => {
+      onSuccess: () => {
         queryClient.invalidateQueries('detailData');
-        // console.log('리뷰 post 성공', data);
         setIsReviewOpen(true);
       },
       onError: (error) => {
-        // console.log('리뷰 post 안됨', error);
         if (error.response.status === 400) {
           alert('이미 리뷰를 작성하셨습니다');
         }
@@ -56,7 +54,6 @@ function PublicFeed({ filter, order }) {
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries('feedData');
-        // console.log('데이터 삭제 성공', data);
       },
     },
   );
@@ -65,7 +62,6 @@ function PublicFeed({ filter, order }) {
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries('feedData');
-        // console.log('좋아요 성공', data);
       },
     },
   );

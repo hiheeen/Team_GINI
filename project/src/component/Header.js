@@ -56,6 +56,7 @@ function Header() {
     setIsOnOffState(newValue);
     localStorage.setItem('isOnOffState', newValue.toString()); // 불리언을 문자열로 저장
   };
+
   // styled 컴포넌트를 사용하여 스위치 스타일 변경
   const CustomSwitch = styled(Switch)(({ theme }) => ({
     '& .MuiSwitch-track': {
